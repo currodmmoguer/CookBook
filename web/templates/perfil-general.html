@@ -1,0 +1,100 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <link rel="shortcut icon" type="image/png" href="{% static 'img/web/favicon.ico' %}"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Profile</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+  <link rel="stylesheet" href="{% static 'css/perfil.css' %}">
+
+
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+</head>
+
+<body>
+
+  {% include 'partes/navbar.html' %}
+
+  <div class="container mb-5">
+    <div style="margin-top: 5rem;">
+
+    </div>
+
+    <!-- DATOS PERFIL -->
+    <div class="row" style="margin-top:0px;">
+      <!-- IMG -->
+      <div class="col-3 col-md-2">
+        <div class="image">
+          <img src="../../media/{{usuario.perfil.imagen_perfil}}" class="img img-responsive full-width rounded-circle"/>
+        </div>
+
+      </div>
+
+      <!-- NOMBRE Y DESCRIPCION -->
+      <div class="col-6 col-md-7">
+        <div class="row">
+          <div class="col-12 nombre">
+            {{usuario.first_name}} {{usuario.last_name}}
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-12 nombre">
+            <p class="user">{{usuario.username}}</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 descripcion">
+            {% if not usuario.perfil.descripcion == None %}
+            <p>{{usuario.perfil.descripcion}}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTÓN SEGUIR -->
+      <div class="col-2 ml-1 div-seguir">
+        {% if user.get_username == usuario.username %}
+        <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-seguir">Editar</button></a>
+        {% elif user.perfil in usuario.perfil.seguidores.all %}
+        <a href="{% url 'dejar_seguir' username=usuario.username %}"><button type="button" class="btn-seguir">Dejar de seguir</button></a>
+        {% else %}
+        <a href="{% url 'seguir' username=usuario.username %}"><button type="button" class="btn-seguir">Seguir</button></a>
+        {% endif %}
+      </div>
+    </div>
+
+
+    <!-- MENU -->
+    {% if request.user == user %}
+      {% include 'partes/menu-perfil-self.html' %}
+    {% else %}
+    {% include 'partes/menu-perfil.html' %}
+    {% endif %}
+
+    <div class="row separador"></div>
+
+    <!-- Receta lista -->
+    {% include 'partes/lista-recetas.html' %}
+
+  </div>
+
+
+
+
+
+
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

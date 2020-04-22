@@ -1,0 +1,94 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/web/favicon.ico' %}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Nueva receta</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+    <link rel="stylesheet" href="{% static 'css/nueva-receta.css' %}">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  </head>
+  <body>
+
+    {% include 'partes/navbar.html' %}
+
+    <div class="container">
+      <div class="row justify-content-center my-5">
+        <h3 style="margin-top: 5rem;">Nueva receta</h3>
+      </div>
+
+
+
+
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        
+        {{ formReceta.titulo }}
+        {{ formReceta.imagen_terminada}}
+        {{ formReceta.raciones }}
+        {{ formReceta.tiempo_estimado }}
+        {{ formReceta.categoria }}
+        
+        
+
+        <h2>Ingredientes</h2>
+
+        {{ formsetIngrediente.management_form }}
+        {% for form_data in formsetIngrediente %}
+          <div id="ingrediente1">
+            {{ form_data.as_ul }}
+          </div>
+        {% endfor %}
+        <button type="button" class="btn btn-sm btn-success add-form-row" id="buttonAddIngredient">
+          Add
+        </button>
+
+        <h2>Pasos</h2>
+
+        {% if formsetPaso.non_form_errors %}
+      <div class="alert alertdanger">{{formsetPaso.non_form_errors}}</div>
+      {% endif %}
+
+        {{ formsetPaso.management_form }}
+        {% for form_data in formsetPaso %}
+        <div class="form-group">
+        <div class="row form-row spacer paso">
+            <div class="col-4">
+                <div class="input-group">
+                    {{form_data.texto}}
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="input-group">
+                    {{form_data.imagen_paso}}
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+        {% endfor %}
+        <button type="button" class="btn btn-sm btn-success add-form-row" id="buttonAddPaso">
+          Add
+        </button>
+
+
+<button type="submit">Submit</button>
+      </form>
+
+    </div>
+
+    <script src="{% static 'js/formset.js' %}"></script>
+
+    <script src="{% static 'js/nueva-receta.js' %}"></script>
+
+  </body>
+</html>

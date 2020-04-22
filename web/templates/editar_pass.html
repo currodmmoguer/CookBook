@@ -1,0 +1,85 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Profile</title>
+  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+</head>
+
+<body>
+
+  <div class="container">
+    <div class="row my-5">
+      <div class="col-12">
+        <ul class="nav justify-content-center">
+          <li class="nav-item">
+            <a class="nav-link active" href="#">Editar perfil</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Cambiar contraseña</a>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+
+    <form>
+
+      <!-- NOMBRE -->
+      <div class="row">
+        <div class="col-12 col-md-5 label">
+          Contraseña actual
+        </div>
+        <div class="col-12 col-md-4 ml-2">
+          <div class="form-group">
+            <input type="password" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- APPELIDO -->
+      <div class="row">
+        <div class="col-12 col-md-5 label">
+          Contraseña nueva
+        </div>
+        <div class="col-12 col-md-4 ml-2">
+          <div class="form-group">
+            <input type="password" class="form-control">
+          </div>
+        </div>
+      </div>
+
+      <!-- APPELIDO -->
+      <div class="row">
+        <div class="col-12 col-md-5 label">
+          Confirmar contraseña nueva
+        </div>
+        <div class="col-12 col-md-4 ml-2">
+          <div class="form-group">
+            <input type="password" class="form-control">
+          </div>
+        </div>
+      </div>
+
+
+
+      <!-- BOTONES -->
+      <div class="row justify-content-center my-3">
+        <div class="col- mr-1">
+          <button type="submit" class="btn">Guardar</button>
+        </div>
+        <div class="col- ml-1">
+          <button type="button" class="btn">Cancelar</button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+
+</body>
+
+</html>

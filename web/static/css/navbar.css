@@ -1,0 +1,29 @@
+
+@media (min-width: 991.9px) {
+  .textoMenu{
+    display: none;
+  }
+}
+
+.header{
+  background-color: #721b65;
+}
+
+.menu{
+  margin-left: 5%;
+}
+.textoMenu{
+  font-size: 2rem;
+}
+
+.btn-navbar {
+  color: #721b65;
+  background-color: white;
+  transition: all .5s;
+}
+
+.btn-navbar:hover{
+  color: white;
+  background-color: #721b65;
+  border: 1px solid white;
+}

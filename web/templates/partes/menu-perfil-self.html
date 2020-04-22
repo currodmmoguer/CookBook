@@ -1,0 +1,48 @@
+<!-- MENU -->
+<div class="row d-flex justify-content-between mx-md-2">
+
+  <div class="col-6 col-sm-3">
+    <a href="{% url 'perfil' username=usuario.username %}">
+      <div class="row justify-content-center">
+        {{usuario.recetas.all.count}}
+      </div>
+      <div class="row justify-content-center">
+        RECETAS
+      </div>
+    </a>
+  </div>
+
+  <div class="col-6 col-sm-3">
+    <a href="{% url 'recetas_guardadas' username=usuario.username %}">
+      <div class="row justify-content-center">
+        {{usuario.recetas_guardadas.all.count}}
+      </div>
+      <div class="row justify-content-center">
+        GUARDADAS
+      </div>
+    </a>
+  </div>
+
+  <div class="col-6 col-sm-3">
+    <a href="{% url 'seguidores' usuario.username %}">
+      <div class="row justify-content-center">
+        {{usuario.perfil.total_seguidores}}
+      </div>
+      <div class="row justify-content-center">
+        SEGUIDORES
+      </div>
+    </a>
+  </div>
+
+  <div class="col-6 col-sm-3">
+    <a href="{% url 'siguiendo' usuario.username %}">
+      <div class="row justify-content-center">
+        {{usuario.perfil.total_siguiendo}}
+      </div>
+      <div class="row justify-content-center">
+        SIGUIENDO
+      </div>
+    </a>
+  </div>
+
+</div>

@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>CookBook</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  </head>
+  <body>
+
+    <div class="video-background-holder">
+      <div class="video-background-overlay"></div>
+      <video autoplay="autoplay" muted loop="loop" id="video_background" preload="auto">
+        <source src="video/video.mp4" type="video/mp4">
+      </video>
+      <div class="container-fluid contenido">
+
+        <!-- LOGO -->
+        <div class="row justify-content-center">
+          <div class="col-5 col-md-3 col-lg-2">
+            <img src="img/logo.png" class="img-fluid">
+          </div>
+        </div>
+
+
+        <!-- FORMULARIOS -->
+
+        <div class="row d-flex justify-content-center">
+           <!--LOGIN -->
+          <div class="col-12 col-md-4 d-flex justify-content-center">
+            <div class="form">
+              <h3>Login</h3>
+              <form class="login-form" method="POST">
+                {% csrf_token %}
+                <input type="text" name="username" placeholder="Usuario"/>
+                <input type="password" name="password" placeholder="Contraseña"/>
+                <button>Acceder</button>
+                <div class="registro">
+                  <span>¿Aún no te has registrado?</span>
+                  <a href="{% url 'registro' %}">Haz clic aquí para hacerlo.</a>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  </body>
+</html>

@@ -1,0 +1,58 @@
+{% load filters %}
+
+<!-- Receta lista -->
+{% for receta in recetas %}
+<div class="row my-3 mx-md-5">
+  <div class="col-2 col-sm-1">
+    <a href="{% url 'guardar' pk=receta.pk %}">
+      <button class="btn-guardar">
+        {% if user in receta.usuarios_guardado.all %}
+          <i class='fas fa-bookmark' style='font-size:36px'></i>
+        {% else %}
+          <i class='far fa-bookmark' style='font-size:36px'></i>
+        {% endif %}
+      </button>
+    </a>
+  </div>
+
+  <div class="col-9 col-sm-6">
+    <div class="row">
+      <div class="col-12">
+        <a href="{% url 'receta' pk=receta.pk %}"><span class="titulo">{{receta.titulo}}</span></a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        Realizado por <a href="{% url 'perfil' username=receta.usuario.username %}">{{receta.usuario.username}}</a>
+      </div>
+    </div>
+    <div class="row valoracion">
+      <div class="col-12">
+        {% if receta.valoracion_media >= 1 %}
+          {% for i in receta.valoracion_media|times %}
+            <span class="fa fa-star checked"></span>
+          {% endfor %}
+
+          <span>{{receta.valoracion_media}}</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+  <div class="col-12 col-sm-5 text-center">
+    <a href="{% url 'receta' pk=receta.pk %}">
+      <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid">
+    </a>
+  </div>
+
+</div>
+
+{% empty %}
+<div class="row justify-content-center">
+  <div class="col-">
+    <h4>{{mensaje_vacio}}</h4>
+  </div>
+</div>
+
+{% endfor %}

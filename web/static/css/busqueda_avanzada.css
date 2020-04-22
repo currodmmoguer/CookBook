@@ -1,0 +1,22 @@
+.btn-plus{
+    color: #b80d57;
+    border: 1px solid #b80d57;
+    background-color: white;
+    width: 2rem;
+    height: 2rem;
+}
+
+.btn-minus{
+    color: white;
+    background-color: #b80d57;
+    border: 1px solid #b80d57;
+    width: 2rem;
+    height: 2rem;
+}
+
+input[type='text']{
+    height: 2rem;
+    border-radius: 0;
+    border: 1px solid #b80d57;
+    border-right: none;
+}

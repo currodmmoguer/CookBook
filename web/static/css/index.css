@@ -1,0 +1,21 @@
+@media(max-width: 768px){
+
+  img{
+    margin-top: 0.5rem;
+  }
+}
+
+@media(max-width: 576px){
+  .valoracion{
+    display: none;
+  }
+}
+
+.valoracion{
+  position:absolute;
+  bottom:0;
+}
+
+.fa-star {
+  color: #F9A31A;
+}

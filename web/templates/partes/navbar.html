@@ -1,0 +1,42 @@
+{% load static %}
+<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+
+<nav class="navbar fixed-top navbar-expand-lg navbar-dark header">
+  <a class="navbar-brand" href="{% url 'index' %}">
+    <img src="{% static 'img/web/logo.png' %}" width="50" height="50" class="d-inline-block align-top" alt="">
+  </a>
+    <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse1">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+      <div class="collapse navbar-collapse" id="navbarCollapse1">
+          <div class="navbar-nav menu">
+              <a href="{% url 'nueva_receta' %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Crear receta">
+                <i class="fa fa-plus-circle" style="font-size: 2rem;"></i>
+                <span class="textoMenu">Crear receta</span>
+              </a>
+              <a href="{% url 'busqueda_avanzada' %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Búsqueda avanzada">
+                <i class="fas fa-search"  style="font-size: 2rem;"></i>
+                <span class="textoMenu">Búsqueda avanzada</span>
+              </a>
+              <!--a href="#" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Notificaciones">
+                <i class="fa fa-bell"  style="font-size: 2rem;"></i>
+                <span class="textoMenu">Notificaciones</span>
+              </a-->
+              <a href="{% url 'perfil' username=user.username %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Pefil">
+                <i class="fa fa-user" style="font-size: 2rem;"></i>
+                <span class="textoMenu">Perfil</span>
+              </a>
+              
+              <a href="{% url 'logout' %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Salir">
+                <i class="fa fa-lock" style="font-size: 2rem;"></i>
+                <span class="textoMenu">Cerrar sesión</span>
+              </a>
+          </div>
+
+          <form action="{% url 'busqueda' %}" method="get" class="form-inline ml-auto buscador">
+              <input type="text" name="name" class="form-control mr-sm-2" placeholder="Buscar..." >
+              <button type="submit" name="/busqueda/" class="btn btn-navbar">Buscar</button>
+          </form>
+      </div>
+  </nav>
