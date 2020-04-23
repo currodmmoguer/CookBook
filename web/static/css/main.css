@@ -140,10 +140,15 @@ a, a:hover {
   appearance: unset;
 }
 
-.form-input input[type="text"]:focus, .form-input textarea:focus{
-  border-bottom: 2px solid #b80d57;
+.form-input input[type="text"]:focus + .form-label, .form-input textarea:focus{
+  top: 1px;
+  
+  font-size: 0.8rem;
   outline: none;
+}
 
+.form-input input[type="text"]:focus {
+  border-bottom: 2px solid #b80d57;
 }
 
 .btn-border-square + input[type="file"]{
@@ -153,4 +158,32 @@ a, a:hover {
   overflow: hidden;
   position: absolute;
   z-index: -1;
+}
+
+input[type="file"]{
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
+
+.subir-foto {
+  font-size: 14px;
+  font-weight: 600;
+  color: #B51F59;
+  border: 1px solid #B51F59;
+  display: inline-block;
+  transition: all .5s;
+  cursor: pointer;
+  padding: 15px 40px !important;
+  text-transform: uppercase;
+  width: fit-content;
+  text-align: center;
+}
+
+.subir-foto:hover {
+  color: #fff;
+  background-color: #B51F59;
 }

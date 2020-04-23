@@ -15,82 +15,98 @@
 
 
   <div class="container">
-    <div class="row my-5">
+    <div class="row mb-3">
       <div class="col-12">
         <ul class="nav justify-content-center">
           <li class="nav-item">
-            <a class="nav-link active" href="#">Editar perfil</a>
+            <a class="nav-link active" href="{% url 'editar_perfil' username=user.username %}">Editar perfil</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Cambiar contraseña</a>
+            <a class="nav-link" href="{% url 'editar_pass' username=user.username %}">Cambiar contraseña</a>
           </li>
         </ul>
       </div>
 
     </div>
 
-    <form>
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
 
       <!-- IMG -->
-      <div class="row">
-        <div class="col-md-5 col-sm-4 col-12 avatar">
-          <img src="img/avatar.png" class="img-fluid rounded-circle" style="width: 30%">
+      <div class="row ">
+        <div class="col-md-5 col-sm-4 col-12 avatar text-right">
+          <img src="../../media/{{user.perfil.imagen_perfil}}" class="img-fluid rounded-circle" style="width: 30%">
         </div>
-        <div class="col-md-4 col-sm-6 col-7 ml-1 ml-sm-2 my-auto border">
+        <div class="col-md-4 col-sm-6 col-7 align-self-center">
           <div class="custom-file">
-            <input type="file" class="custom-file-input" id="validatedCustomFile" required>
+            <input type="file" class="custom-file-input" name="imagen_perfil" id="validatedCustomFile" >
             <label class="custom-file-label" for="validatedCustomFile">Elegir imagen...</label>
-            <div class="invalid-feedback">Example invalid custom file feedback</div>
           </div>
+        </div>
+        <div class="col-md-3 col-sm-2 col-4 align-self-center text-center ">
+          <a href="{% url 'eliminar_foto' %}">
+            <button type="button" class="btn-border-rounded">Eliminar foto</button>
+          </a>
         </div>
       </div>
 
       <!-- NOMBRE -->
       <div class="row my-1">
-        <div class="col-12 col-md-5 label">
+        <div class="col-12 col-md-5 label text-right">
           Nombre
         </div>
         <div class="col-12 col-md-4 ml-2">
           <div class="form-group">
-            <input type="text" class="form-control">
+            <input type="text" name="nombre" class="form-control" value="{{user.first_name}}" required>
           </div>
         </div>
       </div>
 
       <!-- APPELIDO -->
       <div class="row">
-        <div class="col-12 col-md-5 label">
+        <div class="col-12 col-md-5 label text-right">
           Apellido
         </div>
         <div class="col-12 col-md-4 ml-2">
           <div class="form-group">
-            <input type="text" class="form-control">
+            <input type="text" class="form-control" name="apellido" value="{{user.last_name}}">
           </div>
         </div>
       </div>
 
       <!-- DESCRIPCION -->
       <div class="row">
-        <div class="col-12 col-md-5 label">
+        <div class="col-12 col-md-5 label text-right">
           Descripción
         </div>
         <div class="col-12 col-md-4 ml-2">
           <div class="form-group">
-            <textarea class="form-control" rows="3"></textarea>
+            <textarea class="form-control" rows="3" name="descripcion">{{user.perfil.descripcion}}</textarea>
           </div>
         </div>
       </div>
+      
 
       <!-- BOTONES -->
       <div class="row justify-content-center">
         <div class="col- mr-1">
-          <button type="button" class="btn">Guardar</button>
+          <button type="submit" class="btn-border-rounded">Guardar</button>
         </div>
         <div class="col- ml-1">
-          <button type="button" class="btn">Cancelar</button>
+          <a href="{% url 'perfil' username=user.username %}">
+            <button type="button" class="btn-border-rounded">Cancelar</button>
+          </a>
         </div>
       </div>
     </form>
+
+    <div class="row justify-content-center my-3">
+      <div class="col-2">
+        <a href="{% url 'eliminar_cuenta' %}">
+          <button type="button" class="btn-border-rounded">Eliminar cuenta</button>
+        </a>
+      </div>
+    </div>
   </div>
 
 

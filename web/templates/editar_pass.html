@@ -17,10 +17,10 @@
       <div class="col-12">
         <ul class="nav justify-content-center">
           <li class="nav-item">
-            <a class="nav-link active" href="#">Editar perfil</a>
+            <a class="nav-link active" href="{% url 'editar_perfil' username=user.username %}">Editar perfil</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Cambiar contraseña</a>
+            <a class="nav-link" href="{% url 'editar_pass' username=user.username %}">Cambiar contraseña</a>
           </li>
         </ul>
       </div>
@@ -31,7 +31,7 @@
 
       <!-- NOMBRE -->
       <div class="row">
-        <div class="col-12 col-md-5 label">
+        <div class="col-12 col-md-5 label text-right">
           Contraseña actual
         </div>
         <div class="col-12 col-md-4 ml-2">
@@ -43,7 +43,7 @@
 
       <!-- APPELIDO -->
       <div class="row">
-        <div class="col-12 col-md-5 label">
+        <div class="col-12 col-md-5 label text-right">
           Contraseña nueva
         </div>
         <div class="col-12 col-md-4 ml-2">
@@ -55,7 +55,7 @@
 
       <!-- APPELIDO -->
       <div class="row">
-        <div class="col-12 col-md-5 label">
+        <div class="col-12 col-md-5 label text-right">
           Confirmar contraseña nueva
         </div>
         <div class="col-12 col-md-4 ml-2">
@@ -70,10 +70,10 @@
       <!-- BOTONES -->
       <div class="row justify-content-center my-3">
         <div class="col- mr-1">
-          <button type="submit" class="btn">Guardar</button>
+          <button type="submit" class="btn-border-rounded">Guardar</button>
         </div>
         <div class="col- ml-1">
-          <button type="button" class="btn">Cancelar</button>
+          <button type="button" class="btn-border-rounded">Cancelar</button>
         </div>
       </div>
     </form>

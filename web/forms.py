@@ -14,10 +14,10 @@ class RegistroPerfilForm(forms.ModelForm):
         fields = ('descripcion', 'imagen_perfil',)
 
 class EditarPerfilForm(forms.Form):
-    imagen = forms.ImageField()
+    imagen_perfil = forms.ImageField(required=False)
     nombre = forms.CharField(max_length=30)
-    apellido = forms.CharField(max_length=50)
-    descripcion = forms.CharField(max_length=255)
+    apellido = forms.CharField(max_length=50, required=False)
+    descripcion = forms.CharField(max_length=255, required=False)
 
 class RecetaForm(forms.ModelForm):
     class Meta:
@@ -34,6 +34,9 @@ class PasoFormset(forms.ModelForm):
     class Meta:
         model = Paso
         fields = ('texto', 'imagen_paso',)
+        widgets = {
+            'texto': forms.Textarea(attrs={'rows':3}),
+        }
 
 class ComentarioForm(forms.ModelForm):
     class Meta:
@@ -47,10 +50,13 @@ class RespuestaForm(forms.ModelForm):
 
 class ValoracionForm(forms.Form):
     valoracion = forms.CharField(max_length=1)
+
+    def save(self, usuario, receta, valoracion):
+        return Valoracion.objects.create(valoracion=valoracion, receta=receta, usuario=usuario)
     
 
 class BusquedaAvanzadaForm(forms.Form):
-    ingrediente = forms.CharField(max_length=100)
+    ingrediente = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Introduce el ingrediente'}))
 
 class SugForm(forms.Form):
     texto = forms.CharField(max_length=255)

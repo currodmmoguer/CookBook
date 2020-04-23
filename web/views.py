@@ -85,8 +85,10 @@ def receta(request, pk):
         
         #Comprueba que sea valido y que no haya valorado ya
         if valoracionForm.is_valid() and not Valoracion.objects.filter(receta=Receta.objects.get(pk=pk)).filter(usuario=request.user).exists():
+            
             valoracion = valoracionForm.save(
-                request.user, Receta.objects.get(pk=pk))
+                request.user, Receta.objects.get(pk=pk), valoracionForm.cleaned_data.get('valoracion'))
+            print(valoracion)
         else:
             print('Errors: %s' % valoracionForm.errors.as_text())
 
@@ -124,7 +126,8 @@ def editar_receta(request, pk):
 def perfil(request, username):
     user = get_object_or_404(User, username=username)
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
-    """if request.user == user:
+    
+    if request.user == user:
         recetas = user.recetas.all().order_by('-fecha')
         mensaje_vacio = "Aún no tienes ninguna receta creada"
     else:
@@ -134,9 +137,9 @@ def perfil(request, username):
     for r in recetas:  # Añade la valoración media a cada receta
         r.valoracion_media = Valoracion.objects.filter(
             receta=r).aggregate(Avg('valoracion'))['valoracion__avg']
-    """
-    recetas = user.recetas.all().order_by('-fecha')
-    context = {'usuario': user, 'recetas': recetas, 'mensaje_vacio': "mensaje_vacio"}
+    
+    
+    context = {'usuario': user, 'recetas': recetas, 'mensaje_vacio': mensaje_vacio}
     return render(request, 'perfil-general.html', context)
 
 
@@ -146,6 +149,7 @@ def perfil(request, username):
 @login_required
 def recetas_guardadas(request, username):
     user = get_object_or_404(User, username=username)
+    user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     if user == request.user:    #Comprueba que el perfil es el mismo que el usuario logueado
         recetas = request.user.recetas_guardadas.all()
@@ -161,7 +165,11 @@ def recetas_guardadas(request, username):
 @login_required
 def seguidores(request, username):
     user = get_object_or_404(User, username=username)
-    mensaje_vacio = username + " no tiene seguidores."
+    user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
+    if user == request.user:
+        mensaje_vacio = "Aún no tienes seguidores"
+    else:
+        mensaje_vacio = username + " no tiene seguidores"
     seguidores = user.perfil.seguidores.all()
     context = {'usuario': user, 'lista_usuarios': seguidores, 'mensaje_vacio': mensaje_vacio}
     return render(request, 'perfil-usuarios.html', context)
@@ -171,7 +179,13 @@ def seguidores(request, username):
 @login_required
 def siguiendo(request, username):
     user = get_object_or_404(User, username=username)
-    mensaje_vacio = username + " no sigue a nadie."
+    user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
+    
+    if user == request.user:
+        mensaje_vacio = "Aún no sigues a nadie"
+    else:
+        mensaje_vacio = username + " no sigue a nadie"
+
     siguiendo = Perfil.objects.filter(seguidores=user.perfil)
     context = {'usuario': user, 'lista_usuarios': siguiendo, 'mensaje_vacio': mensaje_vacio}
     return render(request, 'perfil-usuarios.html', context)
@@ -293,7 +307,7 @@ def nueva_receta(request):
         formset_ingrediente = formsetIngredienteFactory(
             request.POST, prefix='ingrediente')
 
-        
+        print(formset_ingrediente)
 
         if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
             receta = formReceta.save(commit=False)
@@ -363,12 +377,11 @@ def editar_perfil(request, username):
 
     form = EditarPerfilForm()
     
-    
     if request.method == 'POST':
         form = EditarPerfilForm(request.POST, request.FILES)
-        print(form.data)
+        
         if form.is_valid():
-            print("valid")
+            print(form.cleaned_data)
             cd = form.cleaned_data
             if not cd['nombre'] == '':
                 request.user.first_name = cd['nombre']
@@ -485,7 +498,6 @@ def eliminar_receta(request, pk):
 #Busqueda avanzada de recetas 
 @login_required
 def busqueda_avanzada(request):
-    print("funcion")
     
     form = formset_factory(form=BusquedaAvanzadaForm, extra=1)
     formset = form()
@@ -515,6 +527,7 @@ def busqueda_avanzada(request):
                 
                 recetas.append(receta)
             
+            print(recetas)
             recetas.sort(key=lambda x: x.num, reverse=True)
             
             return render(request, 'resultado_busqueda.html', {'recetas': recetas})
@@ -528,13 +541,11 @@ def busqueda_avanzada(request):
 
 @login_required
 def resultado_busqueda(request):
-    print(request.GET)
     query = request.GET.get('name')
     recetas = Receta.objects.filter(Q(titulo__icontains=query))
-    print(recetas)
+
     context = {
-        'recetas': receta,
-        'palabra': query,
+        'recetas': recetas,
         'mensaje_vacio': 'No se ha encontrado ninguna receta con "' + query + '"'
     }
     return render(request, 'resultado_busqueda.html', context)

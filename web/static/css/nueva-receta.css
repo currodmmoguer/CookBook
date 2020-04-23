@@ -1,0 +1,57 @@
+.subir-foto {
+    font-size: 14px;
+    font-weight: 600;
+    color: #B51F59;
+    border: 1px solid #B51F59;
+    display: inline-block;
+    transition: all .5s;
+    cursor: pointer;
+    padding: 15px 40px !important;
+    text-transform: uppercase;
+    width: fit-content;
+    text-align: center;
+  }
+  
+  .subir-foto:hover {
+    color: #fff;
+    background-color: #B51F59;
+  }
+
+  input[type="file"]{
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+  }
+
+  .btn-remove{
+    width: auto;
+    background: #fff;
+    font-weight: bold;
+    color: #B51F59;
+    border: 1px solid #B51F59;
+    transition: all .5s;
+  }
+  
+  .btn-remove:hover{
+    background: #B51F59;
+    color: #fff;
+  }
+
+  .btn {
+    width: auto;
+    background: #fff;
+    color: #B51F59;
+    padding: 15px 43px;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: all .5s;
+  }
+  
+  .btn:hover {
+    background: #B51F59;
+    color: #fff;
+  }

@@ -21,6 +21,11 @@
   font-size: 2rem;
 }
 
+.user {
+  font-size: 1rem;
+  color: #919191;
+}
+
 .descripcion{
   font-size: 1rem;
 }
