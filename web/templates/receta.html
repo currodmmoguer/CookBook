@@ -1,7 +1,6 @@
 {% load static %}
 {% load filters %}
 
-
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
 
@@ -16,8 +15,6 @@
   <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
   <link rel="stylesheet" href="{% static 'css/receta.css' %}">
   <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-
-
 
 </head>
 
@@ -62,36 +59,57 @@
         <h2>{{ receta.titulo }}</h2>
       </div>
 
+      <form method="get">
+        
+      </form>
 
 
-      <div class="col-4 text-right opc">
-
+      <div class="col-4 text-right">
         {% if receta.usuario == user %}
-          <a href="{% url 'publicar' pk=receta.pk %}">
-            {% if receta.publico %}
-              <i class="fas fa-lock-open" style='font-size:36px'></i>
-            {% else %}
-              <i class="fas fa-lock" style='font-size:36px'></i>
-            {% endif %}
-          </a>
-
-          <a href="{% url 'editar_receta' pk=receta.pk %}">
-            <i class="fas fa-edit" style='font-size:36px'></i>
-          </a>
-
-          <button type="button" class="btn-guardar" data-toggle="modal" data-target="#modal-eliminar">
-            <i class="fas fa-trash" style='font-size:36px'></i>
+        <div class="dropdown">
+          <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Ajustes
           </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a href="{% url 'publicar' pk=receta.pk%}">
+              {% if receta.publico %}
+                <i class="fas fa-lock-open" style='font-size:1rem'>Público</i>
+              {% else %}
+                <i class="fas fa-lock" style='font-size:1rem'>Privado</i>
+              {% endif %}
+            </a>
+            <br>
+            <a href="{% url 'editar_receta' pk=receta.pk %}">
+              <i class="fas fa-edit" style='font-size:1rem'>Editar</i>
+            </a>
+            <br>
+            <a href="{% url 'eliminar_receta' pk=receta.pk %}">
+              <i class="fas fa-trash" style='font-size:1rem'>Eliminar</i>
+            </a>
+            <form method="get" class="col-1">
+              <button class="btn-guardar" type="submit" name="guardar">
+                {% if user in receta.usuarios_guardado.all %}
+                  <i class='fas fa-bookmark' style='font-size:1rem'></i>
+                {% else %}
+                  <i class='far fa-bookmark' style='font-size:1rem'></i>
+                {% endif %}
+              </button>
+            </form>
+          </div>
+        </div>
+        {% else %}
+
+        <form method="get" class="">
+          <button class="btn-guardar" type="submit" name="guardar">
+            {% if user in receta.usuarios_guardado.all %}
+              <i class='fas fa-bookmark' style='font-size:36px'></i>
+            {% else %}
+              <i class='far fa-bookmark' style='font-size:36px'></i>
+            {% endif %}
+          </button>
+        </form>
+        
         {% endif %}
-
-        <a href="{% url 'guardar' pk=receta.pk %}">
-          {% if user in receta.usuarios_guardado.all %}
-            <i class='fas fa-bookmark' style='font-size:36px'></i>
-          {% else %}
-            <i class='far fa-bookmark' style='font-size:36px'></i>
-          {% endif %}
-        </a>
-
 
       </div>
     </div>

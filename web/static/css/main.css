@@ -53,7 +53,7 @@ a, a:hover {
 }
 
 .fa-star {
-  color: #ffd868;
+  color: #F9A31A;
 }
 
 .btn-border-rounded {
@@ -140,14 +140,21 @@ a, a:hover {
   appearance: unset;
 }
 
-.form-input input[type="text"]:focus + .form-label, .form-input textarea:focus{
+.form-input input[type="text"]:focus + .form-label,
+.form-input input[type="password"]:focus + .form-label,
+.form-input input[type="email"]:focus + .form-label,
+.form-input textarea:focus + .form-label,
+.with-text {
   top: 1px;
-  
   font-size: 0.8rem;
   outline: none;
+  color: #b80d57;
 }
 
-.form-input input[type="text"]:focus {
+.form-input input[type="text"]:focus,
+.form-input input[type="password"]:focus,
+.form-input input[type="email"]:focus,
+.form-input textarea:focus {
   border-bottom: 2px solid #b80d57;
 }
 
@@ -187,3 +194,4 @@ input[type="file"]{
   color: #fff;
   background-color: #B51F59;
 }
+

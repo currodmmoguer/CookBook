@@ -57,6 +57,9 @@ def index(request):
 def receta(request, pk):
     receta = get_object_or_404(Receta, pk=pk)  # Obtiene la receta
 
+    if request.method == "GET" and 'guardar' in request.GET:
+        receta.guardar(request.user)
+        
     # Formulario respuesta a un comentario
     if request.method == 'POST' and 'respuesta' in request.POST:
         respuestaForm = RespuestaForm(request.POST)
@@ -190,41 +193,6 @@ def siguiendo(request, username):
     context = {'usuario': user, 'lista_usuarios': siguiendo, 'mensaje_vacio': mensaje_vacio}
     return render(request, 'perfil-usuarios.html', context)
 
-"""
-# Pantalla de acceso
-def login_view(request):
-    context = {}
-    print("Aquiii")
-
-    if request.method == "POST":
-        loginForm = LoginForm(request.POST)
-
-        if 'login' in request.POST:
-            print("Post")
-            if loginForm.is_valid():
-                print("Valido")
-                username = loginForm.cleaned_data['username']
-                password = loginForm.cleaned_data['password']
-                usuario = authenticate(username=username, password=password)
-                if usuario is not None:
-                    do_login(request, usuario)
-                    return redirect('index')
-                else:
-                    print("Aqui")
-                    loginForm.add_error('data', 'Has introducido datos erroneros. Vuelve a intentarlo')
-                    context['form'] = loginForm
-                    context['mensaje_error'] = "Has introducido datos erroneros. Vuelve a intentarlo"
-    else:
-        context = {
-            'form': LoginForm(),
-            'mensaje_error': ""
-        }
-
-    print(context)
-
-    return render(request, 'registration/login.html', context)"""
-
-
 
 
 #Pantalla de registro a la aplicacion
@@ -235,6 +203,7 @@ def registro(request):
         registroPerfilForm = RegistroPerfilForm(request.POST, request.FILES)
 
         if registroUserForm.is_valid() and registroPerfilForm.is_valid():
+            
             username = registroUserForm.cleaned_data.get('username')
             password = registroUserForm.cleaned_data.get('password')
             email = registroUserForm.cleaned_data.get('email')
@@ -292,7 +261,7 @@ def nueva_receta(request):
 
         if 'sugerencia' in request.POST:
             formSugerencia = SugForm(request.POST)
-            print(formSugerencia.data)
+            
             if formSugerencia.is_valid():
                 print(formSugerencia.cleaned_data)
                 return HttpResponse("Se ha enviado tu sugerencia")
@@ -307,22 +276,21 @@ def nueva_receta(request):
         formset_ingrediente = formsetIngredienteFactory(
             request.POST, prefix='ingrediente')
 
-        print(formset_ingrediente)
-
         if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
             receta = formReceta.save(commit=False)
             
-            if request.POST.get('publico'): #Comprueba que se pulse el botón publicar
+            if request.POST.__contains__('publico'): #Comprueba que se pulse el botón publicar
                 receta.publico = True
 
             receta.usuario = request.user
             receta.save()
 
+            print("Ingredientes")
+            print(formset_ingrediente.cleaned_data)
             for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
                 rel_ingrediente = formIngrediente.save(commit=False)
                 formIngrediente = formIngrediente.cleaned_data
-
-
+                print(formIngrediente)
                 if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
                     rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
                 else:
@@ -334,6 +302,7 @@ def nueva_receta(request):
                 rel_ingrediente.save()
 
             pos = 1
+            print("Pasos")
             for formPaso in formset_paso:   #Bucle todos los pasos
                 paso = formPaso.save(commit=False)
                 print(formPaso.cleaned_data)
@@ -508,6 +477,7 @@ def busqueda_avanzada(request):
 
         if formset.is_valid():
             
+            print(len(formset.cleaned_data))
             for forma in formset:
                 try:
                     ingredientes.append(Ingrediente.objects.get(nombre=forma.cleaned_data['ingrediente']))

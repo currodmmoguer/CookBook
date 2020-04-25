@@ -14,13 +14,13 @@
     height: 2rem;
 }
 
-input[type='text']{
+.container input[type='text']{
     height: 2rem;
     border-radius: 0;
     border: 1px solid #b80d57;
     border-right: none;
 }
 
-input[type='text']::placeholder{
+.container input[type='text']::placeholder{
     color: #b80d57;
 }

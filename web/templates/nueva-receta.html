@@ -84,46 +84,47 @@
         
 
         <h2>Ingredientes</h2>
-
-        {{ formsetIngrediente.management_form }}
-        {% for form_data in formsetIngrediente %}
-          <div id="ingrediente1" class="ingrediente">
-            <div class="row">
-              <div class="col-1">
-                <button type="button" id="bri1" class="btn-remove" onclick="borrarIngrediente(this.id)">-</button>
-              </div>
-            </div>
-            <div class="row justify-content-between d-flex align-items-end ml-md-1 mr-md-1">
-              <div class="col-12 col-md-4 col-lg-3">
-                <div class="form-group form-input">
-                  {{form_data.ingrediente}}
-                  <label for="ingrediente" class="form-label">Ingrediente</label>
+        <div id="totalIngredientes">
+          {{ formsetIngrediente.management_form }}
+          {% for form_data in formsetIngrediente %}
+            <div id="ingrediente0" class="ingrediente">
+              <div class="row">
+                <div class="col-1">
+                  <button type="button" id="bri1" class="btn-remove remove-form-row-ingrediente">-</button>
                 </div>
               </div>
-
-              <div class="col-12 col-md-4 col-lg-3">
-                <div class="form-group form-input">
-                  {{form_data.cantidad}}
-                  <label for="cantidad" class="form-label">Cantidad</label>
+              <div class="row justify-content-between d-flex align-items-end ml-md-1 mr-md-1">
+                <div class="col-12 col-md-4 col-lg-3">
+                  <div class="form-group form-input">
+                    {{form_data.ingrediente}}
+                    <label for="ingrediente" class="form-label">Ingrediente</label>
+                  </div>
                 </div>
-              </div>
 
-              <div class="col-12 col-md-4 col-lg-3">
-                <select class="custom-select wrap-input2 validate-input" name="categoria">
-                  {% for unidad in unidades %}
-                    <option value="{{unidad.pk}}"
-                      {% if unidad.pk == 1 %}
-                        selected
-                      {% endif %}>
-                      {{unidad}}
-                    </option>
-                  {% endfor %}
-                </select>
-              </div>
+                <div class="col-12 col-md-4 col-lg-3">
+                  <div class="form-group form-input">
+                    {{form_data.cantidad}}
+                    <label for="cantidad" class="form-label">Cantidad</label>
+                  </div>
+                </div>
 
-            </div>
-          </div>          
-        {% endfor %}
+                <div class="col-12 col-md-4 col-lg-3">
+                  <select class="custom-select wrap-input2 validate-input" id="id_ingrediente-0-unidad_medida" name="ingrediente-0-unidad_medida">
+                    {% for unidad in unidades %}
+                      <option value="{{unidad.pk}}"
+                        {% if unidad.pk == 1 %}
+                          selected
+                        {% endif %}>
+                        {{unidad}}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+              </div>
+            </div>          
+          {% endfor %}
+        </div>
         <div class="row justify-content-center my-3">
           <div class="col-">
             <button type="button" id="buttonAddIngredient" class="btn">+ Añadir ingrediente</button>
@@ -133,42 +134,44 @@
         <h2>Pasos</h2>
 
         {% if formsetPaso.non_form_errors %}
-      <div class="alert alertdanger">{{formsetPaso.non_form_errors}}</div>
-      {% endif %}
+          <div class="alert alertdanger">{{formsetPaso.non_form_errors}}</div>
+        {% endif %}
 
-        {{ formsetPaso.management_form }}
-        {% for form_data in formsetPaso %}
-        <div id="paso1" class="paso">
-          <div class="row d-flex justify-content-center d-flex align-items-stretch">
+        <div id="totalPasos">
+          {{ formsetPaso.management_form }}
+          {% for form_data in formsetPaso %}
+          <div id="paso0" class="paso">
+            <div class="row d-flex justify-content-center d-flex align-items-stretch">
 
-            <div class="col-1">
-              <button type="button" id="brp1" class="btn-remove" onclick="borrarPaso(this.id)">-</button>
-            </div>
-
-            <div class="col-1">
-              <span class="badge badge-pill badge-dark numPaso">1</span>
-            </div>
-
-            <div class="col-5 col-md-6">
-              <div class="form-group form-input">
-                {{form_data.texto}}
-                <label for="descripcion" class="form-label">Descripción...</label>
+              <div class="col-1">
+                <button type="button" class="btn-remove remove-form-row-paso" >-</button>
               </div>
-            </div>
 
-            <div class="col-5 col-md-4 align-self-center text-center">
-            
-                <label for="imagen_terminada" class="subir-foto">
-                  <i class="fa fa-cloud-upload"></i> Subir imagen
-                </label>
-                <input id="imagen_terminada" name="imagen_terminada" type="file"/>   
+              <div class="col-1">
+                <span class="badge badge-pill badge-dark numPaso">1</span>
+              </div>
+
+              <div class="col-5 col-md-6">
+                <div class="form-group form-input">
+                  {{form_data.texto}}
+                  <label for="descripcion" class="form-label">Descripción...</label>
+                </div>
+              </div>
+
+              <div class="col-5 col-md-4 align-self-center text-center">
               
+                  <label for="imagen_terminada" class="subir-foto">
+                    <i class="fa fa-cloud-upload"></i> Subir imagen
+                  </label>
+                  <input id="imagen_terminada" name="imagen_terminada" type="file"/>   
+                
+              </div>
+
             </div>
-
           </div>
-        </div>
 
-        {% endfor %}
+          {% endfor %}
+        </div>
         <div class="row d-flex justify-content-center">
           <div class="col-">
             <button type="button" id="buttonAddPaso" class="btn">+ Añadir paso</button>
@@ -178,22 +181,26 @@
 
         <div class="row my-4 justify-content-center">
           <div class="col-2 text-center">
-            <button type="button" type="submit" class="btn">Guardar</button>
+            <button  type="submit" class="btn">Guardar</button>
           </div>
+
           <div class="col-2 text-center">
-            <button type="button" type="submit" class="btn">Publicar</button>
+            <button type="submit" class="btn" name="publico" >Publicar</button>
           </div>
+
           <div class="col-2 text-center">
-            <button type="button" type="reset" class="btn">Cancelar</button>
+            <button type="reset" class="btn">Cancelar</button>
           </div>
         </div>
+     
       </form>
 
     </div>
 
-    <script src="{% static 'js/formset.js' %}"></script>
+    <script src="{% static 'js/formset-receta.js' %}"></script>
+    <script src="{% static 'js/formulario.js' %}"></script>
 
-    <script src="{% static 'js/nueva-receta.js' %}"></script>
+    
 
   </body>
 </html>

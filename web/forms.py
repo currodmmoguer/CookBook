@@ -56,7 +56,7 @@ class ValoracionForm(forms.Form):
     
 
 class BusquedaAvanzadaForm(forms.Form):
-    ingrediente = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'placeholder': 'Introduce el ingrediente'}))
+    ingrediente = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'required': '', 'placeholder': 'Introduce el ingrediente'}))
 
 class SugForm(forms.Form):
     texto = forms.CharField(max_length=255)

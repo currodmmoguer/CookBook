@@ -7,36 +7,41 @@
     <title>CookBook</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
   </head>
   <body>
 
-    <div class="video-background-holder">
-      <div class="video-background-overlay"></div>
-      <video autoplay="autoplay" muted loop="loop" id="video_background" preload="auto">
-        <source src="video/video.mp4" type="video/mp4">
-      </video>
-      <div class="container-fluid contenido">
+    
+      <div class="container-fluid contenido h-100">
 
-        <!-- LOGO -->
-        <div class="row justify-content-center">
-          <div class="col-5 col-md-3 col-lg-2">
-            <img src="img/logo.png" class="img-fluid">
-          </div>
-        </div>
+        
+        
 
 
         <!-- FORMULARIOS -->
 
-        <div class="row d-flex justify-content-center">
+        <div class="row d-flex justify-content-center border align-items-center h-100">
            <!--LOGIN -->
-          <div class="col-12 col-md-4 d-flex justify-content-center">
+          <div class="col-12 col-sm-10 col-md-7 col-lg-4 col-xl-3 d-flex justify-content-center">
             <div class="form">
-              <h3>Login</h3>
+              
+              <!-- LOGO -->
+              <div class="row justify-content-center">
+                <div class="col-8 col-sm-6">
+                  <img src="{% static 'img/web/logo.png' %}" class="img-fluid">
+                </div>
+              </div>
+              
               <form class="login-form" method="POST">
                 {% csrf_token %}
-                <input type="text" name="username" placeholder="Usuario"/>
-                <input type="password" name="password" placeholder="Contraseña"/>
+                <input type="text" name="username" placeholder="Usuario" required/>
+                <input type="password" name="password" placeholder="Contraseña" required/>
                 <button>Acceder</button>
+                
+                {% if form.errors %}
+                  <p class="my-1">Contraseña incorrecta. Vuelve a intentarlo.</p>
+                {% endif %}
+                  
                 <div class="registro">
                   <span>¿Aún no te has registrado?</span>
                   <a href="{% url 'registro' %}">Haz clic aquí para hacerlo.</a>
@@ -47,7 +52,7 @@
 
         </div>
       </div>
-    </div>
+    
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

@@ -16,13 +16,13 @@
     border-color: #F9A31A;
   }
   
-  .btn-valorar:hover {
-    background-color: #F9A31A;
-    color: #fff;
+.btn-valorar:hover {
+  background-color: #F9A31A;
+  color: #fff;
   
-  }
+}
 
-  .starrating input {display: none;}  /* Elimina el radio button*/
+.starrating input {display: none;}  /* Elimina el radio button*/
 
 .starrating label {
   margin: 2px;
