@@ -1,4 +1,5 @@
 {% load static %}
+{% load filters %}
 
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
@@ -6,7 +7,7 @@
     <meta charset="utf-8">
     <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Nueva receta</title>
+    <title>Editar {{receta.titulo}}</title>
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
     <link rel="stylesheet" href="{% static 'css/nueva-receta.css' %}">
@@ -25,7 +26,7 @@
       </div>
 
 
-      <form method="POST" enctype="multipart/form-data">
+      <form id="receta-form" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
 
         
@@ -33,7 +34,7 @@
         <div class="row justify-content-center my-3">
           <div class="col-md-7 col-12">
             <div class="form-group form-input">
-              <input type="text" name="titulo" id="titulo" required/>
+              <input type="text" name="titulo" id="titulo" value="{{receta.titulo}}" required/>
               <label for="titulo" class="form-label">Título</label>
             </div>
           </div>
@@ -43,14 +44,14 @@
         <div class="row justify-content-center my-3">
           <div class="col-md-4 col-12 mr-1">
             <div class="form-group form-input">
-              <input type="text" name="raciones" id="raciones"/>
+              <input type="text" name="raciones" id="raciones" value="{{receta.raciones|is_none}}" />
               <label for="raciones" class="form-label">Cantidad aproximada</label>
             </div>
           </div>
 
           <div class="col-md-4 col-12 ml-md-1">
             <div class="form-group form-input">
-              <input type="text" name="tiempo_estimado" id="tiempo_estimado"/>
+              <input type="text" name="tiempo_estimado" id="tiempo_estimado" value="{{receta.tiempo_estimado|is_none}}" />
               <label for="tiempo_estimado" class="form-label">Tiempo estimado</label>
             </div>
           </div>
@@ -62,7 +63,7 @@
             <label for="imagen_terminada" class="subir-foto">
               <i class="fa fa-cloud-upload"></i> Subir imagen del plato terminado
             </label>
-            <input id="imagen_terminada" name="imagen_terminada" type="file"/>
+            <input id="imagen_terminada" name="imagen_terminada" type="file" value="{{receta.imagen_terminada|is_none}}"/>
           </div>
         </div>
 
@@ -87,6 +88,7 @@
         <div id="totalIngredientes">
           {{ formsetIngrediente.management_form }}
           {% for form_data in formsetIngrediente %}
+          {{form_data.ingrediente.nombre}}
             <div id="ingrediente0" class="ingrediente">
               <div class="row">
                 <div class="col-1">
@@ -109,16 +111,7 @@
                 </div>
 
                 <div class="col-12 col-md-4 col-lg-3">
-                  <select class="custom-select wrap-input2 validate-input" id="id_ingrediente-0-unidad_medida" name="ingrediente-0-unidad_medida">
-                    {% for unidad in unidades %}
-                      <option value="{{unidad.pk}}"
-                        {% if unidad.pk == 1 %}
-                          selected
-                        {% endif %}>
-                        {{unidad}}
-                      </option>
-                    {% endfor %}
-                  </select>
+                  {{form_data.unidad_medida}}
                 </div>
 
               </div>
@@ -160,14 +153,12 @@
 
               <div class="col-5 col-md-4 align-self-center text-center">
               
-                  <label for="imagen_paso" class="subir-foto">
-                    <i class="fa fa-cloud-upload"></i> Subir imagena
+                  <label for="imagen_terminada" class="subir-foto">
+                    <i class="fa fa-cloud-upload"></i> Subir imagen
                   </label>
-                  <input name="imagen_paso" type="file"/>   
-                  <img src="#" id="blah" alt="" class="img-fluid">
+                  <input id="imagen_terminada" name="imagen_terminada" type="file"/>   
+                
               </div>
-
-              
 
             </div>
           </div>

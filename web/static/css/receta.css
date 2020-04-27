@@ -1,3 +1,11 @@
+.btn, .btn:hover {
+  color: #b80d57;
+}
+
+.dropdown-menu {
+  padding-left: 1rem;
+}
+
 .btn-valorar {
     display: inline-block;
     font-weight: 400;

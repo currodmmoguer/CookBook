@@ -4,15 +4,27 @@
 {% for receta in recetas %}
 <div class="row my-3 mx-md-5">
   <div class="col-2 col-sm-1">
-    <a href="{% url 'guardar' pk=receta.pk %}">
-      <button class="btn-guardar">
+
+    <!-- Botón guardar 
+    <form method="get">
+      <button class="btn-guardar" type="submit" name="guardar" id="{{receta.pk}}">
         {% if user in receta.usuarios_guardado.all %}
           <i class='fas fa-bookmark' style='font-size:36px'></i>
         {% else %}
           <i class='far fa-bookmark' style='font-size:36px'></i>
         {% endif %}
       </button>
+    </form>
+    -->
+    <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid={{receta.pk}}>
+      {% if user in receta.usuarios_guardado.all %}
+          <i class='fas fa-bookmark' style='font-size:36px'></i>
+        {% else %}
+          <i class='far fa-bookmark' style='font-size:36px'></i>
+        {% endif %}
     </a>
+    
+
   </div>
 
   <div class="col-9 col-sm-6">
@@ -39,13 +51,11 @@
     </div>
   </div>
 
-
   <div class="col-12 col-sm-5 text-center">
     <a href="{% url 'receta' pk=receta.pk %}">
       <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid">
     </a>
   </div>
-
 </div>
 
 {% empty %}
@@ -54,5 +64,32 @@
     <h4>{{mensaje_vacio}}</h4>
   </div>
 </div>
-
 {% endfor %}
+
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('.btn-guardar').click(function(){
+      var id = $(this).attr('id');
+      var btn = $(this);
+      $.ajax({
+        type: "GET",
+        url: "{% url 'guardar' %}",
+        data: {receta_id: id},
+        success: function( data ){
+          var clase = btn.children($('.fa-bookmark')).attr('class');
+          console.log(btn)
+          if (clase.includes('far')){
+            
+            btn.children().removeClass('far').addClass('fas');
+          } else {
+            btn.children().removeClass('fas').addClass('far');
+          }
+          
+        },
+        unsuccessful: function(data){
+          console.log("unsuccess");
+        }
+      })
+    });
+  });
+</script>

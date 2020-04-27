@@ -29,6 +29,9 @@ from django.core.paginator import Paginator
 @login_required
 def index(request):
     recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+
+    #if request.method == "GET" and 'guardar' in request.GET:
+     #   print(request.GET.keys())
     
     #Para mostrar las recetas de los usuarios que sigue
     siguiendo = Perfil.objects.filter(seguidores=request.user.perfil)
@@ -104,24 +107,121 @@ def receta(request, pk):
 
     return render(request, 'receta.html', context)
 
-#Pantalla para editar una receta
 @login_required
-def editar_receta(request, pk):
-    receta = get_object_or_404(Receta, pk=pk)
+def nueva_receta(request):
+
     formsetPasoFactory = modelformset_factory(
         Paso, form=PasoFormset, extra=1)
     formsetIngredienteFactory = modelformset_factory(
         Ingrediente_Receta, form=IngredienteFormset, extra=1)
 
+
+    if request.method == 'POST':
+        """
+        if 'sugerencia' in request.POST:
+            formSugerencia = SugForm(request.POST)
+            
+            if formSugerencia.is_valid():
+                print(formSugerencia.cleaned_data)
+                return HttpResponse("Se ha enviado tu sugerencia")
+            else:
+                print(formSugerencia.errors.as_text())
+                print("La sugerencia no vale")
+                return redirect('nueva_receta')"""
+
+        formReceta = RecetaForm(request.POST, request.FILES)
+        formset_paso = formsetPasoFactory(
+            request.POST, request.FILES, prefix='paso')
+        formset_ingrediente = formsetIngredienteFactory(
+            request.POST, prefix='ingrediente')
+
+        if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
+            receta = formReceta.save(commit=False)
+            
+            if request.POST.__contains__('publico'): #Comprueba que se pulse el botón publicar
+                receta.publico = True
+
+            receta.usuario = request.user
+            receta.save()
+
+            print("Ingredientes")
+            print(formset_ingrediente.cleaned_data)
+            for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
+                rel_ingrediente = formIngrediente.save(commit=False)
+                formIngrediente = formIngrediente.cleaned_data
+                print(formIngrediente)
+                if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
+                    rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
+                else:
+                    nombre = formIngrediente['ingrediente']
+                    instancia = Ingrediente.objects.create(nombre=nombre)
+                    rel_ingrediente.ingrediente = instancia
+
+                rel_ingrediente.receta = receta
+                rel_ingrediente.save()
+
+            pos = 1
+            print("Pasos")
+            for formPaso in formset_paso:   #Bucle todos los pasos
+                paso = formPaso.save(commit=False)
+                print(formPaso.cleaned_data)
+                paso.receta = receta
+                paso.posicion = pos
+                paso.save()
+                pos += 1
+
+            return redirect('receta', pk=receta.pk)
+
+        else:
+            print("No es valido")
+            print(formReceta.errors.as_text())
+            print(formset_paso.errors)
+            print(formset_ingrediente.errors)
+
+    else:
+        formReceta = RecetaForm()
+        formset_paso = formsetPasoFactory(
+            queryset=Paso.objects.none(), prefix='paso')
+        formset_ingrediente = formsetIngredienteFactory(
+            queryset=Ingrediente.objects.none(), prefix='ingrediente')
+
+    context = {
+        'formReceta': formReceta,
+        'formsetIngrediente': formset_ingrediente,
+        'formsetPaso': formset_paso,
+        'categorias': Categoria.objects.all(),
+        'unidades': Unidad_medida.objects.all(),
+        'formSugerencia': SugForm(),
+    }
+
+    return render(request, 'nueva-receta.html', context)
+
+
+#Pantalla para editar una receta
+@login_required
+def editar_receta(request, pk):
+    receta = get_object_or_404(Receta, pk=pk)
+    formsetPasoFactory = modelformset_factory(
+        Paso, form=PasoFormset, extra=0)
+    formsetIngredienteFactory = modelformset_factory(
+        Ingrediente_Receta, form=IngredienteEditFormset, extra=0)
+
     formset_paso = formsetPasoFactory(
             queryset=Paso.objects.filter(receta=receta).order_by('posicion'), prefix='paso')
     formset_ingrediente = formsetIngredienteFactory(
             queryset=Ingrediente_Receta.objects.filter(receta=receta), prefix='ingrediente')
+    
+        
+
+    for ingrediente in formset_ingrediente:
+        id_ingrediente = ingrediente.__dict__['initial']['ingrediente']
+        nombre_ingrediente = Ingrediente.objects.get(id=id_ingrediente).nombre
+        ingrediente.__dict__['initial']['ingrediente'] = nombre_ingrediente
 
     context = {'receta': receta, 'categorias': Categoria.objects.all(),
                 'formsetPaso': formset_paso, 'formsetIngrediente': formset_ingrediente}
 
-    return render(request, 'editar_receta.html', context)
+    return render(request, 'editar-receta.html', context)
 
 
 #Perfil de un usuario
@@ -248,94 +348,7 @@ def sugerencia(request):
     print("entra")
 
 
-@login_required
-def nueva_receta(request):
 
-    formsetPasoFactory = modelformset_factory(
-        Paso, form=PasoFormset, extra=1)
-    formsetIngredienteFactory = modelformset_factory(
-        Ingrediente_Receta, form=IngredienteFormset, extra=1)
-
-
-    if request.method == 'POST':
-
-        if 'sugerencia' in request.POST:
-            formSugerencia = SugForm(request.POST)
-            
-            if formSugerencia.is_valid():
-                print(formSugerencia.cleaned_data)
-                return HttpResponse("Se ha enviado tu sugerencia")
-            else:
-                print(formSugerencia.errors.as_text())
-                print("La sugerencia no vale")
-                return redirect('nueva_receta')
-
-        formReceta = RecetaForm(request.POST, request.FILES)
-        formset_paso = formsetPasoFactory(
-            request.POST, request.FILES, prefix='paso')
-        formset_ingrediente = formsetIngredienteFactory(
-            request.POST, prefix='ingrediente')
-
-        if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
-            receta = formReceta.save(commit=False)
-            
-            if request.POST.__contains__('publico'): #Comprueba que se pulse el botón publicar
-                receta.publico = True
-
-            receta.usuario = request.user
-            receta.save()
-
-            print("Ingredientes")
-            print(formset_ingrediente.cleaned_data)
-            for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
-                rel_ingrediente = formIngrediente.save(commit=False)
-                formIngrediente = formIngrediente.cleaned_data
-                print(formIngrediente)
-                if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
-                    rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
-                else:
-                    nombre = formIngrediente['ingrediente']
-                    instancia = Ingrediente.objects.create(nombre=nombre)
-                    rel_ingrediente.ingrediente = instancia
-
-                rel_ingrediente.receta = receta
-                rel_ingrediente.save()
-
-            pos = 1
-            print("Pasos")
-            for formPaso in formset_paso:   #Bucle todos los pasos
-                paso = formPaso.save(commit=False)
-                print(formPaso.cleaned_data)
-                paso.receta = receta
-                paso.posicion = pos
-                paso.save()
-                pos += 1
-
-            return redirect('receta', pk=receta.pk)
-
-        else:
-            print("No es valido")
-            print(formReceta.errors.as_text())
-            print(formset_paso.errors)
-            print(formset_ingrediente.errors)
-
-    else:
-        formReceta = RecetaForm()
-        formset_paso = formsetPasoFactory(
-            queryset=Paso.objects.none(), prefix='paso')
-        formset_ingrediente = formsetIngredienteFactory(
-            queryset=Ingrediente.objects.none(), prefix='ingrediente')
-
-    context = {
-        'formReceta': formReceta,
-        'formsetIngrediente': formset_ingrediente,
-        'formsetPaso': formset_paso,
-        'categorias': Categoria.objects.all(),
-        'unidades': Unidad_medida.objects.all(),
-        'formSugerencia': SugForm(),
-    }
-
-    return render(request, 'nueva-receta.html', context)
 
 
 
@@ -401,10 +414,23 @@ def publicar(request, pk):
 
 # Guarda una receta que se pasa por parametro y se guarda en el usuario conectado
 @login_required
-def guardar(request, pk):
+def guardarr(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
     receta.guardar(request.user)
     return redirect('index')
+
+@login_required
+def guardar(request):
+    
+    if request.method == 'GET':
+        
+        receta_id = request.GET['receta_id']
+        receta = Receta.objects.get(id=receta_id)
+        receta.guardar(request.user)
+        receta.save()
+        return HttpResponse('success')
+    else:
+        return HttpResponse('unsuccesful')
 
 
 @login_required
@@ -457,9 +483,8 @@ def eliminar_foto(request):
 def eliminar_receta(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
     if request.user == receta.usuario:
-        print("Entra")
         receta.delete()
-        return redirect('index')
+        return redirect('perfil', username=request.user.username)
 
 
 
@@ -477,30 +502,39 @@ def busqueda_avanzada(request):
 
         if formset.is_valid():
             
-            print(len(formset.cleaned_data))
-            for forma in formset:
+            for form in formset:   #Por cada input
                 try:
-                    ingredientes.append(Ingrediente.objects.get(nombre=forma.cleaned_data['ingrediente']))
-                except Ingrediente.DoesNotExist:
+                    ingrediente = Ingrediente.objects.get(nombre=form.cleaned_data['ingrediente']) #Obtiene el objeto ingrediente a través del nombre
+                    if not ingrediente in ingredientes: #Comprueba que no esté en la lista para que no haya repetidos
+                        ingredientes.append(ingrediente)
+                except Ingrediente.DoesNotExist:    #Excepción en caso de que no exista un ingrediente con el nombre introducido
                     pass
             
+            #Obtiene la lista de recetas filtrando por ingrediente y sin obtener resultados
+            #Sqlite no soporta hacer distinct() directamente con objeto, por lo que hay que pasar la lista de objeto a las id
             recetas_id = Ingrediente_Receta.objects.filter(ingrediente__in=ingredientes).values_list('receta', flat=True).distinct()
             recetas = []
             
-            for id in recetas_id:
+            for id in recetas_id:   #Se crea el objeto receta a traves de su id
                 receta = Receta.objects.get(pk=id)
-                receta.num = 0
+                receta.num = 0 #Se inicializa el atributo num que indica la cantidad de ingredientes que coinciden
 
-                for receta_ingr in receta.ingredientes.all():
-                    if receta_ingr.ingrediente in ingredientes:
-                        receta.num = receta.num + 1
+                for receta_ingr in receta.ingredientes.all():   #Recorre los ingredientes de cada receta
+                    if receta_ingr.ingrediente in ingredientes: 
+                        receta.num = receta.num + 1 #En caso que dicho ingrediente esté en la lista de ingredientes introducido suma 1
                 
                 recetas.append(receta)
             
-            print(recetas)
-            recetas.sort(key=lambda x: x.num, reverse=True)
+            recetas.sort(key=lambda x: x.num, reverse=True) #Ordena la receta por cantidad de coincidencias de mayor a menor
+
+            mensaje = "Resultado de "
             
-            return render(request, 'resultado_busqueda.html', {'recetas': recetas})
+            for ingrediente in ingredientes:
+                mensaje += ingrediente.nombre + ", "
+            
+            mensaje = mensaje[:-2]  #Borra los 2 último caracteres del string
+            
+            return render(request, 'resultado_busqueda.html', {'recetas': recetas, 'mensaje_titulo': mensaje})
 
     context = {
         'formset': formset
@@ -514,9 +548,14 @@ def resultado_busqueda(request):
     query = request.GET.get('name')
     recetas = Receta.objects.filter(Q(titulo__icontains=query))
 
+    if len(recetas) > 0:
+        mensaje = "Resultados de " + query
+    else:
+        mensaje = 'No se ha encontrado ninguna receta con "' + query + '"'
+
     context = {
         'recetas': recetas,
-        'mensaje_vacio': 'No se ha encontrado ninguna receta con "' + query + '"'
+        'mensaje_vacio': mensaje
     }
     return render(request, 'resultado_busqueda.html', context)
 

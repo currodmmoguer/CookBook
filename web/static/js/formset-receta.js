@@ -1,6 +1,13 @@
+$(document).ready(function(){
+  updateElementIndexPaso();
+  updateElementIndexIngrediente();
+});
+
 // SCRIPT PASOS 
 
-  function updateElementIndexPaso(/*el, prefix, ndx*/) {
+
+
+  function updateElementIndexPaso() {
     var pasos = $('#totalPasos');
     pasos = pasos.children('.paso');
     var pos = 0;
@@ -9,33 +16,26 @@
       
       $(this).find('.numPaso').html(pos+1);
       $(this).find('textarea').attr('id', 'id_paso-' + pos + '-texto').attr('name', 'paso-' + pos + '-texto');
-      $(this).find('input[type=file]').attr('id', 'id_paso-' + pos + '-imagen_termianda').attr('name', 'paso-' + pos + '-imagen_terminada');
+      $(this).find('label.form-label').attr('for', 'id_paso-' + pos + '-texto');
+      $(this).find('input[type=file]').attr('id', 'id_paso-' + pos + '-imagen_paso').attr('name', 'paso-' + pos + '-imagen_paso');
+      $(this).find('label.subir-foto').attr('for', 'id_paso-' + pos + '-imagen_paso');
       $(this).attr('id', 'paso' + pos);
       pos++;
     });
-      /*var id_regex = new RegExp('(' + prefix + '-\\d+)');
-      var replacement = prefix + '-' + ndx;
-      if ($(el).attr("for")) $(el).attr("for", $(el).attr("for").replace(id_regex, replacement));
-      if (el.id) el.id = el.id.replace(id_regex, replacement);
-      if (el.name) el.name = el.name.replace(id_regex, replacement);
-      $(el).find('span.numPaso').html(+ndx+1);*/
 
   }
   function cloneMorePaso(selector, prefix) {
-    console.log(selector);
-    console.log("----");
       var newElement = $(selector).clone(true);
       
       newElement.find('textarea, input[type=file]').each(function(){
         $(this).val('');
       });
-      
+      newElement.find('img').attr('src', '');
 
       var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
       total++;
       $('#id_' + prefix + '-TOTAL_FORMS').val(total);
       $(selector).after(newElement);
-      console.log(newElement);
       updateElementIndexPaso();
       return false;
     }
@@ -50,6 +50,8 @@
       }
       return false;
     }
+
+ 
   $(document).on('click', '#buttonAddPaso', function(e){
       e.preventDefault();
       cloneMorePaso('#paso0', 'paso');
@@ -78,11 +80,14 @@
         
         if ($(this).attr('id').endsWith('ingrediente')){  //Campo nombre ingrediente
           $(this).attr('id', 'id_ingrediente-' + pos + '-ingrediente').attr('name', 'ingrediente-' + pos + '-ingrediente');
+          $(this).next().attr('for', 'id_ingrediente-' + pos + '-ingrediente');
+
         } else if ($(this).attr('id').endsWith('cantidad')){  //Campo cantidad
           $(this).attr('id', 'id_ingrediente-' + pos + '-cantidad').attr('name', 'ingrediente-' + pos + '-cantidad');
+          $(this).next().attr('for', 'id_ingrediente-' + pos + '-cantidad');
         } else if ($(this).attr('id').endsWith('unidad_medida')){ //Campo unidad de medida
-          
           $(this).attr('id', 'id_ingrediente-' + pos + '-unidad_medida').attr('name', 'ingrediente-' + pos + '-unidad_medida');
+          $(this).next().attr('for', 'id_ingrediente-' + pos + '-unidad_medida');
         }
         console.log($(this));
       });
@@ -98,17 +103,8 @@
     newElement.find('input, select').each(function() {
       $(this).val('');
     });
-
-    /*
-    newElement.find('label').each(function() {
-      var forValue = $(this).attr('for');
-      if (forValue) {
-        forValue = forValue.replace('-' + (total-1) + '-', '-' + total + '-');
-        $(this).attr({'for': forValue});
-      }
-    });
     
-    */
+
     total++;
     $('#id_' + prefix + '-TOTAL_FORMS').val(total);
     $(selector).after(newElement);
@@ -138,6 +134,22 @@
     e.preventDefault();
     deleteForm('ingrediente', $(this));
     return false;
+  });
+
+  function readURL(input) {
+    if (input.files && input.files[0]){
+      var reader = new FileReader();
+
+      reader.onload = function(e){
+        $('#blah').attr('src', e.target.result);
+      }
+
+      reader.readAsDataURL(input.files[0])
+    }
+  }
+
+  $(document).on('change', '.paso input[type=file]', function(e){
+    readURL(this);
   });
 
   

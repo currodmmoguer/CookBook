@@ -26,9 +26,22 @@ class RecetaForm(forms.ModelForm):
 
 class IngredienteFormset(forms.ModelForm):
     ingrediente = forms.CharField(max_length=100)
+    
     class Meta:
         model = Ingrediente_Receta
         fields = ('cantidad', 'unidad_medida')
+
+class IngredienteEditFormset(forms.ModelForm):
+    ingrediente = forms.CharField(max_length=100)
+    
+    class Meta:
+        model = Ingrediente_Receta
+        fields = ('cantidad', 'unidad_medida', 'ingrediente')
+        widgets = {
+            'unidad_medida': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input'}),
+        }
+        
+        
 
 class PasoFormset(forms.ModelForm):
     class Meta:

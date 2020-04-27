@@ -67,8 +67,12 @@ body{
   cursor: pointer;
 }
 
-form p {
+form p, form a {
   color: #B51F59;
+  font-size: .8rem;
+}
+
+form span {
   font-size: .8rem;
 }
 

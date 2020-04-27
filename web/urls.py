@@ -8,14 +8,13 @@ from django.conf.urls import url
 urlpatterns = [
     path('buscar/', views.busqueda_avanzada, name='busqueda_avanzada'),     #Buscqueda avanzada de receta
     path('busqueda/', views.resultado_busqueda, name="busqueda"),   #Buscar requeta navbar
-    
+    path('guardar/', views.guardar, name="guardar"),    #Guardar receta
     path('', views.index, name="index"),    #Página princial
     path('<username>/', views.perfil, name="perfil"),   #Perfil
     path('receta/<int:pk>/', views.receta, name="receta"),  #Vista receta
     path('receta/nueva/', views.nueva_receta, name="nueva_receta"),  #Crear receta
     path('receta/<int:pk>/edit/', views.editar_receta, name="editar_receta"),   #Editar receta
     path('<username>/pass-edit/', views.editar_pass, name="editar_pass"),   #Editar contraseña
-    path('receta/<pk>/guardar/', views.guardar, name="guardar"),    #Guardar receta
     path('signup', views.registro, name="registro"),    #Vista registro
     path('<username>/guardadas/', views.recetas_guardadas, name='recetas_guardadas'),   #Vista recetas guardadas
     path('<username>/seguidores', views.seguidores, name="seguidores"), #Vista lista de seguidores

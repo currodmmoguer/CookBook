@@ -1,4 +1,16 @@
 $(document).ready(function(){
+    
+    var campos = $('#receta-form input, #receta-form textarea');
+    
+    campos.each(function(index){
+        
+        if ($(this).val() != ""){
+            $(this).next().addClass('with-text');
+        } else {
+            $(this).next().removeClass('with-text');
+        }
+    });
+
     var btn = $('button[type=submit]');
 
     $('input, textarea').blur(function(){
