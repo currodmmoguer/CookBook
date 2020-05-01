@@ -134,7 +134,7 @@ a, a:hover {
   border: none;
   color: #000;
   background: transparent;
-  border-bottom: 2px solid #999;
+  border-bottom: 3px solid #999;
   padding: 4px 0;
   outline: none;
   appearance: unset;
@@ -155,7 +155,7 @@ a, a:hover {
 .form-input input[type="password"]:focus,
 .form-input input[type="email"]:focus,
 .form-input textarea:focus {
-  border-bottom: 2px solid #b80d57;
+  border-bottom: 3px solid #b80d57;
 }
 
 .btn-border-square + input[type="file"]{

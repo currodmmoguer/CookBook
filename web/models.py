@@ -187,7 +187,7 @@ class Valoracion(models.Model):
         verbose_name_plural = 'Valoraciones'
 
     def __str__(self):
-        return self.valoracion
+        return str(self.valoracion) + str(self.receta) + str(self.usuario)
 
 class Sugerencia(models.Model):
     choices = (
@@ -199,5 +199,5 @@ class Sugerencia(models.Model):
     sugerencia = models.CharField(max_length=255)
 
     def __str__(self):
-        return self.sugerencia
+        return self.sugerencia + "(" + self.tipo + ")"
 

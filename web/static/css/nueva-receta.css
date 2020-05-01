@@ -55,3 +55,15 @@
     background: #B51F59;
     color: #fff;
   }
+
+  .btn-sugerencia {
+    border: none;
+    border-radius: 100%;
+    background-color: #B51F59;
+    color: white;
+    height: 3rem;
+    width: 3rem;
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+  }

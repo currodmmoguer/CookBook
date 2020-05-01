@@ -2,6 +2,8 @@ from django.shortcuts import render, get_object_or_404
 from django.utils import timezone
 from .models import *
 from .forms import *
+from .utils import *
+
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -22,14 +24,20 @@ from django.db.models import Q
 
 from django.http import HttpResponse
 
-#Paginacion
-from django.core.paginator import Paginator
+from django.core.exceptions import ObjectDoesNotExist
+
 
 # Pantalla principal
 @login_required
 def index(request):
-    recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+    try:
+        request.user.perfil
+    except ObjectDoesNotExist:
+        #Falta mostrar mensaje
+        return redirect('login')
 
+    recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+    
     #if request.method == "GET" and 'guardar' in request.GET:
      #   print(request.GET.keys())
     
@@ -43,14 +51,13 @@ def index(request):
             receta=r).aggregate(Avg('valoracion'))['valoracion__avg']
 
     #Paginación
-    paginator = Paginator(recetas, 10)
-    num_pagina = request.GET.get('page')
-    obj_pagina = paginator.get_page(num_pagina)
+    obj_pagina = paginator(request, recetas)
 
     context = {
         'recetas': obj_pagina,
         'mensaje_vacio': "No hay recetas"
     }
+    
 
     return render(request, 'index.html', context)
 
@@ -64,13 +71,13 @@ def receta(request, pk):
         receta.guardar(request.user)
         
     # Formulario respuesta a un comentario
-    if request.method == 'POST' and 'respuesta' in request.POST:
+    if request.method == 'POST' and 'comentario-respuesta' in request.POST:
         respuestaForm = RespuestaForm(request.POST)
 
         if respuestaForm.is_valid():
-            texto = respuestaForm.cleaned_data['respuesta']
+            texto = respuestaForm.cleaned_data['texto']
             padre = Comentario.objects.get(
-                pk=int(respuestaForm.cleaned_data['comentario']))
+                pk=int(request.POST['comentario-respuesta']))
             Comentario.objects.create(
                 texto=texto, receta=receta, usuario=request.user, comentario_respuesta=padre)
             
@@ -85,27 +92,18 @@ def receta(request, pk):
             comentario.receta = Receta.objects.get(pk=pk)  # Le añade la receta
             comentario.save()
 
-    # Formulario valoración
-    if request.method == "POST" and 'valoracion' in request.POST:  # En caso de que seauna valoración
-        valoracionForm = ValoracionForm(request.POST)
-        
-        #Comprueba que sea valido y que no haya valorado ya
-        if valoracionForm.is_valid() and not Valoracion.objects.filter(receta=Receta.objects.get(pk=pk)).filter(usuario=request.user).exists():
-            
-            valoracion = valoracionForm.save(
-                request.user, Receta.objects.get(pk=pk), valoracionForm.cleaned_data.get('valoracion'))
-            print(valoracion)
-        else:
-            print('Errors: %s' % valoracionForm.errors.as_text())
+    
 
     comentarioFrom = ComentarioForm()
     valoracionForm = ValoracionForm()
     respuestaForm = RespuestaForm()
-
+    receta.valoracion_media = Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']
     context = {'receta': receta, 'valoracionForm': valoracionForm,
-               'comentarioForm': comentarioFrom, 'respuestaForm': respuestaForm, 'valoracion_media': Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']}
+               'comentarioForm': comentarioFrom, 'respuestaForm': respuestaForm}
 
     return render(request, 'receta.html', context)
+
+
 
 @login_required
 def nueva_receta(request):
@@ -117,17 +115,15 @@ def nueva_receta(request):
 
 
     if request.method == 'POST':
-        """
+        
         if 'sugerencia' in request.POST:
             formSugerencia = SugForm(request.POST)
             
             if formSugerencia.is_valid():
-                print(formSugerencia.cleaned_data)
-                return HttpResponse("Se ha enviado tu sugerencia")
+                formSugerencia.save()
+                return redirect('nueva_receta')
             else:
-                print(formSugerencia.errors.as_text())
-                print("La sugerencia no vale")
-                return redirect('nueva_receta')"""
+                return redirect('nueva_receta')
 
         formReceta = RecetaForm(request.POST, request.FILES)
         formset_paso = formsetPasoFactory(
@@ -315,6 +311,7 @@ def registro(request):
             if not User.objects.filter(username=username).exists():
                 if not User.objects.filter(email=email).exists():
                     user = registroUserForm.save(commit=False)
+                    user.set_password(password)
                     user.first_name = nombre
                     user.last_name = apellido
                     user.email = email
@@ -345,7 +342,7 @@ def registro(request):
     return render(request, 'registration/registro_perfil.html', context)
 
 def sugerencia(request):
-    print("entra")
+    print("entra en sugerencia")
 
 
 
@@ -432,6 +429,40 @@ def guardar(request):
     else:
         return HttpResponse('unsuccesful')
 
+def valorar(request):
+    
+    if request.method == 'GET':
+        print(request.GET)
+        receta_id = request.GET['receta_id']
+        receta = get_object_or_404(Receta, pk=receta_id)
+        valoracion = request.GET['valoracion']
+
+        #No tiene ya valoracion
+        if not Valoracion.objects.filter(receta=receta).filter(usuario=request.user).exists():
+            print("o aqui")
+            valoracionForm = ValoracionForm()
+            valoracion = valoracionForm.save(
+                request.user, receta, valoracionForm.cleaned_data.get('valoracion'))
+            return HttpResponse('creada')
+        else:
+            
+            return HttpResponse('existe')
+    
+def valorar_seguro(request):
+
+    if request.method == 'GET':
+        receta_id = request.GET['receta_id']
+        receta = get_object_or_404(Receta, pk=receta_id)
+        puntos = request.GET['valoracion']
+        
+        valoracion = Valoracion.objects.filter(receta=receta).filter(usuario=request.user).first()
+        valoracion.valoracion = puntos
+        valoracion.save()
+        receta.valoracion_media = Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']
+        
+        return HttpResponse(receta.valoracion_media)
+    
+    return HttpResponse("unsuccessful")
 
 @login_required
 def seguir(request, pk):
@@ -494,6 +525,7 @@ def eliminar_receta(request, pk):
 def busqueda_avanzada(request):
     
     form = formset_factory(form=BusquedaAvanzadaForm, extra=1)
+    print(form)
     formset = form()
 
     if request.method == 'POST':
@@ -546,8 +578,14 @@ def busqueda_avanzada(request):
 @login_required
 def resultado_busqueda(request):
     query = request.GET.get('name')
-    recetas = Receta.objects.filter(Q(titulo__icontains=query))
 
+    try:
+        categoria = Categoria.objects.get(nombre=query.capitalize())
+        recetas = Receta.objects.filter(categoria=categoria)
+    except ObjectDoesNotExist:
+        recetas = Receta.objects.filter(Q(titulo__icontains=query))
+    
+    
     if len(recetas) > 0:
         mensaje = "Resultados de " + query
     else:
@@ -559,10 +597,7 @@ def resultado_busqueda(request):
     }
     return render(request, 'resultado_busqueda.html', context)
 
-def rueba(request):
-    print("Enrrra")
-    
-    return HttpResponse("Erorrr")
+
 
 def error_404(request, excepction):
     return render(request, 'error_404.html')

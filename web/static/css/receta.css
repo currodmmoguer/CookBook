@@ -50,10 +50,14 @@
 
 .txt-respuesta{
     border: none;
-    border-bottom: 2px solid #222222;
+    border-bottom: 3px solid grey;
+    color: grey;
+    float: left;
 }
 
 .form-respuesta button{
     border: none;
-    background-color: #fff;
+    background-color: transparent;
+    color: grey;
+    
 }

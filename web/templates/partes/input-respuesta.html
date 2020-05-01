@@ -1,0 +1,10 @@
+<div class="row w-100 form-respuesta" style="margin-top: 5rem" >
+    <form class="col-12" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="comentario-respuesta" value="{{comentario.pk}}">
+      <input type="text" class="txt-respuesta col-11" name="texto" placeholder="Respuesta" required/>
+      <button type="submit">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+    </form>
+</div>

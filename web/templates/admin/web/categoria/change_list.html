@@ -1,0 +1,75 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+{% block extrahead %}
+
+
+{{ block.super }}
+
+<script src="https://www.chartjs.org/dist/2.9.3/Chart.min.js"></script>
+<script src="https://www.chartjs.org/samples/latest/utils.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Render our chart -->
+<div style="width: 100%;">
+    <canvas style="margin-bottom: 30px; width: 60%; height: 50%;" id="myChart"></canvas>
+</div>
+<!-- Render the rest of the ChangeList view -->
+
+<script>
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    var datos = {{ chart_data | safe}}
+
+    var lista_cantidad = []
+    var lista_nombre = []
+    var lista_colores = []
+    
+    for (var i = 0; i < datos.length; i++) {
+        var elemento = datos[i];
+        lista_nombre.push(elemento['categoria'])
+        lista_cantidad.push(elemento['total'])
+        lista_colores.push(getRandomColor());
+    }
+
+
+    var config = {
+        type: 'pie',
+        data: {
+            datasets: [{
+                label: lista_nombre,
+                data: lista_cantidad,
+                backgroundColor: lista_colores,
+            }],
+            labels: []
+        },
+        options: {
+            responsive: true
+        }
+    };
+
+    lista_nombre.forEach(function (categoria) {
+        config['data']['labels'].push(categoria);
+    });
+
+    window.onload = function () {
+        var ctx = document.getElementById("myChart").getContext('2d');
+        window.myPie = new Chart(ctx, config);
+    }
+
+</script>
+{{ block.super }}
+{% endblock %}

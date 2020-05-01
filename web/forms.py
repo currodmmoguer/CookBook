@@ -42,7 +42,6 @@ class IngredienteEditFormset(forms.ModelForm):
         }
         
         
-
 class PasoFormset(forms.ModelForm):
     class Meta:
         model = Paso
@@ -71,5 +70,20 @@ class ValoracionForm(forms.Form):
 class BusquedaAvanzadaForm(forms.Form):
     ingrediente = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'required': '', 'placeholder': 'Introduce el ingrediente'}))
 
-class SugForm(forms.Form):
-    texto = forms.CharField(max_length=255)
+class SugForm(forms.ModelForm):
+    
+    class Meta:
+        model = Sugerencia
+        fields = ('tipo', 'sugerencia',)
+        widgets = {
+            'tipo': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input'}),
+        }
+    
+    #Hace que se elimine la opción por defecto de -------
+    def __init__(self, *args, **kwargs):
+        super(SugForm, self).__init__(*args, **kwargs)
+        self.fields['tipo'].widget.choices = self.fields['tipo'].choices[1:]
+
+
+        
+    
