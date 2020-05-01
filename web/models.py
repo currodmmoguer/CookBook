@@ -39,8 +39,6 @@ class Receta(models.Model):
     fecha = models.DateTimeField(default=timezone.now)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recetas")
-    usuarios_guardado = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, related_name="recetas_guardadas", blank=True)
     valoracion_media = ""
 
     class Meta:
@@ -49,12 +47,6 @@ class Receta(models.Model):
     def __str__(self):
         return self.titulo
 
-    def guardar(self, user):    #Guarda o quita de la lista al usuario indicado
-
-    	if not user in self.usuarios_guardado.all():
-    		self.usuarios_guardado.add(user)
-    	else:
-    		self.usuarios_guardado.remove(user)
 
     def publicar(self): #Pone público/privado la receta, devuelve el valor de publico
         self.publico = not self.publico
@@ -114,8 +106,22 @@ class Perfil(models.Model):
     	else:
     		return True"""
 
+class Receta_Guardada(models.Model):
+    receta = receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="guardadas")
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recetas_guardadas")
+    fecha = models.DateTimeField(default=timezone.now)
 
+    class Meta():
+        db_table = "recetas_guardadas"
 
+    def save(self, *args, **kwargs):
+        if Receta_Guardada.objects.filter(receta=self.receta).filter(usuario=self.usuario).exists():
+            return False
+        else:
+            super(Receta_Guardada, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.receta.titulo + " - " + self.usuario.username
 
 class Comentario(models.Model):
     texto = models.TextField()

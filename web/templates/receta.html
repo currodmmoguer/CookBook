@@ -203,15 +203,17 @@
     <div id="valoracion">
       <div class="row">
         <div class="col-12 text-center">
+          <span id="valoracion_media">
           {% if not receta.valoracion_media %}
             {% if user != receta.usuario %}
-              <span>Sé el primero en valorar</span>
+              Sé el primero en valorar
             {% else %}
-              <span>Aún no tiene valoraciones</span>
+              Aún no tiene valoraciones
             {% endif %}
           {% else %}
-          <span id="valoracion_media">{{receta.valoracion_media}}</span>
+            {{receta.valoracion_media}}</span>
           {% endif %}
+          </span>
         </div>
       </div>
       
@@ -359,7 +361,9 @@
             if (data=="existe"){
               $('#modal-valorar').modal('show');
             } else {
-              console.log("Se ha creado");
+              console.log(data);
+              console.log($('#valoracion_media'));
+              $('#valoracion_media').html(data);
             }
            }
         })

@@ -248,14 +248,17 @@ def perfil(request, username):
 @login_required
 def recetas_guardadas(request, username):
     user = get_object_or_404(User, username=username)
-    user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
-    if user == request.user:    #Comprueba que el perfil es el mismo que el usuario logueado
-        recetas = request.user.recetas_guardadas.all()
-        mensaje_vacio = "Aún no tienes ninguna receta guardada"
-    else:
+    if not user == request.user:    #Comprueba que el perfil es el mismo que el usuario logueado
         return redirect('perfil', username=username)
+    
+    user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
+    lista_recetas = Receta_Guardada.objects.filter(usuario=user).values_list('receta', flat=True).order_by('-fecha') 
+    recetas = []
+    for receta in lista_recetas:
+        recetas.append(Receta.objects.get(pk=receta))
 
+    mensaje_vacio = "Aún no tienes ninguna receta guardada"  
     context = {'usuario': user, 'recetas': recetas, 'mensaje_vacio': mensaje_vacio}
     return render(request, 'perfil-general.html', context)
 
@@ -413,18 +416,20 @@ def publicar(request, pk):
 @login_required
 def guardarr(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
-    receta.guardar(request.user)
+    rg = Receta_Guardada(receta=receta, usuario=request.user)
+    rg.save()
     return redirect('index')
 
 @login_required
 def guardar(request):
     
     if request.method == 'GET':
-        
         receta_id = request.GET['receta_id']
         receta = Receta.objects.get(id=receta_id)
-        receta.guardar(request.user)
-        receta.save()
+        if Receta_Guardada.objects.filter(receta=receta).filter(usuario=request.user).exists():
+            Receta_Guardada.objects.filter(receta=receta).filter(usuario=request.user).delete()
+        else:
+            Receta_Guardada.objects.create(receta=receta, usuario=request.user)
         return HttpResponse('success')
     else:
         return HttpResponse('unsuccesful')
@@ -439,13 +444,10 @@ def valorar(request):
 
         #No tiene ya valoracion
         if not Valoracion.objects.filter(receta=receta).filter(usuario=request.user).exists():
-            print("o aqui")
-            valoracionForm = ValoracionForm()
-            valoracion = valoracionForm.save(
-                request.user, receta, valoracionForm.cleaned_data.get('valoracion'))
-            return HttpResponse('creada')
+            Valoracion.objects.create(valoracion=valoracion, receta=receta, usuario=request.user)
+            receta.valoracion_media = Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']
+            return HttpResponse(receta.valoracion_media)
         else:
-            
             return HttpResponse('existe')
     
 def valorar_seguro(request):

@@ -5,6 +5,8 @@
 <div class="row my-3 mx-md-5">
   <div class="col-2 col-sm-1">
 
+    
+
     <!-- Botón guardar 
     <form method="get">
       <button class="btn-guardar" type="submit" name="guardar" id="{{receta.pk}}">
@@ -17,13 +19,15 @@
     </form>
     -->
     <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid={{receta.pk}}>
-      {% if user in receta.usuarios_guardado.all %}
+      {% if  receta|is_save:user %}
           <i class='fas fa-bookmark' style='font-size:36px'></i>
         {% else %}
           <i class='far fa-bookmark' style='font-size:36px'></i>
         {% endif %}
     </a>
     
+    
+
 
   </div>
 

@@ -1,4 +1,5 @@
 from django import template
+from ..models import *
 register = template.Library()
 
 @register.filter
@@ -15,3 +16,10 @@ def is_none(valor):
         return ""
     else:
         return valor
+
+@register.filter
+def is_save(receta, usuario):
+    if Receta_Guardada.objects.filter(receta=receta).filter(usuario=usuario).exists():
+        return True
+    else:
+        return False

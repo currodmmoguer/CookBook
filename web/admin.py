@@ -36,6 +36,6 @@ class Sugerencia(admin.ModelAdmin):
 
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
-
 admin.site.unregister(Group)
+admin.site.register(Receta_Guardada)
 
