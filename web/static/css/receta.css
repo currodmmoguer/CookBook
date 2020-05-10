@@ -1,3 +1,12 @@
+@media(min-width: 768px){
+  .container {
+    padding-left: 3rem !important;
+    padding-right: 3rem !important;
+  }
+}
+h2 {
+  margin-left: 15px !important;
+}
 .btn, .btn:hover {
   color: #b80d57;
 }

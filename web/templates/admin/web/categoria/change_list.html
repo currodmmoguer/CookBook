@@ -5,10 +5,8 @@
 
 {{ block.super }}
 
-<script src="https://www.chartjs.org/dist/2.9.3/Chart.min.js"></script>
-<script src="https://www.chartjs.org/samples/latest/utils.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 
 {% endblock %}
 
@@ -19,33 +17,63 @@
 <div style="width: 100%;">
     <canvas style="margin-bottom: 30px; width: 60%; height: 50%;" id="myChart"></canvas>
 </div>
-<!-- Render the rest of the ChangeList view -->
+
 
 <script>
 
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    // Comprueba si un objeto está en una lista
+    function contiene(lista, obj){
+        lista.forEach(element => {
+            if (element === obj){
+                return true;
+            }
+        });
+        return false;
     }
 
-    var datos = {{ chart_data | safe}}
+    // Crea un color aleatorio en formato rgb
+    function random_rgb() {
+        var o = Math.round, r = Math.random, s = 255;
+        return 'rgb(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ')';
+    }
 
+
+    var datos = {{ chart_data | safe}}
     var lista_cantidad = []
     var lista_nombre = []
-    var lista_colores = []
+    var lista_colores = [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)',
+    ]
+
     
+    // Añade los datos a sus respectivas listas
     for (var i = 0; i < datos.length; i++) {
         var elemento = datos[i];
         lista_nombre.push(elemento['categoria'])
         lista_cantidad.push(elemento['total'])
-        lista_colores.push(getRandomColor());
     }
 
+    // Se añade más colores a la gráfica en caso de que haya más de 7 categorías
+    if (datos.length > lista_colores.length){
+        var total = datos.length - lista_colores.length;
+        
+        for (var i = 0; i < total.length; i++){
+            do {
+                var color = random_rgb();
+            } while (contiene(lista_colores, color));
+            
+            lista_colores.push(color);
+            
+        }
+    }
 
+    // Configuración de la gráfica
     var config = {
         type: 'pie',
         data: {
@@ -61,6 +89,7 @@
         }
     };
 
+    //Se añade aquí, porque en el config coge el array como un elemento solo
     lista_nombre.forEach(function (categoria) {
         config['data']['labels'].push(categoria);
     });

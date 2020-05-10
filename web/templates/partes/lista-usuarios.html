@@ -5,11 +5,11 @@
       <img src="../../media/{{usuario.imagen_perfil}}" class="img-fluid rounded-circle">
     </div>
 
-    <div class="col-8 col-md-5 align-self-center">
-      <h3>{{usuario.usuario.get_full_name}}</h3>
+    <div class="col-5 col-sm-7 col-md-5 align-self-center">
+      <a href="{% url 'perfil' username=usuario.usuario.username %}"><h3>{{usuario.usuario.get_full_name}}</h3></a>
     </div>
 
-    <div class="col-2 align-self-center">
+    <div class="col-5 col-sm-3 text-right">
         {% if usuario.usuario.pk == user.pk %}
         <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-seguir">Editar</button></a>
         {% elif user.perfil in usuario.seguidores.all %}
@@ -30,3 +30,30 @@
 
 {% endfor %}
     
+<!-- PAGINATOR -->
+
+
+{% if lista_usuarios %}
+
+<div class="row justify-content-center my-5 paginator">
+  <span class="step-links">
+    
+    {% if lista_usuarios.has_previous %}
+      <a href="?page={{ lista_usuarios.previous_page_number }}">
+        <
+      </a>
+    {% endif %}
+
+    <span class="current">
+      Página {{lista_usuarios.number}}
+    </span>
+
+    {% if lista_usuarios.has_next %}
+      <a href="?page={{ lista_usuarios.next_page_number }}">></a>
+    {% endif %}
+
+  </span>
+
+</div>
+
+{% endif %}

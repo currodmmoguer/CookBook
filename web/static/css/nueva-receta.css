@@ -1,69 +1,85 @@
-.subir-foto {
-    font-size: 14px;
-    font-weight: 600;
-    color: #B51F59;
-    border: 1px solid #B51F59;
-    display: inline-block;
-    transition: all .5s;
-    cursor: pointer;
-    padding: 15px 40px !important;
-    text-transform: uppercase;
-    width: fit-content;
+@media (max-width: 575.9px) {
+  .btn-sugerencia {
+    top: 80px !important;
+    right: 1rem !important;
+    position: absolute !important;
+  }
+
+  .btn {
+    padding: 15px 15px !important;
+  }
+
+  h2 {
     text-align: center;
   }
-  
-  .subir-foto:hover {
-    color: #fff;
-    background-color: #B51F59;
-  }
+}
 
-  input[type="file"]{
-    width: 0.1px;
-    height: 0.1px;
-    opacity: 0;
-    overflow: hidden;
-    position: absolute;
-    z-index: -1;
-  }
+.subir-foto {
+  font-size: 14px;
+  font-weight: 600;
+  color: #b51f59;
+  border: 1px solid #b51f59;
+  display: inline-block;
+  transition: all 0.5s;
+  cursor: pointer;
+  padding: 15px 40px !important;
+  text-transform: uppercase;
+  width: fit-content;
+  text-align: center;
+}
 
-  .btn-remove{
-    width: auto;
-    background: #fff;
-    font-weight: bold;
-    color: #B51F59;
-    border: 1px solid #B51F59;
-    transition: all .5s;
-  }
-  
-  .btn-remove:hover{
-    background: #B51F59;
-    color: #fff;
-  }
+.subir-foto:hover {
+  color: #fff;
+  background-color: #b51f59;
+}
 
-  .container .btn {
-    width: auto;
-    background: #fff;
-    color: #B51F59;
-    padding: 15px 43px;
-    font-weight: bold;
-    border: none;
-    cursor: pointer;
-    transition: all .5s;
-  }
-  
-  .btn:hover {
-    background: #B51F59;
-    color: #fff;
-  }
+input[type="file"] {
+  width: 0.1px;
+  height: 0.1px;
+  opacity: 0;
+  overflow: hidden;
+  position: absolute;
+  z-index: -1;
+}
 
-  .btn-sugerencia {
-    border: none;
-    border-radius: 100%;
-    background-color: #B51F59;
-    color: white;
-    height: 3rem;
-    width: 3rem;
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-  }
+.btn-remove {
+  width: auto;
+  background: #fff;
+  font-weight: bold;
+  color: #b51f59;
+  border: 1px solid #b51f59;
+  transition: all 0.5s;
+}
+
+.btn-remove:hover {
+  background: #b51f59;
+  color: #fff;
+}
+
+.container .btn {
+  width: auto;
+  background: #fff;
+  color: #b51f59;
+  padding: 15px 43px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: all 0.5s;
+}
+
+.btn:hover {
+  background: #b51f59;
+  color: #fff;
+}
+
+.btn-sugerencia {
+  border: none;
+  border-radius: 100%;
+  background-color: #b51f59;
+  color: white;
+  height: 3rem;
+  width: 3rem;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+}

@@ -4,7 +4,7 @@
   <div class="col-6 col-sm-3">
     <a href="{% url 'perfil' username=usuario.username %}">
       <div class="row justify-content-center">
-        {{usuario.recetas.all.count}}
+        <b>{{usuario.recetas.all.count}}</b>
       </div>
       <div class="row justify-content-center">
         RECETAS
@@ -15,7 +15,7 @@
   <div class="col-6 col-sm-3">
     <a href="{% url 'recetas_guardadas' username=usuario.username %}">
       <div class="row justify-content-center">
-        {{usuario.recetas_guardadas.all.count}}
+        <b>{{usuario.recetas_guardadas.all.count}}</b>
       </div>
       <div class="row justify-content-center">
         GUARDADAS
@@ -26,7 +26,7 @@
   <div class="col-6 col-sm-3">
     <a href="{% url 'seguidores' usuario.username %}">
       <div class="row justify-content-center">
-        {{usuario.perfil.total_seguidores}}
+        <b>{{usuario.perfil.total_seguidores}}</b>
       </div>
       <div class="row justify-content-center">
         SEGUIDORES
@@ -37,7 +37,7 @@
   <div class="col-6 col-sm-3">
     <a href="{% url 'siguiendo' usuario.username %}">
       <div class="row justify-content-center">
-        {{usuario.perfil.total_siguiendo}}
+        <b>{{usuario.perfil.total_siguiendo}}</b>
       </div>
       <div class="row justify-content-center">
         SIGUIENDO

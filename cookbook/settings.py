@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'web.apps.WebConfig',
+    'web.apps.WebConfig',
 ]
 
 MIDDLEWARE = [
@@ -135,4 +135,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = '/'
+
+
 

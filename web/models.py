@@ -1,11 +1,11 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
-from django.contrib.auth import get_user_model
+
+from django.db.models import Avg
+
+# Sirve para controlar el máximo y mínimo de la valoración
 from django.core.validators import MaxValueValidator, MinValueValidator
-from django.db.models import Avg, Sum
-from datetime import datetime
-import os
 
 
 class Categoria(models.Model):
@@ -47,7 +47,6 @@ class Receta(models.Model):
     def __str__(self):
         return self.titulo
 
-
     def publicar(self): #Pone público/privado la receta, devuelve el valor de publico
         self.publico = not self.publico
         self.save()
@@ -56,13 +55,12 @@ class Receta(models.Model):
 
 
 class Perfil(models.Model):
-    usuario = models.OneToOneField(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="perfil")
+    _IMG_DEFAULT = "perfil/avatar-no-img.webp"
+    usuario = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True, related_name="perfil")
     descripcion = models.CharField(max_length=255, null=True, blank=True)
-    imagen_perfil = models.ImageField(upload_to='perfil', default="perfil/avatar-no-img.webp", null=True, blank=True, db_column="imagen")
+    imagen_perfil = models.ImageField(upload_to='perfil', default=_IMG_DEFAULT, null=True, blank=True, db_column="imagen")
     seguidores = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='seguidor')
     
-
     class Meta:
         db_table = 'perfil'
         verbose_name_plural = 'Perfiles'
@@ -76,35 +74,24 @@ class Perfil(models.Model):
     	else:
     		return self.seguidores.all().count()
 
-
     def set_imagen(self, imagen):   #Añade una imagen de perfil
     	if imagen is None: #Si no hay ninguna le pone la de por defecto
-    		self.imagen_perfil.name = "perfil/avatar-no-img.webp"
+    		self.imagen_perfil.name = self._IMG_DEFAULT
     	else:
     		self.imagen_perfil = imagen
     	self.save()
 
 
-    def add_seguidor(self, perfil):
+    def add_seguidor(self, perfil): # Añade un usuario a la lista de seguidores
         if perfil not in self.seguidores.all():
             self.seguidores.add(perfil)
             self.save()
 
-    def dejar_seguir(self, perfil):
+    def dejar_seguir(self, perfil): # Elimina el usuario de la lista de seguidores
         if perfil in self.seguidores.all():
             self.seguidores.remove(perfil)
             self.save()
 
-"""
-    def es_seguidor(self, perfil):
-    	cursos = connection.cursor()
-    	sentencia = "select * from web_perfil_seguidores where to_perfil_id= " + str(perfil.pk) + " and from_perfil_id=" + str(self.usuario.pk)
-    	row = cursor.execute(sentencia)
-
-    	if row == 0:
-    		return False
-    	else:
-    		return True"""
 
 class Receta_Guardada(models.Model):
     receta = receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="guardadas")
@@ -126,12 +113,9 @@ class Receta_Guardada(models.Model):
 class Comentario(models.Model):
     texto = models.TextField()
     fecha = models.DateTimeField(default=timezone.now)
-    receta = models.ForeignKey(
-        Receta, on_delete=models.CASCADE, related_name='comentarios')
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comentario_respuesta = models.ForeignKey(
-        'self', on_delete=models.CASCADE, blank=True, null=True, related_name='respuestas')
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    comentario_respuesta = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='respuestas')
 
     class Meta:
         db_table = 'comentario'
@@ -152,27 +136,21 @@ class Ingrediente(models.Model):
     def __str__(self):
     	return self.nombre
 
-class Ingrediente_Receta(models.Model):
-    receta = models.ForeignKey(
-        Receta, on_delete=models.CASCADE, related_name="ingredientes")
+class Ingrediente_Receta(models.Model): # Relacion entre ingrediente y receta
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="ingredientes")
     ingrediente = models.ForeignKey(Ingrediente, on_delete=models.DO_NOTHING)
     cantidad = models.CharField(max_length=30)
-    unidad_medida = models.ForeignKey(
-        Unidad_medida, on_delete=models.SET("Otros"))
+    unidad_medida = models.ForeignKey(Unidad_medida, on_delete=models.SET("Otros"))
 
     class Meta:
         db_table = 'receta_ingrediente'
-
-    """def __str__(self):
-        return "{} - {} + {}".format(self.pk, self.ingrediente, self.receta)"""
 
 
 class Paso(models.Model):
     texto = models.TextField()
     imagen_paso = models.ImageField(upload_to='paso', null=True, blank=True)
     posicion = models.IntegerField()
-    receta = models.ForeignKey(
-        Receta, on_delete=models.CASCADE, related_name="pasos")
+    receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="pasos")
 
     class Meta:
         db_table = 'paso'
@@ -182,11 +160,9 @@ class Paso(models.Model):
 
 
 class Valoracion(models.Model):
-    valoracion = models.IntegerField(
-        validators=[MaxValueValidator(5), MinValueValidator(1)])
+    valoracion = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="valoraciones")
-    usuario = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
 
     class Meta:
         db_table = 'valoracion'
@@ -199,11 +175,9 @@ class Sugerencia(models.Model):
     choices = (
         ('cat', 'Categoria'),
         ('udm', 'Unidad de medida'),
-        )
+    )
 
     tipo = models.CharField(max_length=3, choices=choices)
     sugerencia = models.CharField(max_length=255)
 
-    def __str__(self):
-        return self.sugerencia + "(" + self.tipo + ")"
 

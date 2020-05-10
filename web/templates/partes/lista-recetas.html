@@ -1,50 +1,44 @@
 {% load filters %}
+{% load static %}
 
-<!-- Receta lista -->
+
 {% for receta in recetas %}
 <div class="row my-3 mx-md-5">
+  
   <div class="col-2 col-sm-1">
 
-    
-
-    <!-- Botón guardar 
-    <form method="get">
-      <button class="btn-guardar" type="submit" name="guardar" id="{{receta.pk}}">
-        {% if user in receta.usuarios_guardado.all %}
-          <i class='fas fa-bookmark' style='font-size:36px'></i>
-        {% else %}
-          <i class='far fa-bookmark' style='font-size:36px'></i>
-        {% endif %}
-      </button>
-    </form>
-    -->
-    <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid={{receta.pk}}>
+    <!-- Botón guardar -->
+    <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid="{% url 'guardar' %}">
       {% if  receta|is_save:user %}
           <i class='fas fa-bookmark' style='font-size:36px'></i>
-        {% else %}
+      {% else %}
           <i class='far fa-bookmark' style='font-size:36px'></i>
-        {% endif %}
+      {% endif %}
     </a>
-    
-    
-
 
   </div>
 
   <div class="col-9 col-sm-6">
+    
+    <!-- TÍTULO -->
     <div class="row">
       <div class="col-12">
         <a href="{% url 'receta' pk=receta.pk %}"><span class="titulo">{{receta.titulo}}</span></a>
       </div>
     </div>
+
+    <!-- USUARIO -->
     <div class="row">
       <div class="col-12">
         Realizado por <a href="{% url 'perfil' username=receta.usuario.username %}">{{receta.usuario.username}}</a>
       </div>
     </div>
+
+    <!-- VALORACIÓN -->
     <div class="row valoracion">
       <div class="col-12">
         {% if receta.valoracion_media >= 1 %}
+          
           {% for i in receta.valoracion_media|times %}
             <span class="fa fa-star checked"></span>
           {% endfor %}
@@ -55,6 +49,7 @@
     </div>
   </div>
 
+  <!-- IMAGEN -->
   <div class="col-12 col-sm-5 text-center">
     <a href="{% url 'receta' pk=receta.pk %}">
       <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid">
@@ -63,37 +58,40 @@
 </div>
 
 {% empty %}
-<div class="row justify-content-center">
-  <div class="col-">
-    <h4>{{mensaje_vacio}}</h4>
+
+  <div class="row justify-content-center">
+    <div class="col-">
+      <h4>{{mensaje_vacio}}</h4>
+    </div>
   </div>
-</div>
+  
 {% endfor %}
 
-<script type="text/javascript">
-  $(document).ready(function(){
-    $('.btn-guardar').click(function(){
-      var id = $(this).attr('id');
-      var btn = $(this);
-      $.ajax({
-        type: "GET",
-        url: "{% url 'guardar' %}",
-        data: {receta_id: id},
-        success: function( data ){
-          var clase = btn.children($('.fa-bookmark')).attr('class');
-          console.log(btn)
-          if (clase.includes('far')){
-            
-            btn.children().removeClass('far').addClass('fas');
-          } else {
-            btn.children().removeClass('fas').addClass('far');
-          }
-          
-        },
-        unsuccessful: function(data){
-          console.log("unsuccess");
-        }
-      })
-    });
-  });
-</script>
+{% if recetas %}
+
+<!-- PAGINATOR -->
+<div class="row justify-content-center my-5 paginator">
+  <span class="step-links">
+    
+    {% if recetas.has_previous %}
+      <a href="?page={{ recetas.previous_page_number }}">
+        <
+      </a>
+    {% endif %}
+
+    <span class="current">
+      Página {{recetas.number}}
+    </span>
+
+    {% if recetas.has_next %}
+      <a href="?page={{ recetas.next_page_number }}">></a>
+    {% endif %}
+
+  </span>
+
+</div>
+
+{% endif %}
+
+<!-- PETICIONES AJAX -->
+<script src="{% static 'js/ajax.js' %}"></script>

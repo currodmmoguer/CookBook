@@ -1,0 +1,24 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-md-3 col-lg-2">
+      
+      <div class="row justify-content-center">
+        <div class="col-4 col-md-12">
+          <img src="../../media/{{comentario.usuario.perfil.imagen_perfil}}" class="img rounded-circle img-fluid" />
+        </div>
+      </div>
+      
+      <div class="row">
+        <p class="text-secondary text-center col-12">{{comentario.fecha_format}}</p>
+      </div>
+    </div>
+    <div class="col-12 col-md-9 col-lg-10">
+      <a href="#">{{comentario.usuario}}</a>
+      <p>{{comentario.texto}}</p>
+
+      <button type="button" class="float-right btn-border-rounded btn-responder">
+        <i class="fa fa-reply"></i> Responder
+      </button>
+
+      {% include 'partes/input-respuesta.html' %}
+    </div>
+  </div>

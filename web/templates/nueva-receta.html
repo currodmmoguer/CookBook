@@ -1,150 +1,149 @@
+{% extends 'base.html' %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="es" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Nueva receta</title>
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-    <link rel="stylesheet" href="{% static 'css/nueva-receta.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+{% block content %}
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-  </head>
-  <body>
+<head>
+  <title>Nueva receta</title>
+  <link rel="stylesheet" href="{% static 'css/nueva-receta.css' %}">
+  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+</head>
 
-    {% include 'partes/navbar.html' %}
 
-    <div class="container">
-      <div class="row justify-content-center my-5">
-        <h3>Nueva receta</h3>
+<div class="row justify-content-center my-1">
+  <h3>Nueva receta</h3>
+</div>
+
+<!-- BOTÓN SUGERENCIA -->
+<button type="button" class="btn-sugerencia" data-toggle="modal" data-target="#sugerenciaModal">
+  <i class="fas fa-question"></i>
+</button>
+
+<!-- MODAL SUGERENCIA -->
+<div class="modal fade" id="sugerenciaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Enviar sugerencia</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
       </div>
-
-      <button type="button" class="btn-sugerencia" data-toggle="modal" data-target="#sugerenciaModal">
-        <i class="fas fa-question"></i>
-      </button>
-
-      <div class="modal fade" id="sugerenciaModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">Enviar sugerencia</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form method="POST">
-              {% csrf_token %}
-              <div class="modal-body">
-                <div class="mb-2">Si hay una categoria o unidad de medida que falte, por favor, comuníquenoslo.</div>
-                
-                  <div class="form-group">
-                    {{formSugerencia.tipo}}
-                  </div>
-                  <div class="form-group">
-                    <div class="form-group form-input">
-                      <input type="text" name="sugerencia" id="id_sugerencia" required/>
-                      <label for="id_sugerencia" class="form-label">Escribe tu sugerencia</label>
-                    </div>
-                  </div>
-                
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Enviar</button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      <form method="POST" enctype="multipart/form-data">
+      <form method="POST">
         {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-2">Si hay una categoria o unidad de medida que falte, por favor, comuníquenoslo.</div>
 
-        
-        <!-- TITULO -->
-        <div class="row justify-content-center my-3">
-          <div class="col-md-7 col-12">
-            <div class="form-group form-input">
-              <input type="text" name="titulo" id="titulo" required/>
-              <label for="titulo" class="form-label">Título</label>
-            </div>
+          <div class="form-group">
+            {{formSugerencia.tipo}}
           </div>
-        </div>
-
-        <!-- FILA CANTIDAD Y TIEMPO -->
-        <div class="row justify-content-center my-3">
-          <div class="col-md-4 col-12 mr-1">
+          <div class="form-group">
             <div class="form-group form-input">
-              <input type="text" name="raciones" id="raciones"/>
-              <label for="raciones" class="form-label">Cantidad aproximada</label>
+              <input type="text" name="sugerencia" id="id_sugerencia" required />
+              <label for="id_sugerencia" class="form-label">Escribe tu sugerencia</label>
             </div>
           </div>
 
-          <div class="col-md-4 col-12 ml-md-1">
-            <div class="form-group form-input">
-              <input type="text" name="tiempo_estimado" id="tiempo_estimado"/>
-              <label for="tiempo_estimado" class="form-label">Tiempo estimado</label>
-            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Enviar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <!-- TITULO -->
+  <div class="row justify-content-center my-md-3">
+    <div class="col-md-7 col-12">
+      <div class="form-group form-input">
+        <input type="text" name="titulo" id="titulo" required />
+        <label for="titulo" class="form-label">Título</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- FILA CANTIDAD Y TIEMPO -->
+  <div class="row justify-content-center my-md-3">
+    
+    <div class="col-md-4 col-12 mr-1">
+      <div class="form-group form-input">
+        <input type="text" name="raciones" id="raciones" />
+        <label for="raciones" class="form-label">Cantidad aproximada</label>
+      </div>
+    </div>
+
+    <div class="col-md-4 col-12 ml-md-1">
+      <div class="form-group form-input">
+        <input type="text" name="tiempo_estimado" id="tiempo_estimado" />
+        <label for="tiempo_estimado" class="form-label">Tiempo estimado</label>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FILA FOTO -->
+  <div class="row my-3">
+    <div class="col-12 text-center">
+      <label for="id_imagen_terminada" class="subir-foto">
+        <i class="fa fa-cloud-upload"></i> Subir imagen del plato terminado
+      </label>
+      <!--input id="imagen_terminada" name="imagen_terminada" type="file"/-->
+      {{formReceta.imagen_terminada}}
+    </div>
+  </div>
+
+  <!--FILA CATEGORIA -->
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-4">
+      <select class="custom-select wrap-input2 validate-input" name="categoria">
+        {% for categoria in categorias %}
+        <option value="{{categoria.pk}}" {% if categoria.pk == 1 %} selected {% endif %}>
+          {{categoria}}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+
+  <!-- INGREDIENTES -->
+  <h2>Ingredientes</h2>
+
+  <div id="totalIngredientes" class="my-2">
+    {{ formsetIngrediente.management_form }}
+    
+    {% for form_data in formsetIngrediente %}
+    <div id="ingrediente0" class="ingrediente my-3">
+      
+      <div class="row">
+        <div class="col-12 d-flex justify-content-end justify-content-md-start">
+          <button type="button" id="bri1" class="btn-remove remove-form-row-ingrediente">-</button>
+        </div>
+      </div>
+
+      <div class="row justify-content-between d-flex align-items-end ml-md-1 mr-md-1">
+        <div class="col-12 col-md-4 col-lg-3">
+          <div class="form-group form-input">
+            {{form_data.ingrediente}}
+            <label for="ingrediente" class="form-label">Ingrediente</label>
           </div>
         </div>
 
-        <!-- FILA FOTO -->
-        <div class="row my-3">
-          <div class="col-12 text-center">
-            <label for="imagen_terminada" class="subir-foto">
-              <i class="fa fa-cloud-upload"></i> Subir imagen del plato terminado
-            </label>
-            <input id="imagen_terminada" name="imagen_terminada" type="file"/>
+        <div class="col-12 col-md-4 col-lg-3">
+          <div class="form-group form-input">
+            {{form_data.cantidad}}
+            <label for="cantidad" class="form-label">Cantidad</label>
           </div>
         </div>
 
-        <!--FILA CATEGORIA -->
-        <div class="row justify-content-center">
-          <div class="col-12 col-md-4">
-            <select class="custom-select wrap-input2 validate-input" name="categoria">
-              {% for categoria in categorias %}
-                <option value="{{categoria.pk}}"
-                  {% if categoria.pk == 1 %}
-                    selected
-                  {% endif %}>
-                  {{categoria}}
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        
-
-        <h2>Ingredientes</h2>
-        <div id="totalIngredientes">
-          {{ formsetIngrediente.management_form }}
-          {% for form_data in formsetIngrediente %}
-            <div id="ingrediente0" class="ingrediente">
-              <div class="row">
-                <div class="col-1">
-                  <button type="button" id="bri1" class="btn-remove remove-form-row-ingrediente">-</button>
-                </div>
-              </div>
-              <div class="row justify-content-between d-flex align-items-end ml-md-1 mr-md-1">
-                <div class="col-12 col-md-4 col-lg-3">
-                  <div class="form-group form-input">
-                    {{form_data.ingrediente}}
-                    <label for="ingrediente" class="form-label">Ingrediente</label>
-                  </div>
-                </div>
-
-                <div class="col-12 col-md-4 col-lg-3">
-                  <div class="form-group form-input">
-                    {{form_data.cantidad}}
-                    <label for="cantidad" class="form-label">Cantidad</label>
-                  </div>
-                </div>
-
-                <div class="col-12 col-md-4 col-lg-3">
+        <div class="col-12 col-md-4 col-lg-3">
+          <!--
                   <select class="custom-select wrap-input2 validate-input" id="id_ingrediente-0-unidad_medida" name="ingrediente-0-unidad_medida">
                     {% for unidad in unidades %}
                       <option value="{{unidad.pk}}"
@@ -154,93 +153,93 @@
                         {{unidad}}
                       </option>
                     {% endfor %}
-                  </select>
-                </div>
-
-              </div>
-            </div>          
-          {% endfor %}
-        </div>
-        <div class="row justify-content-center my-3">
-          <div class="col-">
-            <button type="button" id="buttonAddIngredient" class="btn">+ Añadir ingrediente</button>
-          </div>
+                  </select-->
+          {{form_data.unidad_medida}}
         </div>
 
-        <h2>Pasos</h2>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
 
-        {% if formsetPaso.non_form_errors %}
-          <div class="alert alertdanger">{{formsetPaso.non_form_errors}}</div>
-        {% endif %}
+  <!-- BOTÓN AÑADIR INGREDIENTE -->
+  <div class="row justify-content-center my-3">
+    <div class="col-">
+      <button type="button" id="buttonAddIngredient" class="btn">+ Añadir ingrediente</button>
+    </div>
+  </div>
 
-        <div id="totalPasos">
-          {{ formsetPaso.management_form }}
-          {% for form_data in formsetPaso %}
-          <div id="paso0" class="paso">
-            <div class="row d-flex justify-content-center d-flex align-items-stretch">
+  <!-- PASOS -->
+  <h2>Pasos</h2>
 
-              <div class="col-1">
-                <button type="button" class="btn-remove remove-form-row-paso" >-</button>
-              </div>
+  {% if formsetPaso.non_form_errors %}
+  <div class="alert alertdanger">{{formsetPaso.non_form_errors}}</div>
+  {% endif %}
 
-              <div class="col-1">
-                <span class="badge badge-pill badge-dark numPaso">1</span>
-              </div>
+  <div id="totalPasos">
+    {{ formsetPaso.management_form }}
 
-              <div class="col-5 col-md-6">
-                <div class="form-group form-input">
-                  {{form_data.texto}}
-                  <label for="descripcion" class="form-label">Descripción...</label>
-                </div>
-              </div>
+    {% for form_data in formsetPaso %}
+    <div id="paso0" class="paso my-3">
+      <div class="row d-flex justify-content-start d-flex align-items-stretch">
 
-              <div class="col-5 col-md-4 align-self-center text-center">
-              
-                  <label for="imagen_paso" class="subir-foto">
-                    <i class="fa fa-cloud-upload"></i> Subir imagena
-                  </label>
-                  <input name="imagen_paso" type="file"/>   
-                  <img src="#" id="blah" alt="" class="img-fluid">
-              </div>
-
-              
-
-            </div>
-          </div>
-
-          {% endfor %}
+        <div class="col-1">
+          <button type="button" class="btn-remove remove-form-row-paso">-</button>
         </div>
-        <div class="row d-flex justify-content-center">
-          <div class="col-">
-            <button type="button" id="buttonAddPaso" class="btn">+ Añadir paso</button>
+
+        <div class="col-1">
+          <span class="badge badge-pill badge-dark numPaso">1</span>
+        </div>
+
+        <div class="col-12 col-md-9 ml-1 my-1">
+          <div class="form-group form-input">
+            {{form_data.texto}}
+            <label for="descripcion" class="form-label">Descripción...</label>
           </div>
         </div>
 
+        <div class="col-12 align-self-center text-center">
 
-        <div class="row my-4 justify-content-center">
-          <div class="col-2 text-center">
-            <button  type="submit" class="btn">Guardar</button>
-          </div>
-
-          <div class="col-2 text-center">
-            <button type="submit" class="btn" name="publico" >Publicar</button>
-          </div>
-
-          <div class="col-2 text-center">
-            <button type="reset" class="btn">Cancelar</button>
-          </div>
+          <label for="imagen_paso" class="subir-foto">
+            <i class="fa fa-cloud-upload"></i> Subir imagen
+          </label>
+          <input name="imagen_paso" type="file" />
+          <img src="#" id="blah" alt="" class="img-fluid">
         </div>
-     
-      </form>
 
+
+
+      </div>
     </div>
 
-    <script src="{% static 'js/formset-receta.js' %}"></script>
-    <script src="{% static 'js/formulario.js' %}"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-  
-    
+    {% endfor %}
+  </div>
 
-  </body>
-</html>
+  <!-- BOTÓN AÑADIR PASO-->
+  <div class="row d-flex justify-content-center">
+    <div class="col-">
+      <button type="button" id="buttonAddPaso" class="btn">+ Añadir paso</button>
+    </div>
+  </div>
+
+
+  <!-- FINAL BOTONES -->
+  <div class="row my-3 justify-content-sm-around justify-content-md-center">
+    <div class="col-4 col-md-3 text-center">
+      <button type="submit" class="btn">Guardar</button>
+    </div>
+
+    <div class="col-4 col-md-3 text-center">
+      <button type="submit" class="btn" name="publico">Publicar</button>
+    </div>
+
+    <div class="col-4 col-md-3 text-center">
+      <button type="reset" class="btn">Cancelar</button>
+    </div>
+  </div>
+
+</form>
+
+<script src="{% static 'js/formset-receta.js' %}"></script>
+<script src="{% static 'js/formulario.js' %}"></script>
+{% endblock %}

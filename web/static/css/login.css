@@ -1,3 +1,17 @@
+@media (max-width: 575.99px){
+  .container-fluid {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  body {
+    background-color: white !important;
+  }
+
+  .form {
+    padding: 5% 5% 20% 5% !important;
+  }
+}
 @media (max-width: 767.98px){
   .form{
     box-shadow: none !important;
@@ -9,6 +23,12 @@
     padding: 5% 15% 20% 15% !important;
   }
   
+}
+
+
+
+.a {
+  border: 1px solid red;
 }
 
 html {

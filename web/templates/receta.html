@@ -1,35 +1,21 @@
+{% extends 'base.html' %}
+
 {% load static %}
 {% load filters %}
 
-<!DOCTYPE html>
-<html lang="es" dir="ltr">
+{% block content %}
 
 <head>
-  <meta charset="utf-8">
-  <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>Receta</title>
-
-  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/main.css' %}">
-  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
   <link rel="stylesheet" href="{% static 'css/receta.css' %}">
-  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
-
+  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 </head>
 
-<body>
-
-  <!-- Optional JavaScript -->
-  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
-  <!-- Modal eliminar-->
+<!-- Modal eliminar-->
 <div class="modal fade" id="modal-eliminar" tabindex="-1" role="dialog" aria-labelledby="modal-eliminar" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
+      
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">¿Seguro que deseas eliminar la receta?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -41,354 +27,272 @@
         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
         <a href="{% url 'eliminar_receta' pk=receta.pk %}"><button type="button" class="btn">Eliminar</button></a>
       </div>
+
     </div>
   </div>
 </div>
 
-  <!-- Modal valorar-->
-  <div class="modal fade" id="modal-valorar" tabindex="-1" role="dialog" aria-labelledby="modal-valorar" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Ya has valorado la receta. ¿La deseas modificar</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-  
-        <div class="modal-footer">
-          <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn" id="modal-submit">Valorar</button>
-        </div>
+<!-- Modal valorar-->
+<div class="modal fade" id="modal-valorar" tabindex="-1" role="dialog" aria-labelledby="modal-valorar" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ya has valorado la receta. ¿La deseas modificar</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn" id="modal-submit" data-recetaid="{{receta.pk}}" data-url="{% url 'valorar_seguro' %}">Valorar</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- HEAD -->
+<div class="row justify-content-between my-4">
+
+  <div class="col-8 col-md-10">
+    <h2>{{ receta.titulo }}</h2>
+  </div>
+
+  <!-- Menu ajustes-->
+  {% if receta.usuario == request.user %}
+  <div class="col-1">
+
+    <div class="dropdown">
+      <button class="btn dropdown-toggle" type="button" id="dropdownAjustes" data-toggle="dropdown" aria-haspopup="true"
+        aria-expanded="false"></button>
+
+      <div class="dropdown-menu" aria-labelledby="dropdownAjustes">
+
+        <!-- PUBLICAR -->
+        <a href="{% url 'publicar' pk=receta.pk%}">
+          {% if receta.publico %}
+          <i class="fas fa-lock-open" style='font-size:1rem'></i> Público
+          {% else %}
+          <i class="fas fa-lock" style='font-size:1rem'></i> Privado
+          {% endif %}
+        </a>
+
+        <br>
+
+        <!-- EDITAR -->
+        <a href="{% url 'editar_receta' pk=receta.pk %}">
+          <i class="fas fa-edit" style='font-size:1rem'></i> Editar
+        </a>
+
+        <br>
+
+        <!-- ELIMINAR -->
+        <a href="{% url 'eliminar_receta' pk=receta.pk %}">
+          <i class="fas fa-trash" style='font-size:1rem'></i> Eliminar
+        </a>
+
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Botón guardar -->
+  <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid="{% url 'guardar' %}">
+    {% if  receta|is_save:user %}
+    <i class='fas fa-bookmark' style='font-size:36px'></i>
+    {% else %}
+    <i class='far fa-bookmark' style='font-size:36px'></i>
+    {% endif %}
+  </a>
+
+</div>
+
+<!-- IMG -->
+<div class="row my-3">
+  <div class="col-12 text-center">
+    <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid">
+  </div>
+</div>
+
+<!-- SUB IMAGE -->
+<div class="row justify-content-between">
+  <div class="col-5">
+    {{receta.tiempo_estimado|is_none}}
+  </div>
+
+  <div class="col-6 text-right">
+    Realizado por <a href="{% url 'perfil' username=receta.usuario.username %}">{{receta.usuario.username}}</a>
+  </div>
+</div>
+
+<!-- INGREDIENTES -->
+<div id="ingredientes" class="my-4">
+
+  <div class="row">
+    <h2>Ingredientes</h2>
+    <div class="align-self-center ml-3">
+      {% if not receta.raciones is None %}
+      Para {{receta.raciones}} raciones
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row">
+    <ul>
+      {% for ingrediente in receta.ingredientes.all %}
+      <lu>
+        <b>{{ingrediente.cantidad}} {{ingrediente.unidad_medida.nombre}}</b> de {{ingrediente.ingrediente.nombre}}
+        <br>
+      </lu>
+      {% endfor %}
+    </ul>
+  </div>
+
+</div>
+
+<!-- PASOS -->
+<div id="pasos" class="my-4">
+
+  <div class="row">
+    <h2>Pasos</h2>
+  </div>
+  <div class="row">
+    <ul>
+      {% for paso in receta.pasos.all %}
+      <lu>
+        <p>{{paso.posicion}}. {{paso.texto}}</p>
+        {% if not paso.imagen_paso == "" %}
+        <img src="../../media/{{paso.imagen_paso}}" style="width: 25%; margin-left: 10%;">
+        {% endif %}
+      </lu>
+      {% endfor %}
+    </ul>
+  </div>
+
+
+</div>
+
+<div class="row separador"></div>
+
+<!-- VALORACION -->
+<div id="valoracion">
+  <div class="row">
+    <div class="col-12 text-center">
+      <span id="valoracion_media">
+        {% if not receta.valoracion_media %} <!-- si no tiene valoraciones -->
+          {% if user != receta.usuario %} <!-- si no es el mismo usuario que ha creado la receta-->
+            Sé el primero en valorar
+          {% else %}
+            Aún no tiene valoraciones
+          {% endif %}
+        {% else %}
+          {{receta.valoracion_media}}</span>
+        {% endif %}
+      </span>
+    </div>
+  </div>
+
+  <!-- ESTRELLAS -->
+  <div class="row justify-content-between my-2">
+    <div class="col-12 text-center">
+      <div class="starrating risingstar d-flex justify-content-center flex-row-reverse">
+        <input type="radio" id="star5" name="valoracion" value="5" /><label class="fa fa-star" for="star5"
+          title="5 star"></label>
+        <input type="radio" id="star4" name="valoracion" value="4" /><label class="fa fa-star" for="star4"
+          title="4 star"></label>
+        <input type="radio" id="star3" name="valoracion" value="3" /><label class="fa fa-star" for="star3"
+          title="3 star"></label>
+        <input type="radio" id="star2" name="valoracion" value="2" /><label class="fa fa-star" for="star2"
+          title="2 star"></label>
+        <input type="radio" id="star1" name="valoracion" value="1" required /><label class="fa fa-star" for="star1"
+          title="1 star"></label>
       </div>
     </div>
   </div>
 
 
-  {% include 'partes/navbar.html' %}
-
-  <div class="container px-5" style="margin-top: 6rem">
-
-
-
-    <!-- HEAD -->
-    <div class="row justify-content-between my-4">
-      <div class="col-8">
-        <h2>{{ receta.titulo }}</h2>
-      </div>
-
-      <!-- Botón guardar -->
-      <form method="get" class="col-3 text-right">
-        <button class="btn-guardar" type="submit" name="guardar">
-          {% if user in receta.usuarios_guardado.all %}
-            <i class='fas fa-bookmark' style='font-size:36px'></i>
-          {% else %}
-            <i class='far fa-bookmark' style='font-size:36px'></i>
-          {% endif %}
-        </button>
-      </form>
-
-
-      <!-- Menu ajustes-->
-      {% if receta.usuario == request.user %}
-      <div class="col-1">
-        
-        <div class="dropdown">
-          <button class="btn dropdown-toggle" type="button" id="dropdownAjustes" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
-          
-          <div class="dropdown-menu" aria-labelledby="dropdownAjustes">
-            
-            <a href="{% url 'publicar' pk=receta.pk%}">
-              {% if receta.publico %}
-                <i class="fas fa-lock-open" style='font-size:1rem'></i> Público
-              {% else %}
-                <i class="fas fa-lock" style='font-size:1rem'></i> Privado
-              {% endif %}
-            </a>
-            
-            <br>
-            
-            <a href="{% url 'editar_receta' pk=receta.pk %}">
-              <i class="fas fa-edit" style='font-size:1rem'></i> Editar
-            </a>
-
-            <br>
-
-            <a href="{% url 'eliminar_receta' pk=receta.pk %}">
-              <i class="fas fa-trash" style='font-size:1rem'></i>  Eliminar
-            </a>
-            
-          </div>
-
-        </div>
-
-      </div>
-      {% endif %}
-        
+  <!-- BOTÓN VALORAR -->
+  {% if receta.usuario != user %}
+  <div class="row justify-content-center my-3">
+    <div class="col-12 text-center">
+      <input type="submit" class="btn-border-rounded btn-valorar" value="Valorar" data-recetaid="{{receta.pk}}" data-url="{% url 'valorar' %}">
     </div>
+  </div>
+  {% endif %}
 
-    <!-- IMG -->
-    <div class="row my-3">
-      <div class="col-12 text-center">
-        <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid">
-      </div>
-    </div>
 
-    <!-- SUB IMAGE -->
-    <div class="row justify-content-between">
-      <div class="col-5">
-        {{receta.tiempo_estimado|is_none}}
-      </div>
+</div>
 
-      <div class="col-6 text-right">
-        Realizado por <a href="{% url 'perfil' username=receta.usuario.username %}">{{receta.usuario.username}}</a>
-      </div>
-    </div>
+<!-- ADD COMENTARIO -->
+<div id="addComentario my-5">
+  <div class="row mb-3">
+    <h2>Comentarios</h2>
+  </div>
 
-    <!-- INGREDIENTES -->
-    <div id="ingredientes" class="my-4">
+  <form method="POST">
+    {% csrf_token %}
 
-      <div class="row">
-        <h2>Ingredientes</h2>
-        <div class="align-self-center ml-3">
-          {% if not receta.raciones is None %}
-          Para {{receta.raciones}} raciones
-          {% endif %}
-        </div>
-        
-      </div>
-      <div class="row">
-        <ul>
-          {% for ingrediente in receta.ingredientes.all %}
-          <lu>
-            <b>{{ingrediente.cantidad}} {{ingrediente.unidad_medida.nombre}}</b> de {{ingrediente.ingrediente.nombre}}
-            <br>
-          </lu>
-          {% endfor %}
-        </ul>
+    <div class="row">
+      <div class="col-12">
+        <textarea name="texto" class="form-control" id="exampleFormControlTextarea1" rows="3"
+          placeholder="Escribe un comentario..." required></textarea>
       </div>
 
     </div>
-
-    <!-- PASOS -->
-    <div id="pasos" class="my-4">
-
-      <div class="row">
-        <h2>Pasos</h2>
+    <div class="row">
+      <div class="col-12 text-right my-2">
+        <input type="submit" class="btn-border-rounded" name="comentario" value="Comentar"></input>
       </div>
-      <div class="row">
-        <ul>
-          {% for paso in receta.pasos.all %}
-          <lu>
-            <p>{{paso.posicion}}. {{paso.texto}}</p>
-            {% if not paso.imagen_paso == "" %}
-            <img src="../../media/{{paso.imagen_paso}}" style="width: 25%; margin-left: 10%;">
-            {% endif %}
-          </lu>
-          {% endfor %}
-        </ul>
-      </div>
-
-
     </div>
+  </form>
+
+</div>
 
 
 
+<!-- LISTA COMENTARIOS -->
+<div id="listaComentarios" class="my-3">
+  {% for comentario in receta.comentarios.all %}
+  {% if comentario.comentario_respuesta is None %}
+  <div class="card my-2">
+    <div class="card-body" id="comentario-{{comentario.pk}}">
+      {% include 'partes/comentario.html' %}
 
-
-
-    <div class="row separador"></div>
-
-    <!-- VALORACION -->
-    <div id="valoracion">
-      <div class="row">
-        <div class="col-12 text-center">
-          <span id="valoracion_media">
-          {% if not receta.valoracion_media %}
-            {% if user != receta.usuario %}
-              Sé el primero en valorar
-            {% else %}
-              Aún no tiene valoraciones
-            {% endif %}
-          {% else %}
-            {{receta.valoracion_media}}</span>
-          {% endif %}
-          </span>
+      <!-- RESPUESTAS -->
+      {% for respuesta in comentario.respuestas.all %}
+      <div class="card card-inner my-3" id="comentario-{{respuesta.pk}}">
+        <div class="card-body">
+          {% include 'partes/comentario.html' %}
         </div>
       </div>
-      
-        <div class="row justify-content-between my-2">
-          <div class="col-12 text-center">
-            <div class="starrating risingstar d-flex justify-content-center flex-row-reverse">
-                <input type="radio" id="star5" name="valoracion" value="5" /><label class="fa fa-star" for="star5" title="5 star"></label>
-                <input type="radio" id="star4" name="valoracion" value="4" /><label class="fa fa-star" for="star4" title="4 star"></label>
-                <input type="radio" id="star3" name="valoracion" value="3" /><label class="fa fa-star" for="star3" title="3 star"></label>
-                <input type="radio" id="star2" name="valoracion" value="2" /><label class="fa fa-star" for="star2" title="2 star"></label>
-                <input type="radio" id="star1" name="valoracion" value="1" required/><label class="fa fa-star" for="star1" title="1 star"></label>
-            </div>
-          </div>
-        </div>
-
-
-        {% if receta.usuario != user %}
-        <div class="row justify-content-center my-3">
-          <div class="col-12 text-center">
-            <input type="submit" class="btn-border-rounded btn-valorar" value="Valorar">
-          </div>
-        </div>
-        {% endif %}
-      
-
-    </div>
-
-    <!-- ADD COMENTARIO -->
-    <div id="addComentario my-5">
-      <div class="row mb-3">
-        <h2>Comentarios</h2>
-      </div>
-
-      <form method="POST">
-        {% csrf_token %}
-
-        <div class="row">
-          <div class="col-12">
-            <textarea name="texto" class="form-control" id="exampleFormControlTextarea1" rows="3" placeholder="Escribe un comentario..." required></textarea>
-          </div>
-
-        </div>
-        <div class="row">
-          <div class="col-12 text-right my-2">
-            <input type="submit" class="btn-border-rounded" name="comentario" value="Comentar"></input>
-          </div>
-        </div>
-      </form>
-
-    </div>
-
-
-
-    <!-- LISTA COMENTARIOS -->
-    <div id="listaComentarios" class="my-3">
-      {% for comentario in receta.comentarios.all %}
-      {% if comentario.comentario_respuesta is None %}
-      <div class="card my-2">
-        <div class="card-body" id="{{comentario.pk}}">
-          <div class="row">
-            <div class="col-2" >
-              <img src="../../media/{{comentario.usuario.perfil.imagen_perfil}}" class="img rounded-circle img-fluid"/>
-          	  <p class="text-secondary text-center">{{comentario.fecha_format}}</p>
-            </div>
-
-            <div class="col-10">
-              <a href="#">{{comentario.usuario}}</a>
-              <p>{{comentario.texto}}</p>
-
-                <button type="button" class="float-right btn-border-rounded btn-responder">
-                  <i class="fa fa-reply"></i> Responder
-                </button>
-
-              {% include 'partes/input-respuesta.html' %}
-          </div>
-          </div>
-
-
-
-
-
-          <!-- RESPUESTAS -->
-          {% for respuesta in comentario.respuestas.all %}
-          <div class="card card-inner my-1" id="comentarioRespuesta">
-            <div class="card-body">
-              <div class="row">
-
-                <div class="col-2">
-                  <img src="../../media/{{respuesta.usuario.perfil.imagen_perfil}}" class="img rounded-circle img-fluid"/>
-              	  <p class="text-secondary text-center">{{respuesta.fecha_format}}</p>
-                </div>
-
-                <div class="col-10">
-                  <a href="#">{{respuesta.usuario.username}}</a>
-                  <p>{{respuesta.texto}}</p>
-                  <button type="button" class="float-right btn-border-rounded btn-responder">
-                    <i class="fa fa-reply"></i> Responder
-                  </button>
-                  {% include 'partes/input-respuesta.html' %}
-                </div>
-
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-      </div>
-
-      </div>
-      {% endif %}
-
-      {% empty %}
-        <p>Aún no tiene comentarios. Sé el primero.</p>
       {% endfor %}
     </div>
 
-
-
   </div>
+  {% endif %}
 
+  {% empty %}
+  <p>Aún no tiene comentarios. Sé el primero.</p>
+  {% endfor %}
+</div>
 
+<script>
 
+  $(document).ready(function () {
 
+    $('.form-respuesta').hide();
 
-  <script>
-
-    $(document).ready(function(){
-
-      $('.form-respuesta').hide();
-
-      $('.btn-responder').click(function(){
-        var elemento = $(this).parent().children('div.form-respuesta');
-        elemento.slideToggle('slow');
-      });
-
-      
-      $('.btn-valorar').click(function(){
-        var id = {{receta.pk}};
-        var valoracion = $('input[type=radio]:checked').val();
-        
-        $.ajax({
-          type: 'GET',
-          url: "{% url 'valorar' %}",
-          data: {receta_id: id, valoracion: valoracion},
-          success: function (data) { 
-            if (data=="existe"){
-              $('#modal-valorar').modal('show');
-            } else {
-              console.log(data);
-              console.log($('#valoracion_media'));
-              $('#valoracion_media').html(data);
-            }
-           }
-        })
-      });
-
-      $('#modal-submit').click(function(){
-        var id = {{receta.pk}};
-        var valoracion = $('input[type=radio]:checked').val();
-        
-        $.ajax({
-          type: 'GET',
-          url: "{% url 'valorar_seguro' %}",
-          data: {receta_id: id, valoracion: valoracion},
-          success: function (data) { 
-            $('#valoracion_media').html(data);
-            $('#modal-valorar').modal('hide');
-           }
-        })
-      })
+    $('.btn-responder').click(function () {
+      var elemento = $(this).parent().children('div.form-respuesta');
+      elemento.slideToggle('slow');
     });
-  </script>
+   
+  });
 
+</script>
 
+<script src="{% static 'js/ajax.js' %}"></script>
 
-
-</body>
-
-</html>
+{% endblock %}

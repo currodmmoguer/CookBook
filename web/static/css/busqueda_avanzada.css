@@ -1,3 +1,7 @@
+.container {
+    text-align: center !important;
+}
+
 .btn-plus{
     color: #b80d57;
     border: 1px solid #b80d57;

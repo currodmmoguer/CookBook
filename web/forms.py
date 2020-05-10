@@ -2,16 +2,21 @@ from django import forms
 from .models import *
 from django.contrib.auth.models import User
 
+
 class RegistroUserForm(forms.ModelForm):
     password2 = forms.PasswordInput()
+    
     class Meta:
         model = User
         fields = ('username', 'email','first_name', 'last_name', 'password',)
 
+
 class RegistroPerfilForm(forms.ModelForm):
+   
     class Meta:
         model = Perfil
         fields = ('descripcion', 'imagen_perfil',)
+
 
 class EditarPerfilForm(forms.Form):
     imagen_perfil = forms.ImageField(required=False)
@@ -19,10 +24,14 @@ class EditarPerfilForm(forms.Form):
     apellido = forms.CharField(max_length=50, required=False)
     descripcion = forms.CharField(max_length=255, required=False)
 
+
 class RecetaForm(forms.ModelForm):
+    imagen_terminada = forms.ImageField()
     class Meta:
         model = Receta
         fields = ('titulo', 'imagen_terminada', 'raciones', 'tiempo_estimado', 'categoria')
+    
+    
 
 class IngredienteFormset(forms.ModelForm):
     ingrediente = forms.CharField(max_length=100)
@@ -30,19 +39,23 @@ class IngredienteFormset(forms.ModelForm):
     class Meta:
         model = Ingrediente_Receta
         fields = ('cantidad', 'unidad_medida')
-
+        widgets = { #Añade clases al elemento en el archivo html
+            'unidad_medida': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input'}),
+        }
+    
 class IngredienteEditFormset(forms.ModelForm):
     ingrediente = forms.CharField(max_length=100)
     
     class Meta:
         model = Ingrediente_Receta
-        fields = ('cantidad', 'unidad_medida', 'ingrediente')
-        widgets = {
+        fields = ('cantidad', 'unidad_medida')
+        widgets = { #Añade clases al elemento en el archivo html
             'unidad_medida': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input'}),
         }
         
         
 class PasoFormset(forms.ModelForm):
+    
     class Meta:
         model = Paso
         fields = ('texto', 'imagen_paso',)
@@ -50,12 +63,16 @@ class PasoFormset(forms.ModelForm):
             'texto': forms.Textarea(attrs={'rows':3}),
         }
 
+
 class ComentarioForm(forms.ModelForm):
+
     class Meta:
         model = Comentario
         fields = ('texto',)
 
+
 class RespuestaForm(forms.ModelForm):
+
     class Meta:
         model = Comentario
         fields = ('texto',)
@@ -70,6 +87,7 @@ class ValoracionForm(forms.Form):
 class BusquedaAvanzadaForm(forms.Form):
     ingrediente = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'required': '', 'placeholder': 'Introduce el ingrediente'}))
 
+
 class SugForm(forms.ModelForm):
     
     class Meta:
@@ -82,8 +100,5 @@ class SugForm(forms.ModelForm):
     #Hace que se elimine la opción por defecto de -------
     def __init__(self, *args, **kwargs):
         super(SugForm, self).__init__(*args, **kwargs)
+        # Obtiene la misma lista pero quitando el primer elemento
         self.fields['tipo'].widget.choices = self.fields['tipo'].choices[1:]
-
-
-        
-    

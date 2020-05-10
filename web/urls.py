@@ -6,12 +6,11 @@ from django.conf.urls import url
 
 
 urlpatterns = [
-    path('valorar/', views.valorar, name="valorar"),
-    path('valorar-seg/', views.valorar_seguro, name="valorar_seguro"),
+    path('valorar/', views.valorar, name="valorar"),    #Sirve para cuando se da al botón valorar
+    path('valorar-seg/', views.valorar_seguro, name="valorar_seguro"),  #Sirve cuando se valora desde el modal
     path('buscar/', views.busqueda_avanzada, name='busqueda_avanzada'),     #Buscqueda avanzada de receta
     path('busqueda/', views.resultado_busqueda, name="busqueda"),   #Buscar requeta navbar
     path('guardar/', views.guardar, name="guardar"),    #Guardar receta
-    
     path('', views.index, name="index"),    #Página princial
     path('<username>/', views.perfil, name="perfil"),   #Perfil
     path('receta/<int:pk>/', views.receta, name="receta"),  #Vista receta

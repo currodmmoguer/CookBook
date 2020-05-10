@@ -1,17 +1,54 @@
 @media (max-width: 575.9px){
-  body {
-    font-size: 0.8rem !important;
+  
+  .fa-bookmark {
+    font-size: 2rem !important;
   }
   
-  .contaziner {
-    width: 100% !important;
-    max-width: none !important;
+  * {
+    font-size: .9rem !important;
   }
+
+  h3, h2 {
+    font-size: 1.2rem !important;
+  }
+  
+  
 
   .titulo {
     font-size: 1rem !important;
   }
 
+  .avatar {
+    text-align: center !important;
+    margin-bottom: 1rem !important;
+  }
+  
+
+}
+
+@media (min-width: 576px){
+  .avatar {
+    text-align: right !important;
+  }
+}
+
+@media (max-width: 767.9px){
+  nav {
+    position: relative !important;
+  }
+  .container {
+    margin-top: 0rem !important;
+  }
+
+  .label {
+    text-align: start !important;
+  }
+}
+
+@media(min-width: 768px) and (max-width: 987.9px){
+  .subir-foto {
+    padding: 15px 15px !important;
+  }
 }
 
 body {
@@ -184,7 +221,7 @@ input[type="file"]{
   display: inline-block;
   transition: all .5s;
   cursor: pointer;
-  padding: 15px 40px !important;
+  padding: 15px 40px;
   text-transform: uppercase;
   width: fit-content;
   text-align: center;

@@ -1,0 +1,13 @@
+<div class="row my-3">
+    <div class="col-12">
+      <ul class="nav justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link active" href="{% url 'editar_perfil' username=user.username %}">Editar perfil</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'editar_pass' username=user.username %}">Cambiar contraseña</a>
+        </li>
+      </ul>
+    </div>
+
+  </div>

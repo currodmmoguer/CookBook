@@ -1,3 +1,19 @@
+@media (max-width: 575.9px) {
+  .textoMenu{
+    font-size: 1rem !important;
+  }
+
+  .menu a i {
+    font-size: 1rem !important;
+  }
+
+
+
+  .buscador  {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
 
 @media (min-width: 991.9px) {
   .textoMenu{
@@ -27,4 +43,9 @@
   background-color: #721b65 !important;
   border: 1px solid white !important;
 }
+
+
+
+
+
 

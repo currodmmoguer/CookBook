@@ -1,27 +1,17 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="utf-8">
-  <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Búsqueda</title>
-  <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-  <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-  <link rel="stylesheet" href="{% static 'css/main.css' %}">
-</head>
-<body>
-    
-    {% include 'partes/navbar.html' %}
+{% extends 'base.html' %}
 
-    
-    <div class="container">
-      <div class="row justify-content-center my-2">
-        <h2>{{mensaje_titulo}}</h2>
-      </div>
+{% load static %}
+
+{% block content %}
+
+<head>
+  <title>Búsqueda</title>
+</head>
       
-      {% include 'partes/lista-recetas.html' %}
-    </div>
-    
-</body> 
-</html>
+  <div class="row justify-content-center my-2">
+    <h2>{{mensaje_titulo}}</h2>
+  </div>
+      
+  {% include 'partes/lista-recetas.html' %}
+
+{% endblock %}
