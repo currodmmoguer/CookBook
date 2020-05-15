@@ -20,12 +20,13 @@
     
     {% for form in formset %}
 
+    <!-- CAMPO DE TEXTO -->
     <div class="row form-row my-2 justify-content-center">
       <div class="col-12 col-sm-10 col-md-5 text-center">
         {{form.ingrediente}}<button
           type="button"
           name="button"
-          class="btn-plus add-form-row">
+          class="btn-plus add-form-row" data-toggle="tooltip" data-placement="bottom" title="Añadir ingrediente">
           +
         </button>
       </div>

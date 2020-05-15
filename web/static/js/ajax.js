@@ -1,9 +1,9 @@
-$(document).ready(function(){
+
     
     // Guardar receta
     $('.btn-guardar').click(function(){
       var id = $(this).attr('id');
-      var url = $(this).attr('data-catid');
+      var url = $(this).attr('data-url');
       var btn = $(this);
       
       $.ajax({
@@ -11,8 +11,10 @@ $(document).ready(function(){
         url: url,
         data: {receta_id: id},
         success: function( data ){
+          
           var clase = btn.children($('.fa-bookmark')).attr('class');
 
+          // Cambia la clase el icono de guardar para que esté marcado o desmarcado
           if (clase.includes('far')){
             btn.children().removeClass('far').addClass('fas');
           } else {
@@ -33,6 +35,8 @@ $(document).ready(function(){
       url: url,
       data: { receta_id: id, valoracion: valoracion },
       success: function (data) {
+
+        // Si ya ha valorado antes la receta, abre un modal para modificarla
         if (data == "existe") {
           $('#modal-valorar').modal('show');
         } else {
@@ -58,4 +62,24 @@ $(document).ready(function(){
     })
   });
 
-});
+
+  // Enviar sugerencia
+  $('#submit-sugerencia').click(function(){
+    var url = $(this).attr('data-url');
+    var categoria = $('#sugerenciaModal').find('#id_tipo').val();
+    var sugerencia = $('#sugerenciaModal').find('#id_sugerencia').val();
+    
+    $.ajax({
+      type: 'GET',
+      url: url,
+      data: {
+        categoria: categoria,
+        sugerencia: sugerencia,
+      },
+      success: function(data){
+        $('#sugerenciaModal').modal('toggle');
+        $('#sugerenciaModal').find('#id_sugerencia').val('');
+      }
+    })
+  });
+

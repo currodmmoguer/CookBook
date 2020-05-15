@@ -1,3 +1,4 @@
+{% load filters %}
 <div class="row">
     <!-- IMG -->
     <div class="col-3 col-md-2">
@@ -22,9 +23,7 @@
 
       <div class="row">
         <div class="col-12 descripcion">
-          {% if not usuario.perfil.descripcion == None %}
-          <p>{{usuario.perfil.descripcion}}</p>
-          {% endif %}
+          <p>{{usuario.perfil.descripcion|is_none}}</p>
         </div>
       </div>
 
@@ -33,11 +32,11 @@
     <!-- BOTÓN SEGUIR -->
     <div class="col-2 ml-1 div-seguir">
       {% if user.get_username == usuario.username %}
-      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-seguir">Editar</button></a>
+      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-border-rounded">Editar</button></a>
       {% elif user.perfil in usuario.perfil.seguidores.all %}
-      <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-seguir">Dejar de seguir</button></a>
+      <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Dejar de seguir</button></a>
       {% else %}
-      <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-seguir">Seguir</button></a>
+      <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Seguir</button></a>
       {% endif %}
     </div>
     

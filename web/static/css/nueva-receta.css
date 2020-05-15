@@ -5,32 +5,9 @@
     position: absolute !important;
   }
 
-  .btn {
-    padding: 15px 15px !important;
-  }
-
   h2 {
     text-align: center;
   }
-}
-
-.subir-foto {
-  font-size: 14px;
-  font-weight: 600;
-  color: #b51f59;
-  border: 1px solid #b51f59;
-  display: inline-block;
-  transition: all 0.5s;
-  cursor: pointer;
-  padding: 15px 40px !important;
-  text-transform: uppercase;
-  width: fit-content;
-  text-align: center;
-}
-
-.subir-foto:hover {
-  color: #fff;
-  background-color: #b51f59;
 }
 
 input[type="file"] {
@@ -52,22 +29,6 @@ input[type="file"] {
 }
 
 .btn-remove:hover {
-  background: #b51f59;
-  color: #fff;
-}
-
-.container .btn {
-  width: auto;
-  background: #fff;
-  color: #b51f59;
-  padding: 15px 43px;
-  font-weight: bold;
-  border: none;
-  cursor: pointer;
-  transition: all 0.5s;
-}
-
-.btn:hover {
   background: #b51f59;
   color: #fff;
 }

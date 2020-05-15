@@ -26,19 +26,16 @@
 }
 
 
-
-.a {
-  border: 1px solid red;
-}
-
 html {
   height: 100%;
   min-height: 100%;
 }
+
 body{
   background-color: #B51F59;
   height: 100%;
 }
+
 .contenido{
   position: relative;
   z-index: 1;
@@ -52,12 +49,6 @@ body{
   box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
   display: table-cell;
   vertical-align: middle;
-}
-
-
-.form h3{
-  font-family: "Roboto", sans-serif;
-  margin-bottom: 10%;
 }
 
 .form input, .registro-form input {
@@ -98,5 +89,5 @@ form span {
 
 a:hover{
   color: #841741;
-
+  text-decoration: underline;
 }

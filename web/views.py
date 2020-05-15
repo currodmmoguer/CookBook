@@ -13,7 +13,7 @@ from django.contrib.auth.forms import UserCreationForm
 
 #Cambiar pass
 from django.contrib.auth import update_session_auth_hash
-from django.contrib.auth.forms import PasswordChangeForm
+#from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
 
 #Fromset
@@ -30,14 +30,13 @@ from django.core.exceptions import ObjectDoesNotExist
 # Pantalla principal
 @login_required
 def index(request):
-    print("Prime")
-    try:
+
+    try:    # Comprueba que el usuario tiene un perfil
         request.user.perfil
     except ObjectDoesNotExist:
         logout(request)
         return redirect('login')
 
-    print("Segundo")
     recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
     
     for receta in recetas:  # Añade la valoración media a cada receta
@@ -153,24 +152,26 @@ def nueva_receta(request):
 
             return redirect('receta', pk=receta.pk)
 
-        else:   # En caso de que no sea válido el formulario, muestra los errores
-            print("No es valido")
-            print(formReceta.errors.as_text())
-            print(formset_paso.errors)
-            print(formset_ingrediente.errors)
+        else:
+            # En caso de que no sea válido el formulario, muestra los errores
+            # Nunca va a dar la situación porque o es requerido, que no 
+            # se envía el formulario en caso de que no se introduzca los datos
+            # o tiene máximo de caracteres, que no se permite introducir más
+            # en el campo de texto
+            pass
 
     else:   # Si no es POST, crea los formularios vacíos
         formReceta = RecetaForm()
         formset_paso = formsetPasoFactory(queryset=Paso.objects.none(), prefix='paso')
         formset_ingrediente = formsetIngredienteFactory(queryset=Ingrediente.objects.none(), prefix='ingrediente')
+        formSugerencia = SugForm()
 
     context = {
         'formReceta': formReceta,
         'formsetIngrediente': formset_ingrediente,
         'formsetPaso': formset_paso,
         'categorias': Categoria.objects.all(),
-        'unidades': Unidad_medida.objects.all(),
-        'formSugerencia': SugForm(),
+        'formSugerencia': formSugerencia,
     }
 
     return render(request, 'nueva-receta.html', context)
@@ -197,7 +198,7 @@ def editar_receta(request, pk):
         formReceta = RecetaForm(request.POST, request.FILES, instance=receta)
         formset_paso = formsetPasoFactory(request.POST, request.FILES, prefix='paso')
         formset_ingrediente = formsetIngredienteFactory(request.POST, prefix='ingrediente')
-        print(formset_paso)
+
         if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
             # Receta (básicos)
             receta = formReceta.save(commit=False)
@@ -236,34 +237,35 @@ def editar_receta(request, pk):
 
             return redirect('receta', pk=receta.pk)
         else:
-            print("Receta")
-            print(formReceta.errors.as_text())
-            print("Pasos")
-            print(formset_paso.errors)
-            print("Ingredientes")
-            print(formset_ingrediente.errors)
+            # En caso de que no sea válido el formulario, muestra los errores
+            # Nunca va a dar la situación porque o es requerido, que no 
+            # se envía el formulario en caso de que no se introduzca los datos
+            # o tiene máximo de caracteres, que no se permite introducir más
+            # en el campo de texto
+            pass
 
-    else:
+    else:   # Si no es POST
         formReceta = RecetaForm(instance=receta)
-        #print(formReceta.__dict__['initial']['imagen_terminada'].__dict__['field'].__dict__)
         formset_paso = formsetPasoFactory(queryset=Paso.objects.filter(receta=receta).order_by('posicion'), prefix='paso')
         formset_ingrediente = formsetIngredienteFactory(queryset=Ingrediente_Receta.objects.filter(receta=receta), prefix='ingrediente')
+        formSugerencia = SugForm()
 
         # Cambia que donde se almacena el id del ingrediente, por el nombre de dicho
+        # para que en el formulario se muestre el nombre del insgrediente en vez del id
         for ingrediente in formset_ingrediente:
             id_ingrediente = ingrediente.instance.ingrediente_id
             nombre_ingrediente = Ingrediente.objects.get(id=id_ingrediente).nombre
             ingrediente.__dict__['initial']['ingrediente'] = nombre_ingrediente
 
     context = {
-        'receta': receta,
-        'categorias': Categoria.objects.all(),
         'formReceta': formReceta,
         'formsetPaso': formset_paso,
-        'formsetIngrediente': formset_ingrediente
+        'formsetIngrediente': formset_ingrediente,
+        'categorias': Categoria.objects.all(),
+        'formSugerencia': formSugerencia,
     }
 
-    return render(request, 'editar-receta.html', context)
+    return render(request, 'nueva-receta.html', context)
 
 
 #Perfil de un usuario
@@ -290,10 +292,11 @@ def perfil(request, username):
     context = {
         'usuario': user,
         'recetas': obj_pagina,
-        'mensaje_vacio': mensaje_vacio
+        'mensaje_vacio': mensaje_vacio,
+        'lista_es_receta': True,
     }
 
-    return render(request, 'perfil-general.html', context)
+    return render(request, 'perfil.html', context)
 
 
 #Vista del perfil con las recetas guardadas
@@ -323,10 +326,11 @@ def recetas_guardadas(request, username):
     context = {
         'usuario': user,
         'recetas': utils.paginator(request, recetas),
-        'mensaje_vacio': mensaje_vacio
+        'mensaje_vacio': mensaje_vacio,
+        'lista_es_receta': True,
     }
 
-    return render(request, 'perfil-general.html', context)
+    return render(request, 'perfil.html', context)
 
 
 #Vista de perfil con la lista de seguidores
@@ -347,10 +351,11 @@ def seguidores(request, username):
     context = {
         'usuario': user,
         'lista_usuarios': utils.paginator(request, seguidores),
-        'mensaje_vacio': mensaje_vacio
+        'mensaje_vacio': mensaje_vacio,
+        'lista_es_receta': False,
     }
 
-    return render(request, 'perfil-usuarios.html', context)
+    return render(request, 'perfil.html', context)
 
 
 #Vista de perfil con la lista de usuarios que sigue
@@ -371,37 +376,40 @@ def siguiendo(request, username):
     context = {
         'usuario': user,
         'lista_usuarios': utils.paginator(request, siguiendo),
-        'mensaje_vacio': mensaje_vacio
+        'mensaje_vacio': mensaje_vacio,
+        'lista_es_receta': False,
     }
 
-    return render(request, 'perfil-usuarios.html', context)
+    return render(request, 'perfil.html', context)
 
 
 #Formulario para editar datos del perfil
 @login_required
 def editar_perfil(request, username):
 
-    form = EditarPerfilForm()
+    
     
     if request.method == 'POST':
         form = EditarPerfilForm(request.POST, request.FILES)
         
         if form.is_valid():
-            print(form.cleaned_data)
             cd = form.cleaned_data
-            if not cd['nombre'] == '':
-                request.user.first_name = cd['nombre']
-            if not cd['apellido'] == '':
-                request.user.last_name = cd['apellido']
-            if not cd['descripcion'] == '':
-                print("entra")
-                request.user.perfil.descripcion = cd['descripcion']
-            if not cd['imagen_perfil'] == None:
-                request.user.perfil.set_imagen(cd['imagen_perfil'])
+            request.user.first_name = cd['nombre']
+            request.user.last_name = cd['apellido']
+            request.user.perfil.descripcion = cd['descripcion']
+            request.user.perfil.set_imagen(cd['imagen_perfil'])
             request.user.save()
             request.user.perfil.save()
         else:
-            print(form.errors.as_text())
+            # No puede haber errores
+            pass
+    else:
+
+        form = EditarPerfilForm(initial={
+                'nombre': request.user.first_name,
+                'apellido': request.user.last_name,
+                'descripcion': request.user.perfil.descripcion,
+            })
 
     return render(request, 'editar_perfil.html', {'form': form})
 
@@ -409,24 +417,22 @@ def editar_perfil(request, username):
 # Pantalla para cambiar la contraseña de la cuenta
 @login_required
 def editar_pass(request, username):
-    user = get_object_or_404(User, username=request.user.get_username())
-
+    
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
-        
+
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
             messages.success(request, 'Se ha actualizado la contraseña correctamente')
             return redirect('editar_pass', username=username)
-        else:
-            messages.error(request, 'Error al cambiar la contraseña')
 
     else:
         form = PasswordChangeForm(request.user)
+        print("-"*10)
+        print(form)     
 
     context = {
-        'usuario': user,
         'form': form
     }
 
@@ -469,16 +475,24 @@ def busqueda_avanzada(request):
             
             recetas.sort(key=lambda x: x.num, reverse=True) #Ordena la receta por cantidad de coincidencias de mayor a menor
 
-            mensaje = "Resultado de "
+            # Mensaje indicando los ingredientes que busca
+            mensaje = "Resultados de "
             
             for ingrediente in ingredientes:
                 mensaje += ingrediente.nombre + ", "
             
             mensaje = mensaje[:-2]  #Borra los 2 último caracteres del string
+
+            context = {
+                'recetas': utils.paginator(request, recetas), 
+                'mensaje_titulo': mensaje if len(recetas) > 0 else "",
+                'mensaje_vacio': "No se han encontrado recetas"
+            }
             
-            return render(request, 'resultado_busqueda.html', {'recetas': utils.paginator(request, recetas), 'mensaje_titulo': mensaje})
+            return render(request, 'resultado_busqueda.html', context)
     else:
         formset = form()
+        
 
     context = {
         'formset': formset
@@ -497,15 +511,11 @@ def resultado_busqueda(request):
         recetas = Receta.objects.filter(categoria=categoria)
     except ObjectDoesNotExist:  # Si no hay, obtiene las recetas que se llamen como se ha introducido en el buscador
         recetas = Receta.objects.filter(Q(titulo__icontains=query))
-    
-    if len(recetas) > 0:
-        mensaje = "Resultados de " + query
-    else:
-        mensaje = 'No se ha encontrado ninguna receta con "' + query + '"'
 
     context = {
         'recetas': utils.paginator(request, recetas),
-        'mensaje_vacio': mensaje
+        'mensaje_titulo': "Resultados de " + query if len(recetas) > 0 else "",
+        'mensaje_vacio': 'No se ha encontrado ninguna receta con "' + query + '"',
     }
 
     return render(request, 'resultado_busqueda.html', context)
@@ -524,36 +534,42 @@ def registro(request):
             # Obtiene todos los datos
             username = registroUserForm.cleaned_data.get('username')
             password = registroUserForm.cleaned_data.get('password')
+            password2 = registroUserForm.cleaned_data.get('password2')
             email = registroUserForm.cleaned_data.get('email')
             nombre = registroUserForm.cleaned_data.get('first_name')
             apellido = registroUserForm.cleaned_data.get('last_name')
             descripcion = registroPerfilForm.cleaned_data.get('descripcion')
             imagen = registroPerfilForm.cleaned_data.get('imagen_perfil')
             
+            
             # Comprueba que no exista un usuario con el nombre de usuario introducido
             if not User.objects.filter(username=username).exists():
 
                 # Comprueba que no exista un usuario con el email introducido
                 if not User.objects.filter(email=email).exists():
-                    user = registroUserForm.save(commit=False)
-                    user.set_password(password)
-                    user.first_name = nombre
-                    user.last_name = apellido
-                    user.email = email
-                    user.save() #Guarda el objeto user
 
-                    perfil = Perfil(usuario=user)
-                    perfil.descripcion = descripcion
-                    perfil.set_imagen(imagen)
-                    perfil.save()   #Guarda el perfil de dicho usuario
-                    do_login(request, user) #Accede a la aplicación
-                    return redirect('index')
+                    if password == password2:
 
+                        if not password.isnumeric():
+                            user = registroUserForm.save(commit=False)
+                            user.set_password(password)
+                            user.first_name = nombre
+                            user.last_name = apellido
+                            user.email = email
+                            user.save() #Guarda el objeto user
+
+                            perfil = Perfil(usuario=user)
+                            perfil.descripcion = descripcion
+                            perfil.set_imagen(imagen)
+                            perfil.save()   #Guarda el perfil de dicho usuario
+                            do_login(request, user) #Accede a la aplicación
+                            return redirect('index')
+                        else:
+                            registroUserForm.add_error('password', 'Las contraseñas no pueden ser solo numérica.')
+                    else:
+                        registroUserForm.add_error('password', 'Las contraseñas no coinciden.')
                 else:
                     registroUserForm.add_error('email', 'Ya existe un usuario registrado con este email.')
-        else:
-            print(registroUserForm.errors.as_text())
-            print(registroPerfilForm.errors.as_text())
 
     else:
         registroUserForm = RegistroUserForm()
@@ -592,6 +608,7 @@ def eliminar_receta(request, pk):
 
 
 #Pone una receta pública
+@login_required()
 def publicar(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
     
@@ -652,6 +669,23 @@ def valorar_seguro(request):
     
     return HttpResponse("unsuccessful")
 
+
+@login_required
+def sugerencia(request):
+    
+    if request.method == "GET":
+        # Busca si existe la sugerencia
+        if Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).exists():
+            sugerencia = Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).first()
+            sugerencia.cantidad += 1
+            sugerencia.save()
+        else:
+            Sugerencia.objects.create(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia'])
+        
+        return HttpResponse()
+
+    return HttpResponse("unsuccessful")
+
 @login_required
 def seguir(request, pk):
     usuario = get_object_or_404(User, pk=pk)
@@ -667,4 +701,5 @@ def dejar_seguir(request, pk):
     if not request.user == usuario:
         usuario.perfil.dejar_seguir(request.user.perfil)
         return redirect('perfil', username=usuario.username)
+
 

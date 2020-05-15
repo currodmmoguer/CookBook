@@ -8,7 +8,7 @@
   <div class="col-2 col-sm-1">
 
     <!-- Botón guardar -->
-    <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid="{% url 'guardar' %}">
+    <a href="#" id="{{receta.pk}}" class="btn-guardar" data-url="{% url 'guardar' %}" data-toggle="tooltip" data-placement="bottom" title="Guardar">
       {% if  receta|is_save:user %}
           <i class='fas fa-bookmark' style='font-size:36px'></i>
       {% else %}
@@ -24,6 +24,16 @@
     <div class="row">
       <div class="col-12">
         <a href="{% url 'receta' pk=receta.pk %}"><span class="titulo">{{receta.titulo}}</span></a>
+        
+        {% if receta.usuario == user %}
+          {% if receta.publico%}
+            <i class="fas fa-lock-open" style="color: #721b65"></i>
+          {% else %}
+            <i class="fas fa-lock" style="color: #721b65"></i>
+          {% endif %}
+        {% endif %}
+          
+        
       </div>
     </div>
 
@@ -35,7 +45,7 @@
     </div>
 
     <!-- VALORACIÓN -->
-    <div class="row valoracion">
+    <div class="row valoracion mt-1">
       <div class="col-12">
         {% if receta.valoracion_media >= 1 %}
           

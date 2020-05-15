@@ -1,4 +1,5 @@
-$(document).ready(function(){
+// Cuando se abre la pantalla, actualiza los pasos e ingredientes
+$(document).ready(function () {
   updateElementIndexPaso();
   updateElementIndexIngrediente();
 });
@@ -7,149 +8,170 @@ $(document).ready(function(){
 
 
 
-  function updateElementIndexPaso() {
-    var pasos = $('#totalPasos');
-    pasos = pasos.children('.paso');
-    var pos = 0;
-    
-    pasos.each(function(index){
-      
-      $(this).find('.numPaso').html(pos+1);
-      $(this).find('textarea').attr('id', 'id_paso-' + pos + '-texto').attr('name', 'paso-' + pos + '-texto');
-      $(this).find('label.form-label').attr('for', 'id_paso-' + pos + '-texto');
-      $(this).find('input[type=file]').attr('id', 'id_paso-' + pos + '-imagen_paso').attr('name', 'paso-' + pos + '-imagen_paso');
-      $(this).find('label.subir-foto').attr('for', 'id_paso-' + pos + '-imagen_paso');
-      $(this).attr('id', 'paso' + pos);
-      pos++;
-    });
+/**
+ * Actualiza todas las filas de pasos
+ */
+function updateElementIndexPaso() {
+  var pasos = $('#totalPasos').children('.paso');
+  
+  pasos.each(function (pos) {
+    var name = 'paso-' + pos + '-';
+    $(this).find('.numPaso').html(pos + 1);
+    $(this).find('textarea').attr('id', 'id_' + name + 'texto').attr('name', name + 'texto');
+    $(this).find('label.form-label').attr('for', 'id_' + name + 'texto');
+    $(this).find('input[type=file]').attr('id', 'id_' + name + 'imagen_paso').attr('name', name + 'imagen_paso');
+    $(this).find('label.subir-foto').attr('for', 'id_' + name + 'imagen_paso');
+    $(this).find('img').attr('id', 'vista_previa_imagen_paso_' + pos);
+    $(this).attr('id', 'paso' + pos);
+  });
 
+}
+
+/**
+ * Crea una nueva fila paso y lo añade al final de la lista
+ * @param {Objeto} selector Fila formset
+ * @param {Texto} prefix Prefijo
+ */
+function cloneMorePaso(selector, prefix) {
+  var newElement = $(selector).clone(true);
+  var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+
+  // Vacía los campos textarea y el input file
+  newElement.find('textarea, input[type=file]').each(function () {
+    $(this).val('');
+  });
+
+  // Vacía la imagen de vista previa
+  newElement.find('img').attr('src', '');
+
+  total++;
+  $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+
+  newElement.find('textarea').removeAttr("required");
+
+  // Añade la nueva fila detrás del último
+  $(selector).after(newElement);
+  newElement.find("textarea").focus();
+  newElement.find("textarea").attr("required", "true");
+  
+  updateElementIndexPaso();
+}
+
+/**
+ * Elimina el campo de texto selecionado.
+ *
+ * @param {texto} prefix Prefijo
+ * @param {objeto} btn Botón eliminar
+ */
+function deleteFormPaso(prefix, btn) {
+  var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+
+  if (total > 1) {
+    btn.parents('.paso').remove();
+    $('#id_' + prefix + '-TOTAL_FORMS').val($('.paso').length);
+    updateElementIndexPaso();
   }
-  function cloneMorePaso(selector, prefix) {
-      var newElement = $(selector).clone(true);
-      
-      newElement.find('textarea, input[type=file]').each(function(){
-        $(this).val('');
-      });
-      newElement.find('img').attr('src', '');
 
-      var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-      total++;
-      $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-      $(selector).after(newElement);
-      updateElementIndexPaso();
-      return false;
-    }
-  function deleteFormPaso(prefix, btn) {
-      var total = $('#totalPasos').children('div.paso').length;
-      if (total > 1){
-          btn.parents('.paso').remove();
-          var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-          total--;
-          $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-          updateElementIndexPaso();
-      }
-      return false;
-    }
+}
 
- 
-  $(document).on('click', '#buttonAddPaso', function(e){
-      e.preventDefault();
-      cloneMorePaso('#paso0', 'paso');
-      return false;
-    });
 
-  $(document).on('click', '.remove-form-row-paso', function(e){
-      e.preventDefault();
-      deleteFormPaso('paso', $(this));
-      return false;
-    });
+$(document).on('click', '#buttonAddPaso', function (e) {
+  e.preventDefault();
+  cloneMorePaso('.paso:last', 'paso');
+});
+
+$(document).on('click', '.remove-form-row-paso', function (e) {
+  e.preventDefault();
+  deleteFormPaso('paso', $(this));
+});
 
 
 // SCRIPT INGREDIENTES
 
-  function updateElementIndexIngrediente(/*el, prefix, ndx*/) {
-    var ingredientes = $('#totalIngredientes');
-    ingredientes = ingredientes.children('.ingrediente');
-    var pos = 0;
-
-    ingredientes.each(function(index) {
-      console.log("ingrediente " + pos)
-      $(this).attr('id', 'ingrediente' + pos);
-
-      $(this).find('input, select').each(function(i){ //Recoge todos
-        
-        if ($(this).attr('id').endsWith('ingrediente')){  //Campo nombre ingrediente
-          $(this).attr('id', 'id_ingrediente-' + pos + '-ingrediente').attr('name', 'ingrediente-' + pos + '-ingrediente');
-          $(this).next().attr('for', 'id_ingrediente-' + pos + '-ingrediente');
-
-        } else if ($(this).attr('id').endsWith('cantidad')){  //Campo cantidad
-          $(this).attr('id', 'id_ingrediente-' + pos + '-cantidad').attr('name', 'ingrediente-' + pos + '-cantidad');
-          $(this).next().attr('for', 'id_ingrediente-' + pos + '-cantidad');
-        } else if ($(this).attr('id').endsWith('unidad_medida')){ //Campo unidad de medida
-          $(this).attr('id', 'id_ingrediente-' + pos + '-unidad_medida').attr('name', 'ingrediente-' + pos + '-unidad_medida');
-          $(this).next().attr('for', 'id_ingrediente-' + pos + '-unidad_medida');
-        }
-        console.log($(this));
-      });
-      pos++;
-    });
-  }
-
-  function cloneMoreIngrediente(selector, prefix) {
-    var newElement = $(selector).clone(true);
-    var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-    console.log("nuevo")
-    console.log(newElement)
-    newElement.find('input, select').each(function() {
-      $(this).val('');
-    });
-    
-
-    total++;
-    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-    $(selector).after(newElement);
-    updateElementIndexIngrediente();
-    return false;
-  }
-  function deleteForm(prefix, btn) {
-    
-  var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+function updateElementIndexIngrediente() {
+  var ingredientes = $('#totalIngredientes').children('.ingrediente');
   
-  if (total > 1){
-    console.log(btn);
-    btn.parents('.ingrediente').remove();
-    var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
-    total--;
-    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
-  }
-  return false;
-  }
-  $(document).on('click', '#buttonAddIngredient', function(e){
-    e.preventDefault();
-    cloneMoreIngrediente('#ingrediente0', 'ingrediente');
-    return false;
-  });
+  ingredientes.each(function(pos) {
 
-  $(document).on('click', '.remove-form-row-ingrediente', function(e){
-    e.preventDefault();
-    deleteForm('ingrediente', $(this));
-    return false;
-  });
+    // Añade el id al div.row
+    $(this).attr('id', 'ingrediente' + pos);
+    
+    // Loop para todos los campos input y select dentro del div
+    $(this).find('input, select').each(function () { 
+      // Según el campo que sea, modifica sus atributos
+      var name = 'ingrediente-' + pos + '-';
 
-  function readURL(input) {
-    if (input.files && input.files[0]){
-      var reader = new FileReader();
+      if ($(this).attr('id').endsWith('ingrediente')) {  //Campo nombre ingrediente
+        $(this).attr('id', 'id_' + name + 'ingrediente').attr('name', name + 'ingrediente');
+        $(this).next().attr('for', 'id_' + name + 'ingrediente');
 
-      reader.onload = function(e){
-        $('#blah').attr('src', e.target.result);
+      } else if ($(this).attr('id').endsWith('cantidad')) {  //Campo cantidad
+        $(this).attr('id', 'id_' + name + 'cantidad').attr('name', name + 'cantidad');
+        $(this).next().attr('for', 'id_' + name + 'cantidad');
+      
+      } else if ($(this).attr('id').endsWith('unidad_medida')) { //Campo unidad de medida
+        $(this).attr('id', 'id_' + name + 'unidad_medida').attr('name', name + 'unidad_medida');
+        $(this).next().attr('for', 'id_' + name + 'unidad_medida');
       }
 
-      reader.readAsDataURL(input.files[0])
-    }
-  }
+    });
+  });
+}
 
-  $(document).on('change', '.paso input[type=file]', function(e){
-    readURL(this);
+/**
+ * Crea un nuevo campo de texto vacío y lo añade al último de la lista
+ * @param {Objeto} selector Campo de texto
+ * @param {Texto} prefix Prefijo
+ */
+function cloneMoreIngrediente(selector, prefix) {
+  var newElement = $(selector).clone(true);
+  var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+
+  // Vacía los campos del formulario
+  newElement.find('input, select').each(function () {
+    $(this).val('');
+    $(this).removeAttr("required");
   });
 
+
+  total++;
+  $('#id_' + prefix + '-TOTAL_FORMS').val(total);
   
+  // Añade la nueva fila al final
+  $(selector).after(newElement);
+  newElement.find("input, select").attr("required", "true");
+  updateElementIndexIngrediente();
+}
+
+/**
+ * Elimina el campo de texto selecionado.
+ * (Igual q avanzado excepto paretns)
+ * @param {texto} prefix Prefijo
+ * @param {objeto} btn Botón eliminar
+ */
+function deleteForm(prefix, btn) {
+
+  var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
+
+  if (total > 1) {
+    btn.parents('.ingrediente').remove();
+    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+    updateElementIndexIngrediente();
+  }
+}
+
+$(document).on('click', '#buttonAddIngredient', function (e) {
+  e.preventDefault();
+  cloneMoreIngrediente('.ingrediente:last', 'ingrediente');
+});
+
+$(document).on('click', '.remove-form-row-ingrediente', function (e) {
+  e.preventDefault();
+  deleteForm('ingrediente', $(this));
+});
+
+
+
+
+
+

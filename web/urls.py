@@ -6,6 +6,7 @@ from django.conf.urls import url
 
 
 urlpatterns = [
+    path('sugerencia/', views.sugerencia, name="sugerencia"),
     path('valorar/', views.valorar, name="valorar"),    #Sirve para cuando se da al botón valorar
     path('valorar-seg/', views.valorar_seguro, name="valorar_seguro"),  #Sirve cuando se valora desde el modal
     path('buscar/', views.busqueda_avanzada, name='busqueda_avanzada'),     #Buscqueda avanzada de receta

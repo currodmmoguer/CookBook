@@ -1,0 +1,131 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+{% block extrahead %}
+
+
+{{ block.super }}
+
+<script src="{% static 'js/Chart.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+
+
+<!-- Render our chart -->
+<div style="width: 100%;">
+    <canvas style="margin-bottom: 30px; width: 60%; height: 50%;" id="myChart"></canvas>
+</div>
+
+
+<script>
+
+    // Comprueba si un objeto está en una lista
+    function contiene(lista, obj){
+        lista.forEach(element => {
+            if (element === obj){
+                return true;
+            }
+        });
+        return false;
+    }
+
+    // Crea un color aleatorio en formato rgb
+    function random_rgb() {
+        var o = Math.round, r = Math.random, s = 255;
+        return 'rgb(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ')';
+    }
+
+
+    var datos = {{ chart_data | safe}}
+    var lista_cantidad = []
+    var lista_nombre = []
+    var lista_colores = [
+        'rgb(255, 99, 132)',
+        'rgb(255, 159, 64)',
+        'rgb(255, 205, 86)',
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+    ]
+
+    var datas = {
+        datasets: [{
+            label: "Hola",
+            backgroundColor: random_rgb(),
+            data: [1]
+        }]
+    }
+
+    var barDatos = {
+        labels: [],
+        datasets: [
+            {
+                label: "Recetas publicadas",
+                backgroundColor: [],
+                data: []
+            }
+        ]
+    }
+
+    // Añade los datos a sus respectivas listas
+    for (var i = 0; i < datos.length; i++) {
+        var elemento = datos[i];
+        
+        lista_nombre.push(elemento['username'])
+        lista_cantidad.push(elemento['total_recetas'])
+        var dato = {backgroundColor: lista_colores[i], data: [elemento['total_recetas']]};
+        barDatos.labels.push(elemento['username']);
+        
+        barDatos.datasets[0].backgroundColor.push(lista_colores[i]);
+        barDatos.datasets[0].data.push(elemento['total_recetas']);
+    }
+
+    
+
+
+    // Se añade más colores a la gráfica en caso de que haya más de 7 categorías
+    if (datos.length > lista_colores.length){
+        var total = datos.length - lista_colores.length;
+        
+        for (var i = 0; i < total.length; i++){
+            do {
+                var color = random_rgb();
+            } while (contiene(lista_colores, color));
+            
+            lista_colores.push(color);
+            
+        }
+    }
+
+    
+ 
+    
+    // Configuración de la gráfica
+    var config = {
+        type: 'bar',
+        data: barDatos,
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Top creadores de recetas'
+            },
+            legend: { display: false },
+        }
+    };
+
+    /*Se añade aquí, porque en el config coge el array como un elemento solo
+    lista_nombre.forEach(function (usuario) {
+        config['data']['labels'].push(usuario);
+    });*/
+
+    window.onload = function () {
+        var ctx = document.getElementById("myChart").getContext('2d');
+        window.myPie = new Chart(ctx, config);
+    }
+
+</script>
+hola
+{{ block.super }}
+{% endblock %}

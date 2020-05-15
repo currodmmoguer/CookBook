@@ -139,7 +139,7 @@ class Ingrediente(models.Model):
 class Ingrediente_Receta(models.Model): # Relacion entre ingrediente y receta
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="ingredientes")
     ingrediente = models.ForeignKey(Ingrediente, on_delete=models.DO_NOTHING)
-    cantidad = models.CharField(max_length=30)
+    cantidad = models.FloatField(max_length=30)
     unidad_medida = models.ForeignKey(Unidad_medida, on_delete=models.SET("Otros"))
 
     class Meta:
@@ -149,7 +149,7 @@ class Ingrediente_Receta(models.Model): # Relacion entre ingrediente y receta
 class Paso(models.Model):
     texto = models.TextField()
     imagen_paso = models.ImageField(upload_to='paso', null=True, blank=True)
-    posicion = models.IntegerField()
+    posicion = models.PositiveIntegerField()
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="pasos")
 
     class Meta:
@@ -179,5 +179,9 @@ class Sugerencia(models.Model):
 
     tipo = models.CharField(max_length=3, choices=choices)
     sugerencia = models.CharField(max_length=255)
+    cantidad = models.PositiveIntegerField(default=1)
+
+    class Meta:
+        db_table = 'sugerencia'
 
 

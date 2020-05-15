@@ -94,6 +94,7 @@
         config['data']['labels'].push(categoria);
     });
 
+    // Muestra la gráfica en el elemento con id myChart
     window.onload = function () {
         var ctx = document.getElementById("myChart").getContext('2d');
         window.myPie = new Chart(ctx, config);

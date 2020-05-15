@@ -2,7 +2,7 @@
     text-align: center !important;
 }
 
-.btn-plus{
+.add-form-row {
     color: #b80d57;
     border: 1px solid #b80d57;
     background-color: white;
@@ -10,7 +10,7 @@
     height: 2rem;
 }
 
-.btn-minus{
+.remove-form-row {
     color: white;
     background-color: #b80d57;
     border: 1px solid #b80d57;

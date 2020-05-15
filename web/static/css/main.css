@@ -12,8 +12,6 @@
     font-size: 1.2rem !important;
   }
   
-  
-
   .titulo {
     font-size: 1rem !important;
   }
@@ -21,6 +19,10 @@
   .avatar {
     text-align: center !important;
     margin-bottom: 1rem !important;
+  }
+
+  .btn-sin-borde {
+    padding: 15px 15px !important;
   }
   
 
@@ -68,6 +70,20 @@ a, a:hover {
   font-size: 2rem;
 }
 
+
+
+.separador {
+  border-top: 1px solid #721b65;
+  width: 100%;
+  margin: 2rem 0 2rem 0;
+}
+
+/* BOTONES */
+
+.fa-star {
+  color: #F9A31A;
+}
+
 .btn-guardar{
   background-color: Transparent;
   background-repeat:no-repeat;
@@ -81,18 +97,6 @@ a, a:hover {
   color: #b80d57;
 }
 
-
-
-.separador {
-  border-top: 1px solid #721b65;
-  width: 100%;
-  margin: 2rem 0 2rem 0;
-}
-
-.fa-star {
-  color: #F9A31A;
-}
-
 .btn-border-rounded {
   display: inline-block;
   font-weight: 400;
@@ -101,14 +105,13 @@ a, a:hover {
   cursor: pointer;
   user-select: none;
   background-color: transparent;
-  border: 1px solid transparent;
+  border: 1px solid #b80d57;
   padding: 0.375rem 0.75rem;
   font-size: 1rem;
   line-height: 1.5;
   border-radius: 0.25rem;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   color: #b80d57;
-  border-color: #b80d57;
 }
 
 .btn-border-square {
@@ -134,12 +137,32 @@ a, a:hover {
   border: none;
   cursor: pointer;
   transition: all .5s;
+  border-radius: 0.25rem;
 
 }
 
 .btn-border-rounded:hover, .btn-border-square:hover, .btn-sin-borde:hover {
   background-color: #b80d57;
   color: #fff;
+}
+
+.subir-foto {
+  font-size: 14px;
+  font-weight: 600;
+  color: #B51F59;
+  border: 1px solid #B51F59;
+  display: inline-block;
+  transition: all .5s;
+  cursor: pointer;
+  padding: 15px 40px;
+  text-transform: uppercase;
+  width: fit-content;
+  text-align: center;
+}
+
+.subir-foto:hover {
+  color: #fff;
+  background-color: #B51F59;
 }
 
 /*form-beauty*/
@@ -161,7 +184,8 @@ a, a:hover {
 }
 
 .form-input input[type="text"], .form-input input[type="email"],
-.form-input input[type="password"], .form-input textarea {
+.form-input input[type="password"], .form-input textarea,
+.form-input input[type="number"] {
   
   transition: 0.3s ease;
   padding-top: 10px;
@@ -181,6 +205,7 @@ a, a:hover {
 .form-input input[type="password"]:focus + .form-label,
 .form-input input[type="email"]:focus + .form-label,
 .form-input textarea:focus + .form-label,
+.form-input input[type="number"]:focus + .form-label,
 .with-text {
   top: 1px;
   font-size: 0.8rem;
@@ -213,22 +238,5 @@ input[type="file"]{
   z-index: -1;
 }
 
-.subir-foto {
-  font-size: 14px;
-  font-weight: 600;
-  color: #B51F59;
-  border: 1px solid #B51F59;
-  display: inline-block;
-  transition: all .5s;
-  cursor: pointer;
-  padding: 15px 40px;
-  text-transform: uppercase;
-  width: fit-content;
-  text-align: center;
-}
 
-.subir-foto:hover {
-  color: #fff;
-  background-color: #B51F59;
-}
 

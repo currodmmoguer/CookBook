@@ -9,6 +9,32 @@
   <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 </head>
 
+<!-- Modal eliminar-->
+<div class="modal fade" id="modal-eliminar" tabindex="-1" role="dialog" aria-labelledby="modal-eliminar"
+  aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">¿Seguro que deseas eliminar tu cuenta?</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <p>Si eliminas tu cuenta de CookBook, no podrás recuperar el contenido ni la información que compartiste.</p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
+        <a href="{% url 'eliminar_cuenta' %}"><button type="button" class="btn">Eliminar</button></a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 {% include 'partes/menu-editar-perfil.html' %}
 
 <form method="POST" enctype="multipart/form-data">
@@ -44,7 +70,7 @@
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
-        <input type="text" name="nombre" class="form-control" value="{{user.first_name}}" required>
+        {{form.nombre}}
       </div>
     </div>
   </div>
@@ -56,7 +82,7 @@
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
-        <input type="text" class="form-control" name="apellido" value="{{user.last_name}}">
+        {{form.apellido}}
       </div>
     </div>
   </div>
@@ -68,7 +94,7 @@
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
-        <textarea class="form-control" rows="3" name="descripcion">{{user.perfil.descripcion}}</textarea>
+        {{form.descripcion}}
       </div>
     </div>
   </div>
@@ -89,29 +115,19 @@
 
 <div class="row justify-content-center my-3">
   <div class="col-12 text-center">
-    <a href="{% url 'eliminar_cuenta' %}">
-      <button type="button" class="btn-border-rounded">Eliminar cuenta</button>
-    </a>
+    <button type="button" class="btn-border-rounded" data-toggle="modal" data-target="#modal-eliminar">
+      Eliminar cuenta
+    </button>
+    
   </div>
 </div>
 
+<script src="{% static 'js/formulario.js' %}"></script>
+
 
 <script type="text/javascript">
-
-  function readURL(input) {
-    if (input.files && input.files[0]) {
-      var reader = new FileReader();
-
-      reader.onload = function (e) {
-        $('#img-perfil').attr('src', e.target.result);
-      }
-
-      reader.readAsDataURL(input.files[0])
-    }
-  }
-
-  $(document).on('change', '#id_input_avatar', function (e) {
-    readURL(this);
+  $('#id_input_avatar').change(function() {
+    readURL(this, $('#img-perfil'));
   });
 </script>
 

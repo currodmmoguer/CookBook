@@ -9,6 +9,7 @@
   <title>Nueva receta</title>
   <link rel="stylesheet" href="{% static 'css/nueva-receta.css' %}">
   <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+
 </head>
 
 
@@ -26,63 +27,63 @@
   aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
+
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">Enviar sugerencia</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form method="POST">
-        {% csrf_token %}
-        <div class="modal-body">
-          <div class="mb-2">Si hay una categoria o unidad de medida que falte, por favor, comuníquenoslo.</div>
 
-          <div class="form-group">
-            {{formSugerencia.tipo}}
-          </div>
-          <div class="form-group">
-            <div class="form-group form-input">
-              <input type="text" name="sugerencia" id="id_sugerencia" required />
-              <label for="id_sugerencia" class="form-label">Escribe tu sugerencia</label>
-            </div>
-          </div>
+      <div class="modal-body">
+        <div class="mb-2">Si hay una categoria o unidad de medida que falte, por favor, comuníquenoslo.</div>
 
+        <div class="form-group">
+          {{formSugerencia.tipo}}
         </div>
-        <div class="modal-footer">
-          <button type="submit" class="btn btn-primary">Enviar</button>
+        <div class="form-group">
+          <div class="form-group form-input">
+            <input type="text" name="sugerencia" id="id_sugerencia" required />
+            <label for="id_sugerencia" class="form-label">Escribe tu sugerencia</label>
+          </div>
         </div>
-      </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" id="submit-sugerencia" class="btn btn-primary"
+          data-url="{% url 'sugerencia' %}">Enviar</button>
+      </div>
     </div>
   </div>
 </div>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" id="beauty-form" enctype="multipart/form-data">
   {% csrf_token %}
 
   <!-- TITULO -->
   <div class="row justify-content-center my-md-3">
     <div class="col-md-7 col-12">
       <div class="form-group form-input">
-        <input type="text" name="titulo" id="titulo" required />
-        <label for="titulo" class="form-label">Título</label>
+        {{formReceta.titulo}}
+        <label for="id_titulo" class="form-label">Título*</label>
       </div>
     </div>
   </div>
 
   <!-- FILA CANTIDAD Y TIEMPO -->
   <div class="row justify-content-center my-md-3">
-    
+
     <div class="col-md-4 col-12 mr-1">
       <div class="form-group form-input">
-        <input type="text" name="raciones" id="raciones" />
-        <label for="raciones" class="form-label">Cantidad aproximada</label>
+        {{formReceta.raciones}}
+        <label for="id_raciones" class="form-label">Cantidad aproximada de raciones</label>
       </div>
     </div>
 
     <div class="col-md-4 col-12 ml-md-1">
       <div class="form-group form-input">
-        <input type="text" name="tiempo_estimado" id="tiempo_estimado" />
-        <label for="tiempo_estimado" class="form-label">Tiempo estimado</label>
+        {{formReceta.tiempo_estimado}}
+        <label for="id_tiempo_estimado" class="form-label">Tiempo estimado</label>
       </div>
     </div>
 
@@ -94,8 +95,8 @@
       <label for="id_imagen_terminada" class="subir-foto">
         <i class="fa fa-cloud-upload"></i> Subir imagen del plato terminado
       </label>
-      <!--input id="imagen_terminada" name="imagen_terminada" type="file"/-->
       {{formReceta.imagen_terminada}}
+      <img src="#" id="previa_imagen_terminada" alt="" class="img-fluid">
     </div>
   </div>
 
@@ -117,10 +118,12 @@
 
   <div id="totalIngredientes" class="my-2">
     {{ formsetIngrediente.management_form }}
-    
+
     {% for form_data in formsetIngrediente %}
+
+    {{form_data.id}}
     <div id="ingrediente0" class="ingrediente my-3">
-      
+
       <div class="row">
         <div class="col-12 d-flex justify-content-end justify-content-md-start">
           <button type="button" id="bri1" class="btn-remove remove-form-row-ingrediente">-</button>
@@ -143,17 +146,6 @@
         </div>
 
         <div class="col-12 col-md-4 col-lg-3">
-          <!--
-                  <select class="custom-select wrap-input2 validate-input" id="id_ingrediente-0-unidad_medida" name="ingrediente-0-unidad_medida">
-                    {% for unidad in unidades %}
-                      <option value="{{unidad.pk}}"
-                        {% if unidad.pk == 1 %}
-                          selected
-                        {% endif %}>
-                        {{unidad}}
-                      </option>
-                    {% endfor %}
-                  </select-->
           {{form_data.unidad_medida}}
         </div>
 
@@ -165,7 +157,7 @@
   <!-- BOTÓN AÑADIR INGREDIENTE -->
   <div class="row justify-content-center my-3">
     <div class="col-">
-      <button type="button" id="buttonAddIngredient" class="btn">+ Añadir ingrediente</button>
+      <button type="button" id="buttonAddIngredient" class="btn-sin-borde">+ Añadir ingrediente</button>
     </div>
   </div>
 
@@ -180,7 +172,8 @@
     {{ formsetPaso.management_form }}
 
     {% for form_data in formsetPaso %}
-    <div id="paso0" class="paso my-3">
+    {{form_data.id}}
+    <div id="paso0" class="paso my-3 p-1 border">
       <div class="row d-flex justify-content-start d-flex align-items-stretch">
 
         <div class="col-1">
@@ -203,11 +196,9 @@
           <label for="imagen_paso" class="subir-foto">
             <i class="fa fa-cloud-upload"></i> Subir imagen
           </label>
-          <input name="imagen_paso" type="file" />
-          <img src="#" id="blah" alt="" class="img-fluid">
+          {{form_data.imagen_paso}}
+          <img src="#" id="" alt="" class="img-fluid">
         </div>
-
-
 
       </div>
     </div>
@@ -218,7 +209,7 @@
   <!-- BOTÓN AÑADIR PASO-->
   <div class="row d-flex justify-content-center">
     <div class="col-">
-      <button type="button" id="buttonAddPaso" class="btn">+ Añadir paso</button>
+      <button type="button" id="buttonAddPaso" class="btn-sin-borde">+ Añadir paso</button>
     </div>
   </div>
 
@@ -226,15 +217,15 @@
   <!-- FINAL BOTONES -->
   <div class="row my-3 justify-content-sm-around justify-content-md-center">
     <div class="col-4 col-md-3 text-center">
-      <button type="submit" class="btn">Guardar</button>
+      <button type="submit" class="btn-sin-borde">Guardar</button>
     </div>
 
     <div class="col-4 col-md-3 text-center">
-      <button type="submit" class="btn" name="publico">Publicar</button>
+      <button type="submit" class="btn-sin-borde" name="publico">Publicar</button>
     </div>
 
     <div class="col-4 col-md-3 text-center">
-      <button type="reset" class="btn">Cancelar</button>
+      <button type="reset" class="btn-sin-borde">Cancelar</button>
     </div>
   </div>
 
@@ -242,4 +233,27 @@
 
 <script src="{% static 'js/formset-receta.js' %}"></script>
 <script src="{% static 'js/formulario.js' %}"></script>
+<script src="{% static 'js/ajax.js' %}"></script>
+
+<script>
+
+  // Hace que el campo cantidad en ingrediente no se pueda introducir letras
+  $("input[id$='-cantidad'").keypress(function(event){
+    if((event.which > 47 && event.which < 58) || (event.which == 46 || event.which == 8)) {
+    	 // your condition
+    } else {
+      event.preventDefault();
+    }
+  }).on('paste', function (event) {
+    event.preventDefault();
+  })
+
+  $('#id_imagen_terminada').change(function() {
+    readURL(this, $('#previa_imagen_terminada'));
+  });
+
+  $('.paso input[type=file]').change(function() {
+    readURL(this, $(this).next());
+  });
+</script>
 {% endblock %}

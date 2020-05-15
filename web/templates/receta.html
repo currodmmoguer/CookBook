@@ -57,7 +57,14 @@
 <div class="row justify-content-between my-4">
 
   <div class="col-8 col-md-10">
-    <h2>{{ receta.titulo }}</h2>
+    <h2>
+      {{ receta.titulo }}
+      {% if receta.publico %}
+        <i class="fas fa-lock-open" style="color: #888"></i>
+      {% else %}
+        <i class="fas fa-lock" style="color: #888"></i>
+      {% endif %}
+    </h2>
   </div>
 
   <!-- Menu ajustes-->
@@ -66,7 +73,7 @@
 
     <div class="dropdown">
       <button class="btn dropdown-toggle" type="button" id="dropdownAjustes" data-toggle="dropdown" aria-haspopup="true"
-        aria-expanded="false"></button>
+        aria-expanded="false">Ajustes</button>
 
       <div class="dropdown-menu" aria-labelledby="dropdownAjustes">
 
@@ -89,8 +96,8 @@
         <br>
 
         <!-- ELIMINAR -->
-        <a href="{% url 'eliminar_receta' pk=receta.pk %}">
-          <i class="fas fa-trash" style='font-size:1rem'></i> Eliminar
+        <a href="#modal-eliminar" data-toggle="modal" data-target="#modal-eliminar">
+          <i class="fas fa-trash" style='font-size:1rem' ></i> Eliminar
         </a>
 
       </div>
@@ -99,7 +106,7 @@
   {% endif %}
 
   <!-- Botón guardar -->
-  <a href="#" id="{{receta.pk}}" class="btn-guardar" data-catid="{% url 'guardar' %}">
+  <a href="#" id="{{receta.pk}}" class="btn-guardar" data-url="{% url 'guardar' %}">
     {% if  receta|is_save:user %}
     <i class='fas fa-bookmark' style='font-size:36px'></i>
     {% else %}

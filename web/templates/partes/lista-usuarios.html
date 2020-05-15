@@ -1,37 +1,40 @@
 
 {% for usuario in lista_usuarios %}
 <div class="row px-md-5 justify-content-md-center">
+
+  <!-- IMAGEN AVATAR-->
     <div class="col-md-1 col-2 align-self-center">
       <img src="../../media/{{usuario.imagen_perfil}}" class="img-fluid rounded-circle">
     </div>
 
+    <!-- NOMBRE DE USUARIO-->
     <div class="col-5 col-sm-7 col-md-5 align-self-center">
       <a href="{% url 'perfil' username=usuario.usuario.username %}"><h3>{{usuario.usuario.get_full_name}}</h3></a>
     </div>
 
+    <!-- BOTÓN -->
     <div class="col-5 col-sm-3 text-right">
         {% if usuario.usuario.pk == user.pk %}
-        <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-seguir">Editar</button></a>
+        <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-border-rounded">Editar</button></a>
         {% elif user.perfil in usuario.seguidores.all %}
-        <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-seguir">Dejar de seguir</button></a>
+        <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Dejar de seguir</button></a>
         {% else %}
-        <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-seguir">Seguir</button></a>
+        <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Seguir</button></a>
         {% endif %}
     </div>
 
   </div>
 
   {% empty %}
-<div class="row justify-content-center">
-  <div class="col-">
-    <h4>{{mensaje_vacio}}</h4>
-  </div>
-</div>
+    <div class="row justify-content-center">
+      <div class="col-">
+        <h4>{{mensaje_vacio}}</h4>
+      </div>
+    </div>
 
 {% endfor %}
     
 <!-- PAGINATOR -->
-
 
 {% if lista_usuarios %}
 

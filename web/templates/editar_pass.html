@@ -11,8 +11,8 @@
 
 
 {% include 'partes/menu-editar-perfil.html' %}
-
-<form>
+<form method="POST">
+  {% csrf_token %}
 
   <!-- CONTRASEÑA ACTUAL -->
   <div class="row">
@@ -21,7 +21,7 @@
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
-        <input type="password" class="form-control">
+        {{form.old_password}}
       </div>
     </div>
   </div>
@@ -33,7 +33,7 @@
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
-        <input type="password" id="password1" class="form-control">
+        {{form.new_password1}}
       </div>
     </div>
   </div>
@@ -45,8 +45,21 @@
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
-        <input type="password" id="password2" class="form-control">
+        {{form.new_password2}}
       </div>
+    </div>
+  </div>
+
+  <!-- MENSAJE DE ERROR -->
+  <div class="row">
+    <div class="col-12 text-center">
+      {% if form.errors %}
+        {% for field in form %}
+          {% for error in field.errors %}
+            {{error|linebreaks}}
+          {% endfor %}
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
 
@@ -60,11 +73,14 @@
 
 
 <script>
+  /**
+   * Cuando se escribe en un campo password comprueba si es válido o no
+  */
   $('input[type=password]').keyup(function () {
-    var pass1 = $('#password1');
-    var pass2 = $('#password2')
+    var pass1 = $('#id_new_password1');
+    var pass2 = $('#id_new_password2')
 
-    if (pass1.val() == pass2.val() && pass1.val().length >= 8) {
+    if (pass1.val() == pass2.val() && pass1.val().length >= 8 && isNaN(pass1.val())) {
       pass1.css('background-color', '#0080008a');
       pass2.css('background-color', '#0080008a');
     } else {

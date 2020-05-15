@@ -33,15 +33,16 @@
                 {% csrf_token %}
                 <input type="text" id="username" name="username" placeholder="Usuario" required/>
                 <input type="password" id="password" name="password" placeholder="Contraseña" required/>
-                <button id="btn-acceder" data-url="{% url 'tiene_perfil' %}">Acceder</button>
+                <button id="btn-acceder">Acceder</button>
                 
                 <!-- ERROR -->
                 {% if form.errors %}
-                  <p class="my-1">Contraseña incorrecta. Vuelve a intentarlo.</p>
+                  <p class="my-1">Usuario o contraseña incorrecta. Vuelve a intentarlo.</p>
                 {% endif %}
 
                 <div class="registro my-1">
                   <span>¿Aún no te has registrado?</span>
+                  <br>
                   <a href="{% url 'registro' %}">Haz clic aquí para hacerlo.</a>
                 </div>
               </form>
