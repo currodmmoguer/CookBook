@@ -140,7 +140,7 @@ class Ingrediente_Receta(models.Model): # Relacion entre ingrediente y receta
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="ingredientes")
     ingrediente = models.ForeignKey(Ingrediente, on_delete=models.DO_NOTHING)
     cantidad = models.FloatField(max_length=30)
-    unidad_medida = models.ForeignKey(Unidad_medida, on_delete=models.SET("Otros"))
+    unidad_medida = models.ForeignKey(Unidad_medida, on_delete=models.SET("Otros"), default=1)
 
     class Meta:
         db_table = 'receta_ingrediente'
@@ -177,11 +177,29 @@ class Sugerencia(models.Model):
         ('udm', 'Unidad de medida'),
     )
 
-    tipo = models.CharField(max_length=3, choices=choices)
+    tipo = models.CharField(max_length=3, choices=choices, default=choices[0])
     sugerencia = models.CharField(max_length=255)
     cantidad = models.PositiveIntegerField(default=1)
 
     class Meta:
         db_table = 'sugerencia'
 
+class Notificacion(models.Model):
+    choices = (
+        ('comentario', 'Comentario'),
+        ('respuesta', 'Respuesta'),
+        ('valoracion', 'Valoracion'),
+        ('siguiendo', 'Siguiendo'),
+    )
+    usuario_destino = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notificaciones")
+    usuario_origen = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    fecha = models.DateTimeField(default=timezone.now)
+    visto = models.BooleanField(default=False)
+    tipo = models.CharField(max_length=20, choices=choices, default=choices[0])
+    caso = models.CharField(max_length=255, blank=True, null=True)
 
+    class Meta:
+        #db_table = 'notificacion'
+        verbose_name_plural = 'Notificaciones'
+    def __str__(self):
+        return "Usuario origen: {}, Usuario destino: {}, Tipo: {}".format(self.usuario_destino, self.usuario_origen, self.tipo)

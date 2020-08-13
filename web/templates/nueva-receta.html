@@ -36,15 +36,15 @@
       </div>
 
       <div class="modal-body">
-        <div class="mb-2">Si hay una categoria o unidad de medida que falte, por favor, comuníquenoslo.</div>
+        <div class="mb-2">{{formSugerencia.info}}</div>
 
         <div class="form-group">
           {{formSugerencia.tipo}}
         </div>
         <div class="form-group">
           <div class="form-group form-input">
-            <input type="text" name="sugerencia" id="id_sugerencia" required />
-            <label for="id_sugerencia" class="form-label">Escribe tu sugerencia</label>
+            {{formSugerencia.sugerencia}}
+            <label for="{{formSugerencia.sugerencia.auto_id}}" class="form-label">{{formSugerencia.sugerencia.label}}</label>
           </div>
         </div>
 
@@ -65,51 +65,49 @@
     <div class="col-md-7 col-12">
       <div class="form-group form-input">
         {{formReceta.titulo}}
-        <label for="id_titulo" class="form-label">Título*</label>
+        <label for="{{formReceta.titulo.auto_id}}" class="form-label">{{formReceta.titulo.label}}</label>
       </div>
     </div>
   </div>
 
   <!-- FILA CANTIDAD Y TIEMPO -->
   <div class="row justify-content-center my-md-3">
-
     <div class="col-md-4 col-12 mr-1">
       <div class="form-group form-input">
         {{formReceta.raciones}}
-        <label for="id_raciones" class="form-label">Cantidad aproximada de raciones</label>
+        <label for="{{formReceta.raciones.auto_id}}" class="form-label">{{formReceta.raciones.label}}</label>
       </div>
     </div>
 
     <div class="col-md-4 col-12 ml-md-1">
       <div class="form-group form-input">
         {{formReceta.tiempo_estimado}}
-        <label for="id_tiempo_estimado" class="form-label">Tiempo estimado</label>
+        <label for="{{formReceta.tiempo_estimado.auto_id}}" class="form-label">{{formReceta.tiempo_estimado.label}}</label>
       </div>
     </div>
 
   </div>
 
   <!-- FILA FOTO -->
-  <div class="row my-3">
+  <div class="row my-3 px-2 px-md-0">
     <div class="col-12 text-center">
-      <label for="id_imagen_terminada" class="subir-foto">
-        <i class="fa fa-cloud-upload"></i> Subir imagen del plato terminado
+      <label for="{{formReceta.imagen_terminada.auto_id}}" class="subir-foto">
+        <i class="fa fa-cloud-upload"></i> {{formReceta.imagen_terminada.label}}
       </label>
       {{formReceta.imagen_terminada}}
+      
+    </div>
+  </div>
+  <div class="row my-3">
+    <div class="col-12 text-center">
       <img src="#" id="previa_imagen_terminada" alt="" class="img-fluid">
     </div>
   </div>
 
   <!--FILA CATEGORIA -->
-  <div class="row justify-content-center">
+  <div class="row justify-content-center mb-3">
     <div class="col-12 col-md-4">
-      <select class="custom-select wrap-input2 validate-input" name="categoria">
-        {% for categoria in categorias %}
-        <option value="{{categoria.pk}}" {% if categoria.pk == 1 %} selected {% endif %}>
-          {{categoria}}
-        </option>
-        {% endfor %}
-      </select>
+      {{formReceta.categoria}}
     </div>
   </div>
 
@@ -122,29 +120,32 @@
     {% for form_data in formsetIngrediente %}
 
     {{form_data.id}}
-    <div id="ingrediente0" class="ingrediente my-3">
+    <div id="ingrediente0" class="ingrediente py-3">
 
       <div class="row">
-        <div class="col-12 d-flex justify-content-end justify-content-md-start">
-          <button type="button" id="bri1" class="btn-remove remove-form-row-ingrediente">-</button>
+        <div class="col-12 d-flex justify-content-end justify-content-lg-start">
+          <button type="button" class="btn-remove remove-form-row-ingrediente">-</button>
         </div>
       </div>
 
+      <!-- NOMBRE INGREDIENTE -->
       <div class="row justify-content-between d-flex align-items-end ml-md-1 mr-md-1">
         <div class="col-12 col-md-4 col-lg-3">
           <div class="form-group form-input">
             {{form_data.ingrediente}}
-            <label for="ingrediente" class="form-label">Ingrediente</label>
+            <label for="{{form_data.ingrediente.auto_id}}" class="form-label">{{form_data.ingrediente.label}}</label>
           </div>
         </div>
 
+        <!-- CANTIDAD -->
         <div class="col-12 col-md-4 col-lg-3">
           <div class="form-group form-input">
             {{form_data.cantidad}}
-            <label for="cantidad" class="form-label">Cantidad</label>
+            <label for="{{form_data.cantidad.auto_id}}" class="form-label">{{form_data.cantidad.label}}</label>
           </div>
         </div>
 
+        <!-- UNIDAD DE MEDIDA -->
         <div class="col-12 col-md-4 col-lg-3">
           {{form_data.unidad_medida}}
         </div>
@@ -173,45 +174,54 @@
 
     {% for form_data in formsetPaso %}
     {{form_data.id}}
-    <div id="paso0" class="paso my-3 p-1 border">
-      <div class="row d-flex justify-content-start d-flex align-items-stretch">
-
-        <div class="col-1">
+    <div id="paso0" class="paso py-3">
+      <div class="row">
+        <div class="col-12 d-flex justify-content-end justify-content-lg-start">
           <button type="button" class="btn-remove remove-form-row-paso">-</button>
         </div>
+      </div>
+      
+      <div class="row d-flex justify-content-start d-flex align-items-stretch">
 
         <div class="col-1">
           <span class="badge badge-pill badge-dark numPaso">1</span>
         </div>
 
-        <div class="col-12 col-md-9 ml-1 my-1">
+        <div class="col-10 col-md-7 my-1">
           <div class="form-group form-input">
             {{form_data.texto}}
-            <label for="descripcion" class="form-label">Descripción...</label>
+            <label for="{{form_data.texto.auto_id}}" class="form-label">{{form_data.texto.label}}</label>
           </div>
         </div>
 
-        <div class="col-12 align-self-center text-center">
+        <div class="col-md-4 col-12 align-self-center text-center">
 
-          <label for="imagen_paso" class="subir-foto">
-            <i class="fa fa-cloud-upload"></i> Subir imagen
+          <label for="{{form_data.imagen_paso.auto_id}}" class="subir-foto">
+            <i class="fa fa-cloud-upload"></i> {{form_data.imagen_paso.label}}
           </label>
           {{form_data.imagen_paso}}
-          <img src="#" id="" alt="" class="img-fluid">
+          
         </div>
 
       </div>
+      <div class="row justify-content-center my-2 mx-2">
+        <img src="#" id="" alt="" class="img-fluid img-paso">
+      </div>
+      
     </div>
+
+    
 
     {% endfor %}
   </div>
 
   <!-- BOTÓN AÑADIR PASO-->
-  <div class="row d-flex justify-content-center">
+  <div class="row d-flex justify-content-center my-3">
     <div class="col-">
       <button type="button" id="buttonAddPaso" class="btn-sin-borde">+ Añadir paso</button>
     </div>
   </div>
+
 
 
   <!-- FINAL BOTONES -->
@@ -253,7 +263,8 @@
   });
 
   $('.paso input[type=file]').change(function() {
-    readURL(this, $(this).next());
+    var img = $(this).parents('.paso').find('img');
+    readURL(this, img);
   });
 </script>
 {% endblock %}

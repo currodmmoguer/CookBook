@@ -1,15 +1,61 @@
 @media(max-width: 768px){
 
-  img{
+  .container img{
     margin-top: 0.5rem;
   }
+
 }
+
 
 @media(max-width: 576px){
   .valoracion{
     display: none;
   }
+
+  
+
 }
+
+@media (max-width: 991.9px) {
+  .fila-orden {
+    margin-top: .5rem !important;
+  }
+}
+
+/* MENÚ ORDEN */
+.fila-orden {
+  line-height: 30px;
+}
+
+.sort {
+  border: 1px solid #ccc;
+  margin-left: 10px;
+  color: #666;
+  display: inline-block;
+  line-height: 30px;
+}
+
+.sort .sort-item {
+  padding: 0 8px;
+  text-align: center;
+  background-color: transparent;
+  border: none;
+  border-right: 1px solid #e8e8e8;
+}
+
+.sort .sort-item:hover {
+  color: #b80d57;
+}
+
+.sort .sort-item:last-child { /* Quita al último el borde derecho */
+  border-right: none;
+}
+
+.active {
+  color: #b80d57;
+  font-weight: 600;
+}
+
 
 .valoracion{
   position:absolute;

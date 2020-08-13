@@ -26,8 +26,6 @@ function cloneMore(selector, prefix) {
   total++;
   $("#id_" + prefix + "-TOTAL_FORMS").val(total);
 
-  //Se quita para que no salga el cuadrado rojo del validator
-  newElement.find("input").removeAttr("required");
 
   // Añade el campo de texto detrás del último
   $(selector).after(newElement);
@@ -42,7 +40,6 @@ function cloneMore(selector, prefix) {
     .html("-");
 
   newElement.find("input").focus();
-  newElement.find("input").attr("required", "true");
 
 }
 

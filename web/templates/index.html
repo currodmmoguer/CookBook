@@ -10,10 +10,33 @@
   <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 </head>
 
+<div class="row mx-md-5 mx-1 justify-content-end fila-orden">
+  
+    Ordenar por:
+    <form method="POST" class="sort">
+      {% csrf_token %}
+      <button type="submit" class="sort-item" id="new" name="new" data-toggle="tooltip" title="Últimas recetas">Nuevos</button>
+      <button type="submit" class="sort-item" id="follow" name="follow" data-toggle="tooltip" title="Últimas recetas de los usuarios a los que sigues">Seguidos</button>
+      <button type="submit" class="sort-item" id="rating" name="rating" data-toggle="tooltip" title="Recetas mejor valoradas">Valoración</button>
+    </form>
+  
+</div>
+
   <!-- Receta lista -->
   {% include 'partes/lista-recetas.html' %}
 
+<script>
+  var opc = "{{opc}}"
+  $('.sort').find('.active').removeClass('active');
 
+  if (opc == "" || opc == "new") {
+    $('#new').addClass('active');
+  } else if (opc == "follow") {
+    $('#follow').addClass('active');
+  } else if (opc == "rating") {
+    $('#rating').addClass('active');
+  }
+</script>
   
 
 {% endblock %}

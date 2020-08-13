@@ -23,6 +23,7 @@ from django.forms import modelformset_factory, formset_factory
 from django.db.models import Q
 
 from django.http import HttpResponse
+from django.urls import reverse
 
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -37,26 +38,61 @@ def index(request):
         logout(request)
         return redirect('login')
 
-    recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
+    for notificacion in notificaciones:
+        pass
+   
+    if request.method == "POST":
+        if "new" in request.POST:
+            recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+            opc = "new"
+        
+        elif "follow" in request.POST:
+            siguiendo = Perfil.objects.filter(seguidores=request.user.perfil)
+            recetas = Receta.objects.filter(publico=True).filter(usuario__perfil__in=siguiendo).order_by('-fecha')
+            opc = "follow"
+        
+        elif "rating" in request.POST:
+            lista_recetas = []
+            recetas = Receta.objects.filter(publico=True)
+            
+            for receta in recetas:
+                receta.valoracion_media = utils.valoracion_media(receta)
+                lista_recetas.append(receta)
+            
+            lista_recetas.sort(key=lambda x: x.valoracion_media, reverse=True)
+            recetas = lista_recetas
+            opc = "rating"
+        
+    else:
+        recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+        opc = ""
+        
     
-    for receta in recetas:  # Añade la valoración media a cada receta
-        receta.valoracion_media = utils.valoracion_media(receta)
-
+    if not opc == "rating": # Si la lista es por valoración, ya ha realizado esto
+        for receta in recetas:  # Añade la valoración media a cada receta
+            receta.valoracion_media = utils.valoracion_media(receta)
+    
     #Paginación
     obj_pagina = utils.paginator(request, recetas)
 
+    
     context = {
         'recetas': obj_pagina,
+        'opc': opc,
+        'notificaciones': notificaciones,
         'mensaje_vacio': "No hay recetas"
     }
     
     return render(request, 'index.html', context)
 
 
+
 # Vista de una receta creada
 @login_required
 def receta(request, pk):
     receta = get_object_or_404(Receta, pk=pk)  # Obtiene la receta
+    
         
     # Formulario respuesta a un comentario
     if request.method == 'POST' and 'comentario-respuesta' in request.POST:
@@ -68,7 +104,8 @@ def receta(request, pk):
                 pk=int(request.POST['comentario-respuesta']))
             Comentario.objects.create(
                 texto=texto, receta=receta, usuario=request.user, comentario_respuesta=padre)
-            
+            utils.add_notificacion(request.user, receta.usuario, "respuesta", receta)
+
 
     # Formulario escribir comentario
     if request.method == "POST" and 'comentario' in request.POST:  # En caso de que escriba un comentario
@@ -79,6 +116,8 @@ def receta(request, pk):
             comentario.usuario = request.user  # Añade el usuario
             comentario.receta = Receta.objects.get(pk=pk)  # Le añade la receta
             comentario.save()
+            
+            utils.add_notificacion(request.user, receta.usuario, "comentario", receta)
 
     comentarioFrom = ComentarioForm()
     valoracionForm = ValoracionForm()
@@ -89,13 +128,15 @@ def receta(request, pk):
     
     context = {'receta': receta, 'valoracionForm': valoracionForm,
                'comentarioForm': comentarioFrom, 'respuestaForm': respuestaForm}
-
+    for i in receta.ingredientes.all():
+        print(i.__dict__)
     return render(request, 'receta.html', context)
 
 
 @login_required
 def nueva_receta(request):
 
+    formSugerencia = SugForm()
     formsetPasoFactory = modelformset_factory(Paso, form=PasoFormset, extra=1)
     formsetIngredienteFactory = modelformset_factory(Ingrediente_Receta, form=IngredienteFormset, extra=1)
 
@@ -158,13 +199,16 @@ def nueva_receta(request):
             # se envía el formulario en caso de que no se introduzca los datos
             # o tiene máximo de caracteres, que no se permite introducir más
             # en el campo de texto
-            pass
+            print("No Valido")
+            print(formReceta.errors)
+            print(formset_ingrediente.errors)
+            print(formset_paso.errors)
 
     else:   # Si no es POST, crea los formularios vacíos
         formReceta = RecetaForm()
         formset_paso = formsetPasoFactory(queryset=Paso.objects.none(), prefix='paso')
         formset_ingrediente = formsetIngredienteFactory(queryset=Ingrediente.objects.none(), prefix='ingrediente')
-        formSugerencia = SugForm()
+        
 
     context = {
         'formReceta': formReceta,
@@ -181,6 +225,7 @@ def nueva_receta(request):
 @login_required
 def editar_receta(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
+    formSugerencia = SugForm()
     
     formsetPasoFactory = modelformset_factory(Paso, form=PasoFormset, extra=0)
     formsetIngredienteFactory = modelformset_factory(Ingrediente_Receta, form=IngredienteEditFormset, extra=0)
@@ -242,13 +287,15 @@ def editar_receta(request, pk):
             # se envía el formulario en caso de que no se introduzca los datos
             # o tiene máximo de caracteres, que no se permite introducir más
             # en el campo de texto
-            pass
+            print(formReceta.errors)
+            print(formset_ingrediente.errors)
+            print(formset_paso.errors)
 
     else:   # Si no es POST
         formReceta = RecetaForm(instance=receta)
         formset_paso = formsetPasoFactory(queryset=Paso.objects.filter(receta=receta).order_by('posicion'), prefix='paso')
         formset_ingrediente = formsetIngredienteFactory(queryset=Ingrediente_Receta.objects.filter(receta=receta), prefix='ingrediente')
-        formSugerencia = SugForm()
+        
 
         # Cambia que donde se almacena el id del ingrediente, por el nombre de dicho
         # para que en el formulario se muestre el nombre del insgrediente en vez del id
@@ -428,9 +475,7 @@ def editar_pass(request, username):
             return redirect('editar_pass', username=username)
 
     else:
-        form = PasswordChangeForm(request.user)
-        print("-"*10)
-        print(form)     
+        form = PasswordChangeForm(request.user) 
 
     context = {
         'form': form
@@ -615,7 +660,7 @@ def publicar(request, pk):
     if request.user == receta.usuario:  # Comprueba que la receta pertenezca al usuario logueado
         receta.publicar()
         return redirect('receta', pk=pk)
-
+    
 
 # Guarda una receta que se pasa por parametro y se guarda en el usuario conectado
 @login_required
@@ -646,6 +691,7 @@ def valorar(request):
         if not Valoracion.objects.filter(receta=receta).filter(usuario=request.user).exists():
             Valoracion.objects.create(valoracion=valoracion, receta=receta, usuario=request.user)
             receta.valoracion_media = utils.valoracion_media(receta)
+            utils.add_notificacion(request.user, receta.usuario, "valoracion", receta.pk)
             return HttpResponse(receta.valoracion_media)
         else:
             return HttpResponse('existe')
@@ -664,6 +710,7 @@ def valorar_seguro(request):
         valoracion.valoracion = puntos
         valoracion.save()
         receta.valoracion_media = utils.valoracion_media(receta)
+        utils.add_notificacion(request.user, receta.usuario, "valoracion", receta.pk)
         
         return HttpResponse(receta.valoracion_media)
     
@@ -687,11 +734,23 @@ def sugerencia(request):
     return HttpResponse("unsuccessful")
 
 @login_required
+def vaciar_notificaciones(request):
+
+    if request.method == "GET":
+
+        notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
+        for notificacion in notificaciones:
+            notificacion.visto = True
+            notificacion.save()
+        return HttpResponse()
+
+@login_required
 def seguir(request, pk):
     usuario = get_object_or_404(User, pk=pk)
 
     if not request.user == usuario:
         usuario.perfil.add_seguidor(request.user.perfil)
+        utils.add_notificacion(request.user, usuario, "siguiendo")
         return redirect('perfil', username=usuario.username)
 
 

@@ -43,13 +43,20 @@ class Perfil(admin.ModelAdmin):
         extra_context = extra_context or {"chart_data": as_json}
         return super().changelist_view(request, extra_context=extra_context)
 
+        
+
 @admin.register(Sugerencia)
 class Sugerencia(admin.ModelAdmin):
     list_display = ('sugerencia', 'tipo', 'cantidad',)  # Indica los datos que se muestran en la lista
     list_filter = ('tipo', )    # Permite filtrar por dicho campo la lista
     ordering = ('-cantidad',)
 
+@admin.register(Notificacion)
+class Notificacion(admin.ModelAdmin):
+    list_display = ('usuario_origen', 'usuario_destino', 'tipo', 'visto', )
+
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
+
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)

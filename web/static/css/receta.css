@@ -4,16 +4,32 @@
     padding-right: 3rem !important;
   }
 }
-h2 {
-  margin-left: 15px !important;
+
+@media(min-width: 992px){
+  .img-receta{
+    height: 500px;
+  }
 }
 
-.btn, .btn:hover {
-  color: #b80d57;
+@media(max-width: 992px){
+  #pasos img{
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+#pasos img {
+  width: 35%;
+  margin-left: 10%;
+  cursor: pointer;
 }
 
 .dropdown-menu {
   padding-left: 1rem;
+}
+
+.dropdown .btn {
+  color: #b80d57;
 }
 
 .btn-valorar {
@@ -70,4 +86,17 @@ h2 {
     background-color: transparent;
     color: grey;
     
+}
+
+
+/* Modal imagen previa */
+
+#modal-img-preview .modal-dialog {
+  max-width: none;
+  width: 65%;
+}
+#modal-img-preview .modal-content {
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
 }

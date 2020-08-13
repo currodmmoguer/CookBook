@@ -43,6 +43,8 @@
   <!-- IMG AVATAR -->
   <div class="row ">
 
+    
+
     <div class="col-md-5 col-sm-4 col-12 avatar">
       <img id="img-perfil" src="../../media/{{user.perfil.imagen_perfil}}" class="img-fluid rounded-circle"
         style="width: 30%">
@@ -50,8 +52,8 @@
 
     <div class="col-md-4 col-sm-6 col-7 align-self-center">
       <div class="custom-file">
-        <input type="file" class="custom-file-input" name="imagen_perfil" id="id_input_avatar" accept="image/*">
-        <label class="custom-file-label" for="id_input_avatar">Elegir imagen...</label>
+        {{form.imagen_perfil}}
+        <label class="custom-file-label" for="{{form.imagen_perfil.auto_id}}">{{form.imagen_perfil.label}}</label>
       </div>
     </div>
 
@@ -66,7 +68,7 @@
   <!-- NOMBRE -->
   <div class="row my-1">
     <div class="col-12 col-md-5 label text-right">
-      Nombre
+      {{form.nombre.label}}
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
@@ -78,7 +80,7 @@
   <!-- APPELIDO -->
   <div class="row">
     <div class="col-12 col-md-5 label text-right">
-      Apellido
+      {{form.apellido.label}}
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
@@ -90,7 +92,7 @@
   <!-- DESCRIPCION -->
   <div class="row">
     <div class="col-12 col-md-5 label text-right">
-      Descripción
+      {{form.descripcion.label}}
     </div>
     <div class="col-12 col-md-4 ml-md-2">
       <div class="form-group">
@@ -126,7 +128,7 @@
 
 
 <script type="text/javascript">
-  $('#id_input_avatar').change(function() {
+  $('#{{form.imagen_perfil.auto_id}}').change(function() {
     readURL(this, $('#img-perfil'));
   });
 </script>

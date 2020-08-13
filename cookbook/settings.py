@@ -28,7 +28,8 @@ SECRET_KEY = '8ev@_@gy3m&d3(p6cjb!#jig!*rf187qu_p!h)!c7v%b_t^6tg'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-	'localhost', 
+	'192.168.0.196', 
+    'localhost',
     
 ]
 
@@ -108,6 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 
 
 # Internationalization

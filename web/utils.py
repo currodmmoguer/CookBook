@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Valoracion, Avg
+from .models import Valoracion, Notificacion, Avg
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
@@ -17,16 +17,25 @@ def has_profile(request):
     try:
         request.user.perfil
     except ObjectDoesNotExist:
-        print("No existe")
         #Falta mostrar mensaje
-        print(request.user.pk)
         sessions = Session.objects.all()
-        for session in sessions:
-            print(session)
-        
-        print(request.session.__dict__)
         logout(request)
         return redirect('login')
 
 def valoracion_media(receta):
-    return Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']
+    media = Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']
+    
+    if media is None:
+        return 0
+    else:
+        return media
+    
+def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0):
+
+    if not usuario_origen == usuario_destino:
+        notificacion = Notificacion.objects.create(usuario_origen=usuario_origen, usuario_destino=usuario_destino, tipo=tipo)
+        
+        # En caso que sea comentario o valoracion se debe almacenar a la receta que hace referencia
+        if not tipo == "siguiendo":
+            notificacion.caso = receta.pk
+            notificacion.save()

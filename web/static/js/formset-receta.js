@@ -23,6 +23,16 @@ function updateElementIndexPaso() {
     $(this).find('label.subir-foto').attr('for', 'id_' + name + 'imagen_paso');
     $(this).find('img').attr('id', 'vista_previa_imagen_paso_' + pos);
     $(this).attr('id', 'paso' + pos);
+    
+    if (pos % 2 == 0){
+
+      $(this).css('background-color', '#fff');
+    } else {
+      $(this).css('background-color', '#f0f0f0');
+    }
+
+    
+    
   });
 
 }
@@ -52,9 +62,11 @@ function cloneMorePaso(selector, prefix) {
   // Añade la nueva fila detrás del último
   $(selector).after(newElement);
   newElement.find("textarea").focus();
-  newElement.find("textarea").attr("required", "true");
+  newElement.find('textarea').attr("required", "");
   
   updateElementIndexPaso();
+  
+  return newElement;
 }
 
 /**
@@ -64,7 +76,7 @@ function cloneMorePaso(selector, prefix) {
  * @param {objeto} btn Botón eliminar
  */
 function deleteFormPaso(prefix, btn) {
-  var total = $('#id_' + prefix + '-TOTAL_FORMS').val();
+  var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
   if (total > 1) {
     btn.parents('.paso').remove();
@@ -115,6 +127,12 @@ function updateElementIndexIngrediente() {
       }
 
     });
+
+    if (pos % 2 == 0){
+      $(this).css('background-color', '#fff');
+    } else {
+      $(this).css('background-color', '#f0f0f0');
+    }
   });
 }
 
@@ -131,6 +149,7 @@ function cloneMoreIngrediente(selector, prefix) {
   newElement.find('input, select').each(function () {
     $(this).val('');
     $(this).removeAttr("required");
+    
   });
 
 
@@ -139,8 +158,10 @@ function cloneMoreIngrediente(selector, prefix) {
   
   // Añade la nueva fila al final
   $(selector).after(newElement);
+  newElement.find("input[id$='ingrediente']").focus();
   newElement.find("input, select").attr("required", "true");
   updateElementIndexIngrediente();
+  
 }
 
 /**
@@ -153,9 +174,11 @@ function deleteForm(prefix, btn) {
 
   var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
+
   if (total > 1) {
     btn.parents('.ingrediente').remove();
-    $('#id_' + prefix + '-TOTAL_FORMS').val(total);
+    console.log($('.ingrediente').length);
+    $('#id_' + prefix + '-TOTAL_FORMS').val($('.ingrediente').length);
     updateElementIndexIngrediente();
   }
 }

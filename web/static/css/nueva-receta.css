@@ -1,14 +1,26 @@
-@media (max-width: 575.9px) {
+@media (max-width: 991.9px){
+  h2 {
+    text-align: center;
+  }
+
   .btn-sugerencia {
     top: 80px !important;
     right: 1rem !important;
     position: absolute !important;
   }
 
-  h2 {
-    text-align: center;
+  .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    max-width: 100% !important;
+  }
+
+  div .row {
+    padding-left: 15px !important;
+    padding-right: 15px !important;
   }
 }
+
 
 input[type="file"] {
   width: 0.1px;
@@ -19,9 +31,27 @@ input[type="file"] {
   z-index: -1;
 }
 
+#previa_imagen_terminada[src="#"]{
+  height: 0px;
+}
+
+#previa_imagen_terminada {
+  max-height: 500px;
+}
+
+.img-paso[src="#"]{
+  height: 0px;
+}
+
+.img-paso {
+  height: 300px;
+}
+
+
 .btn-remove {
-  width: auto;
-  background: #fff;
+  width: 25px;
+  height: 25px;
+  background: transparent;
   font-weight: bold;
   color: #b51f59;
   border: 1px solid #b51f59;
