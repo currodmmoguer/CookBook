@@ -68,9 +68,16 @@ function readURL(input, img) {
       var reader = new FileReader();
       
       reader.onload = function (e) {
-        img.attr('src', e.target.result);
+        if (typeof e.target.result !== "undefined"){
+            img.attr('src', '#');
+        } else {
+            img.attr('src', e.target.result);
+        }
+        
       }
   
       reader.readAsDataURL(input.files[0])
     }
+
+    
   }

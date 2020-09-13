@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nueva contraseña</title>
+</head>
+<body>
+
+    
+    {% if validlink %}
+    <h1>Nueva contraseña</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{form.new_password1.errors}}
+
+        <label for="">Nueva contrasña:</label>
+        {{form.new_password1}}
+
+        {{form.new_password2.errors}}
+
+        <label for="">Cpnfirme contrasña:</label>
+        {{form.new_password2}}
+
+        <input type="submit" value="Cambiar">
+    </form>
+        
+    {% else %}
+
+    <h1>ENCALE INVALIDO</h1>
+        
+    {% endif %}
+        
+    
+</body>
+</html>

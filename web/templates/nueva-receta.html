@@ -44,7 +44,8 @@
         <div class="form-group">
           <div class="form-group form-input">
             {{formSugerencia.sugerencia}}
-            <label for="{{formSugerencia.sugerencia.auto_id}}" class="form-label">{{formSugerencia.sugerencia.label}}</label>
+            <label for="{{formSugerencia.sugerencia.auto_id}}"
+              class="form-label">{{formSugerencia.sugerencia.label}}</label>
           </div>
         </div>
 
@@ -82,7 +83,8 @@
     <div class="col-md-4 col-12 ml-md-1">
       <div class="form-group form-input">
         {{formReceta.tiempo_estimado}}
-        <label for="{{formReceta.tiempo_estimado.auto_id}}" class="form-label">{{formReceta.tiempo_estimado.label}}</label>
+        <label for="{{formReceta.tiempo_estimado.auto_id}}"
+          class="form-label">{{formReceta.tiempo_estimado.label}}</label>
       </div>
     </div>
 
@@ -95,7 +97,7 @@
         <i class="fa fa-cloud-upload"></i> {{formReceta.imagen_terminada.label}}
       </label>
       {{formReceta.imagen_terminada}}
-      
+
     </div>
   </div>
   <div class="row my-3">
@@ -123,33 +125,48 @@
     <div id="ingrediente0" class="ingrediente py-3">
 
       <div class="row">
-        <div class="col-12 d-flex justify-content-end justify-content-lg-start">
+        <div class="col-12 d-flex justify-content-end justify-content-md-start">
           <button type="button" class="btn-remove remove-form-row-ingrediente">-</button>
         </div>
       </div>
 
-      <!-- NOMBRE INGREDIENTE -->
-      <div class="row justify-content-between d-flex align-items-end ml-md-1 mr-md-1">
-        <div class="col-12 col-md-4 col-lg-3">
-          <div class="form-group form-input">
-            {{form_data.ingrediente}}
-            <label for="{{form_data.ingrediente.auto_id}}" class="form-label">{{form_data.ingrediente.label}}</label>
+
+      <div class="row justify-content-between d-flex align-items-center">
+        <!-- FLECHAS MOVER -->
+        <div class="col-1">
+          <div class="moveup row justify-content-center mb-1" data-parent="ingrediente"><i
+              class="fas fa-chevron-up"></i></div>
+          <div class="movedown row justify-content-center mt-1" data-parent="ingrediente"><i
+              class="fas fa-chevron-down"></i></div>
+        </div>
+
+        <!-- FORMULARIO -->
+        <div class="col-11">
+          <div class="row">
+            <!-- NOMBRE INGREDIENTE -->
+            <div class="col-12 col-md-4">
+              <div class="form-group form-input">
+                {{form_data.ingrediente}}
+                <label for="{{form_data.ingrediente.auto_id}}"
+                  class="form-label">{{form_data.ingrediente.label}}</label>
+              </div>
+            </div>
+
+            <!-- CANTIDAD -->
+            <div class="col-12 col-md-4">
+              <div class="form-group form-input">
+                {{form_data.cantidad}}
+                <label for="{{form_data.cantidad.auto_id}}" class="form-label">{{form_data.cantidad.label}}</label>
+              </div>
+            </div>
+
+            <!-- UNIDAD DE MEDIDA -->
+            <div class="col-12 col-md-4">
+              {{form_data.unidad_medida}}
+            </div>
+
           </div>
         </div>
-
-        <!-- CANTIDAD -->
-        <div class="col-12 col-md-4 col-lg-3">
-          <div class="form-group form-input">
-            {{form_data.cantidad}}
-            <label for="{{form_data.cantidad.auto_id}}" class="form-label">{{form_data.cantidad.label}}</label>
-          </div>
-        </div>
-
-        <!-- UNIDAD DE MEDIDA -->
-        <div class="col-12 col-md-4 col-lg-3">
-          {{form_data.unidad_medida}}
-        </div>
-
       </div>
     </div>
     {% endfor %}
@@ -176,15 +193,22 @@
     {{form_data.id}}
     <div id="paso0" class="paso py-3">
       <div class="row">
-        <div class="col-12 d-flex justify-content-end justify-content-lg-start">
+        <div class="col-12 d-flex justify-content-end">
           <button type="button" class="btn-remove remove-form-row-paso">-</button>
         </div>
       </div>
-      
+
       <div class="row d-flex justify-content-start d-flex align-items-stretch">
 
-        <div class="col-1">
-          <span class="badge badge-pill badge-dark numPaso">1</span>
+        <div class="col-1 align-items-center" style="display: flex;">
+          <div>
+            <div class="row mt-1 justify-content-center"><span class="badge badge-pill badge-dark numPaso">1</span>
+            </div>
+            <div class="moveup row mt-3 justify-content-center mb-1" data-parent="paso"><i
+                class="fas fa-chevron-up"></i></div>
+            <div class="movedown row justify-content-center mt-1" data-parent="paso"><i class="fas fa-chevron-down"></i>
+            </div>
+          </div>
         </div>
 
         <div class="col-10 col-md-7 my-1">
@@ -200,17 +224,17 @@
             <i class="fa fa-cloud-upload"></i> {{form_data.imagen_paso.label}}
           </label>
           {{form_data.imagen_paso}}
-          
+
         </div>
 
       </div>
       <div class="row justify-content-center my-2 mx-2">
         <img src="#" id="" alt="" class="img-fluid img-paso">
       </div>
-      
+
     </div>
 
-    
+
 
     {% endfor %}
   </div>
@@ -218,7 +242,8 @@
   <!-- BOTÓN AÑADIR PASO-->
   <div class="row d-flex justify-content-center my-3">
     <div class="col-">
-      <button type="button" id="buttonAddPaso" class="btn-sin-borde">+ Añadir paso</button>
+      <button type="button" id="buttonAddPaso" class="btn-sin-borde" onclick="cloneMorePaso('.paso:last', 'paso')">+
+        Añadir paso</button>
     </div>
   </div>
 
@@ -241,16 +266,18 @@
 
 </form>
 
+
 <script src="{% static 'js/formset-receta.js' %}"></script>
 <script src="{% static 'js/formulario.js' %}"></script>
 <script src="{% static 'js/ajax.js' %}"></script>
 
+
 <script>
 
   // Hace que el campo cantidad en ingrediente no se pueda introducir letras
-  $("input[id$='-cantidad'").keypress(function(event){
-    if((event.which > 47 && event.which < 58) || (event.which == 46 || event.which == 8)) {
-    	 // your condition
+  $("input[id$='-cantidad'").keypress(function (event) {
+    if ((event.which > 47 && event.which < 58) || (event.which == 46 || event.which == 8)) {
+      // your condition
     } else {
       event.preventDefault();
     }
@@ -258,13 +285,82 @@
     event.preventDefault();
   })
 
-  $('#id_imagen_terminada').change(function() {
+
+  //Muestra la imagen de la receta
+  $('#id_imagen_terminada').change(function () {
     readURL(this, $('#previa_imagen_terminada'));
   });
 
-  $('.paso input[type=file]').change(function() {
+  //Muestra la imagen de los pasos
+  $('.paso input[type=file]').change(function () {
     var img = $(this).parents('.paso').find('img');
     readURL(this, img);
   });
+
+  $('.moveup, .movedown').click(function (e) {
+
+    var opcion = e.currentTarget.classList[0];
+    var padre = e.currentTarget.dataset.parent;
+    var objeto = $(this).parents('.' + padre);
+    var totalInputs = $('#id_' + padre + '-TOTAL_FORMS').val();
+
+
+    if (totalInputs > 1) { // Comprueba que no haya solo un dato
+
+      //1 obtener posicion
+
+      if (opcion === "moveup") {
+        //Comprobar si es el primero
+        var primero = $(this).parents('.' + padre).parent().children("." + padre).first();
+        if (objeto.html() === primero.html()) {
+          console.log("Es el primero y no se puede subir");
+        } else {
+          //var anterior = objeto.prev();
+          objeto.insertBefore(objeto.prev());
+        }
+
+      } else if (opcion === "movedown") {
+        //Comprobar si es el último
+        var ultimo = $(this).parents('.' + padre).parent().children("." + padre).last();
+        if (objeto.html() === ultimo.html()) {
+          console.log("Es el último y no se puede bajar");
+        } else {
+          //var siguiente = objeto.next();
+          objeto.insertAfter(objeto.next());
+        }
+      }
+
+      updateElementIndexPaso();
+      updateElementIndexIngrediente();
+    }
+
+
+  });
+
+  /*
+    // Permite modificar el orden de los ingredientes y pasos
+    $('#totalPasos, #totalIngredientes').sortable({
+      revert: true,
+      stop: function (e, ui) { //Cuando lo mueve, reordena los campos
+        if (this.id === "totalIngredientes") {
+          updateElementIndexIngrediente();
+        } else if (this.id === "totalPasos") {
+          updateElementIndexPaso();
+        }
+      }
+    });
+  
+    $("#totalPasos, #totalIngredientes").disableSelection();
+  
+    */
+
+
+
+  $(document).on('click', '.remove-form-row-paso', function (e) {
+    deleteFormPaso('paso', $(this));
+  });
+
+
+
 </script>
 {% endblock %}

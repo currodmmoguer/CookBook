@@ -32,7 +32,6 @@ function updateElementIndexPaso() {
     }
 
     
-    
   });
 
 }
@@ -52,7 +51,7 @@ function cloneMorePaso(selector, prefix) {
   });
 
   // Vacía la imagen de vista previa
-  newElement.find('img').attr('src', '');
+  newElement.find('img').attr('src', '#');
 
   total++;
   $('#id_' + prefix + '-TOTAL_FORMS').val(total);
@@ -64,8 +63,9 @@ function cloneMorePaso(selector, prefix) {
   newElement.find("textarea").focus();
   newElement.find('textarea').attr("required", "");
   
+
   updateElementIndexPaso();
-  
+  console.log(newElement);
   return newElement;
 }
 
@@ -86,16 +86,20 @@ function deleteFormPaso(prefix, btn) {
 
 }
 
-
+/**
 $(document).on('click', '#buttonAddPaso', function (e) {
-  e.preventDefault();
+  alert("Aqui si");
+  //e.preventDefault();
   cloneMorePaso('.paso:last', 'paso');
+  
 });
+
 
 $(document).on('click', '.remove-form-row-paso', function (e) {
   e.preventDefault();
   deleteFormPaso('paso', $(this));
 });
+*/
 
 
 // SCRIPT INGREDIENTES
@@ -124,6 +128,7 @@ function updateElementIndexIngrediente() {
       } else if ($(this).attr('id').endsWith('unidad_medida')) { //Campo unidad de medida
         $(this).attr('id', 'id_' + name + 'unidad_medida').attr('name', name + 'unidad_medida');
         $(this).next().attr('for', 'id_' + name + 'unidad_medida');
+        console.log(this);
       }
 
     });
