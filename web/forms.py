@@ -42,7 +42,7 @@ class EditarPerfilForm(forms.Form):
     nombre = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': "form-control"}))
     apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
     descripcion = forms.CharField(max_length=255, label="Descripción", required=False, widget=forms.Textarea(attrs={'rows':3, 'class': "form-control"}))
-    
+    email = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': "form-control"}))
 
 class PasswordChangeForm(PasswordChangeForm):
     

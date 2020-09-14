@@ -312,6 +312,8 @@ def editar_receta(request, pk):
         'formSugerencia': formSugerencia,
     }
 
+    print(formReceta.instance.pk)
+
     return render(request, 'nueva-receta.html', context)
 
 
@@ -444,6 +446,7 @@ def editar_perfil(request, username):
             request.user.first_name = cd['nombre']
             request.user.last_name = cd['apellido']
             request.user.perfil.descripcion = cd['descripcion']
+            request.user.email = cd['email']
             request.user.perfil.set_imagen(cd['imagen_perfil'])
             request.user.save()
             request.user.perfil.save()
@@ -456,6 +459,7 @@ def editar_perfil(request, username):
                 'nombre': request.user.first_name,
                 'apellido': request.user.last_name,
                 'descripcion': request.user.perfil.descripcion,
+                'email': request.user.email,
             })
 
     return render(request, 'editar_perfil.html', {'form': form})

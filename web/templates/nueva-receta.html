@@ -259,9 +259,18 @@
       <button type="submit" class="btn-sin-borde" name="publico">Publicar</button>
     </div>
 
-    <div class="col-4 col-md-3 text-center">
-      <button type="reset" class="btn-sin-borde">Cancelar</button>
-    </div>
+    {% if formReceta.instance.pk is None %}
+      <div class="col-4 col-md-3 text-center">
+        <a href="{% url 'perfil' username=user.username %}"><button type="button"
+            class="btn-sin-borde">Cancelar</button></a>
+      </div>
+    {% else %}
+      <div class="col-4 col-md-3 text-center">
+        <a href="{% url 'receta' pk=formReceta.instance.pk %}"><button class="btn-sin-borde">Cancelar</button></a>
+      </div>
+    {% endif %}
+
+
   </div>
 
 </form>
@@ -277,11 +286,11 @@
   // Hace que el campo cantidad en ingrediente no se pueda introducir letras
   $("input[id$='-cantidad'").keypress(function (event) {
     if ((event.which > 47 && event.which < 58) || (event.which == 46 || event.which == 8)) {
-      // your condition
+      // Los núneros son en el código ascii del 47 al 58, el 46 es el punto y 8 borrar
     } else {
       event.preventDefault();
     }
-  }).on('paste', function (event) {
+  }).on('paste', function (event) { // No permite pegar en el campo
     event.preventDefault();
   })
 
@@ -299,60 +308,38 @@
 
   $('.moveup, .movedown').click(function (e) {
 
-    var opcion = e.currentTarget.classList[0];
+    // "padre" obtiene un string "ingrediente" o "pasos" según sea
     var padre = e.currentTarget.dataset.parent;
-    var objeto = $(this).parents('.' + padre);
+    // Obtiene el total de pasos o ingredientes de la receta
     var totalInputs = $('#id_' + padre + '-TOTAL_FORMS').val();
 
-
     if (totalInputs > 1) { // Comprueba que no haya solo un dato
+      var opcionMovimiento = e.currentTarget.classList[0];
+      var objeto = $(this).parents('.' + padre);
 
-      //1 obtener posicion
-
-      if (opcion === "moveup") {
+      if (opcionMovimiento === "moveup") { // En caso de subir
         //Comprobar si es el primero
         var primero = $(this).parents('.' + padre).parent().children("." + padre).first();
-        if (objeto.html() === primero.html()) {
-          console.log("Es el primero y no se puede subir");
-        } else {
-          //var anterior = objeto.prev();
-          objeto.insertBefore(objeto.prev());
+        if (objeto.html() !== primero.html()) {
+          objeto.insertBefore(objeto.prev()); //Inserta el paso/ingrediente encima del anterior
         }
-
-      } else if (opcion === "movedown") {
+      } else if (opcionMovimiento === "movedown") { // En caso de bajar
         //Comprobar si es el último
         var ultimo = $(this).parents('.' + padre).parent().children("." + padre).last();
-        if (objeto.html() === ultimo.html()) {
-          console.log("Es el último y no se puede bajar");
-        } else {
-          //var siguiente = objeto.next();
-          objeto.insertAfter(objeto.next());
+        if (objeto.html() !== ultimo.html()) {
+          objeto.insertAfter(objeto.next());  //Inserta el paso/ingrediente despues del posterior
         }
       }
 
-      updateElementIndexPaso();
-      updateElementIndexIngrediente();
+      // Actualiza la lista de pasos o ingredientes
+      if (padre === "paso")
+        updateElementIndexPaso();
+      else
+        updateElementIndexIngrediente();
     }
 
 
   });
-
-  /*
-    // Permite modificar el orden de los ingredientes y pasos
-    $('#totalPasos, #totalIngredientes').sortable({
-      revert: true,
-      stop: function (e, ui) { //Cuando lo mueve, reordena los campos
-        if (this.id === "totalIngredientes") {
-          updateElementIndexIngrediente();
-        } else if (this.id === "totalPasos") {
-          updateElementIndexPaso();
-        }
-      }
-    });
-  
-    $("#totalPasos, #totalIngredientes").disableSelection();
-  
-    */
 
 
 
