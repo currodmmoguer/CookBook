@@ -10,7 +10,7 @@ $(".btn-guardar").click(function () {
     data: { receta_id: id },
     success: function (data) {
       var clase = btn.children($(".fa-bookmark")).attr("class");
-
+      
       // Cambia la clase el icono de guardar para que esté marcado o desmarcado
       if (clase.includes("far")) {
         btn.children().removeClass("far").addClass("fas");

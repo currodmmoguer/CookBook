@@ -436,8 +436,6 @@ def siguiendo(request, username):
 @login_required
 def editar_perfil(request, username):
 
-    
-    
     if request.method == 'POST':
         form = EditarPerfilForm(request.POST, request.FILES)
         
@@ -447,7 +445,10 @@ def editar_perfil(request, username):
             request.user.last_name = cd['apellido']
             request.user.perfil.descripcion = cd['descripcion']
             request.user.email = cd['email']
-            request.user.perfil.set_imagen(cd['imagen_perfil'])
+
+            if not cd['imagen_perfil'] is None:
+                request.user.perfil.set_imagen(cd['imagen_perfil'])
+
             request.user.save()
             request.user.perfil.save()
         else:
@@ -569,7 +570,18 @@ def resultado_busqueda(request):
 
     return render(request, 'resultado_busqueda.html', context)
 
+# Resultado búsqueda por categoría
+def resultado_busqueda_categoria(request, c):
+    categoria = Categoria.objects.get(pk=c)
+    recetas = Receta.objects.filter(categoria=c).order_by('-fecha')
+    print(recetas.__dict__)
+    context = {
+        'recetas': utils.paginator(request, recetas),
+        'mensaje_titulo': "Resultados de " + categoria.nombre,
+        'mensaje_vacio': 'No se ha encontrado ninguna receta de la categoría ' + categoria.nombre + '',
+    }
 
+    return render(request, 'resultado_busqueda.html', context)
 
 #Pantalla de registro a la aplicacion
 def registro(request):

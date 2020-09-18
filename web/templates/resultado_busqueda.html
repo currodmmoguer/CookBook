@@ -6,13 +6,21 @@
 
 <head>
   <title>Búsqueda</title>
-  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 </head>
       
   <div class="row justify-content-center my-2">
+    
+    {% if recetas|length > 0 %}
     <h2>{{mensaje_titulo}}</h2>
+    {% else %}
+    <h2>{{mensaje_vacio}}</h2>
+    {% endif %}
+      
+    
+    
   </div>
       
-  {% include 'partes/lista-recetas.html' %}
+  {% include 'partes/lista-recetas2.html' %}
 
 {% endblock %}

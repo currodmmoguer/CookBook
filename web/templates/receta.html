@@ -8,7 +8,7 @@
 <head>
   <title>Receta</title>
   <link rel="stylesheet" href="{% static 'css/receta.css' %}">
-  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 </head>
 
 <!-- Modal eliminar-->
@@ -74,6 +74,7 @@
 <!-- HEAD -->
 <div class="row justify-content-between my-4">
 
+  <!-- Título -->
   <div class="col-7 col-md-9 ">
     <h2 class="">
       {{ receta.titulo }}
@@ -93,7 +94,7 @@
 
     <div class="dropdown">
       <button class="btn dropdown-toggle" type="button" id="dropdownAjustes" data-toggle="dropdown" aria-haspopup="true"
-        aria-expanded="false">Ajustes</button>
+        aria-expanded="false"><i class="fas fa-cog" style="font-size:36px"></i></button>
 
       <div class="dropdown-menu" aria-labelledby="dropdownAjustes">
 
@@ -126,7 +127,7 @@
   {% endif %}
 
   <!-- Botón guardar -->
-  <a href="#" id="{{receta.pk}}" class="btn-guardar col-2 col-md-1" data-url="{% url 'guardar' %}">
+  <a href="#" id="{{receta.pk}}" class="btn-guardar btn col-2 col-md-1" data-url="{% url 'guardar' %}">
     {% if  receta|is_save:user %}
     <i class='fas fa-bookmark' style='font-size:36px'></i>
     {% else %}
@@ -146,7 +147,9 @@
 <!-- SUB IMAGE -->
 <div class="row justify-content-between">
   <div class="col-5">
-    {{receta.tiempo_estimado|is_none}}
+    {% if not receta.tiempo_estimado is None %}
+      <i class="far fa-clock"></i> {{receta.tiempo_estimado}}
+    {% endif %}
   </div>
 
   <div class="col-6 text-right">
@@ -162,8 +165,9 @@
     
     <div class="align-self-center ml-3">
       {% if not receta.raciones is None %}
-      Para  <input id="cantidad" type="text" value="{{receta.raciones}}" style="width: 30px;"> raciones
+      Para  <input id="cantidad" type="number" value="{{receta.raciones}}" style="width: 30px; -moz-appearance: textfield; -webkit-appearance: textfield;" autocomplete="off"> raciones
       {% endif %}
+      
     </div>
   </div>
 
@@ -315,33 +319,28 @@
       });
     console.log(cantidadesIngredientes);
 
+
   // Hace que el campo cantidad en ingrediente no se pueda introducir letras
-  $("#cantidad").keydown(function(event){
+  $("#cantidad").keyup(function(event){
+
     
-    
-    var newRaciones = event.originalEvent.key;
-    
-    if(event.which > 47 && event.which < 58) {
-      // Cambiar cantidades
+    if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105  || event.which == 8) {
+      
+      var newRaciones = $('#cantidad').val();
       
       ingredientes.children().each(function(i){
-        
         //var oldCantidad = this.childNodes[1].textContent.replace(',','.');
         // Comprobar si es fracción
         //oldCantidad = Number(oldCantidad);
-        console.log(cantidadesIngredientes[i] + ' x ' + newRaciones + ' / ' + defaultRaciones);
+        //console.log(cantidadesIngredientes[i] + ' x ' + newRaciones + ' / ' + defaultRaciones);
         var newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
-        this.firstElementChild.textContent = newCantidad.toFixed(3);
+        this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
       });
-    } else if (event.which == 8){
-      // Para que permita borrar
     
-    } else {
-      event.preventDefault();
     }
   }).on('paste', function (event) {
     event.preventDefault();
-  })
+  });
 
     $('.form-respuesta').hide();
 
@@ -360,7 +359,7 @@
         
     });
    
-   console.log($(window).width());
+   
   });
 
 </script>

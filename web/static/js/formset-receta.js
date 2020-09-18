@@ -127,8 +127,6 @@ function updateElementIndexIngrediente() {
       
       } else if ($(this).attr('id').endsWith('unidad_medida')) { //Campo unidad de medida
         $(this).attr('id', 'id_' + name + 'unidad_medida').attr('name', name + 'unidad_medida');
-        $(this).next().attr('for', 'id_' + name + 'unidad_medida');
-        console.log(this);
       }
 
     });

@@ -1,43 +1,99 @@
 {% load filters %}
+{% load static %}
+
 <div class="row">
-    <!-- IMG -->
-    <div class="col-3 col-md-2">
-      <div class="image-fluid">
-        <img src="../../media/{{usuario.perfil.imagen_perfil}}" class="img-fluid rounded-circle"/>
-      </div>
+  <!-- IMG -->
+  <div class="col-3 col-md-2">
+    <div class="img-fluid">
+      <img src="../../media/{{usuario.perfil.imagen_perfil}}" class="img-fluid rounded-circle" />
     </div>
-
-    <!-- NOMBRE Y DESCRIPCION -->
-    <div class="col-6 col-md-7">
-      <div class="row">
-        <div class="col-12 nombre">
-          {{usuario.get_full_name}}
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 nombre">
-          <p class="user">{{usuario.username}}</p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-12 descripcion">
-          <p>{{usuario.perfil.descripcion|is_none}}</p>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- BOTÓN SEGUIR -->
-    <div class="col-2 ml-1 div-seguir">
-      {% if user.get_username == usuario.username %}
-      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-border-rounded">Editar</button></a>
-      {% elif user.perfil in usuario.perfil.seguidores.all %}
-      <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Dejar de seguir</button></a>
-      {% else %}
-      <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Seguir</button></a>
-      {% endif %}
-    </div>
-    
   </div>
+
+  <!-- NOMBRE Y DESCRIPCION -->
+  <div class="col-6 col-md-7">
+    <div class="row">
+      <div class="col-12 nombre">
+        {{usuario.get_full_name}}
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 nombre">
+        <p class="user">{{usuario.username}}</p>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-12 descripcion">
+        <p>{{usuario.perfil.descripcion|is_none}}</p>
+      </div>
+    </div>
+
+    <!-- REDES SOCIALES -->
+
+    <div class="row mb-2 justify-content-md-right">
+      <div class="col-3 col-md-2 col-lg-1">
+        <a href="http://www.facebook.com">
+          <img class="img-fluid" src="{% static 'img/facebook-icon.png' %}" alt="">
+        </a>
+      </div>
+
+      <div class="col-3 col-md-2 col-lg-1">
+        <a href="http://www.instagram.com">
+          <img class="img-fluid" src="{% static 'img/instagram-icon.png' %}" alt="">
+        </a>
+      </div>
+
+      <div class="col-3 col-md-2 col-lg-1">
+        <a href="http://www.twitter.com">
+          <img class="img-fluid" src="{% static 'img/twitter-icon.png' %}" alt="">
+        </a>
+      </div>
+
+      <div class="col-3 col-md-2 col-lg-1">
+        <a href="http://www.youtube.com">
+          <img class="img-fluid" src="{% static 'img/youtube-icon.png' %}" alt="">
+        </a>
+      </div>
+
+      
+
+
+    </div>
+
+  </div>
+
+  <!-- BOTÓN SEGUIR -->
+  <div class="col-2 ml-1 div-seguir">
+    {% if user.get_username == usuario.username %}
+    <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
+        class="btn-border-rounded">Editar</button></a>
+    {% elif user.perfil in usuario.perfil.seguidores.all %}
+    <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Dejar de
+        seguir</button></a>
+    {% else %}
+    <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Seguir</button></a>
+    {% endif %}
+  </div>
+
+
+
+</div>
+
+<script>
+  console.log($(window).width());
+  $(document).ready(function () {
+
+    if ($(window).width() < 576) {
+      // Obtiene la posición horizontal de la fila incluyendo el pa
+      var posicion = $('.descripcion').parent().offset().left + 15;
+
+      $('.descripcion').parent().css({
+        "width": $(window).width(),
+        "margin-left": -posicion,
+        "padding-left": "1rem",
+        "padding-right": "1rem"
+      });
+    }
+  });
+</script>

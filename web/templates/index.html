@@ -7,7 +7,7 @@
 <head>
   <title>Cookbook</title>
   <link rel="stylesheet" href="{% static 'css/index.css' %}">
-  <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+  <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 </head>
 
 <div class="row mx-md-5 mx-1 justify-content-end fila-orden">
@@ -23,7 +23,11 @@
 </div>
 
   <!-- Receta lista -->
-  {% include 'partes/lista-recetas.html' %}
+  {% include 'partes/lista-recetas2.html' %}
+  
+  
+
+  
 
 <script>
   var opc = "{{opc}}"
@@ -37,6 +41,7 @@
     $('#rating').addClass('active');
   }
 </script>
+
   
 
 {% endblock %}

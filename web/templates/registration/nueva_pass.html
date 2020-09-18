@@ -1,38 +1,73 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nueva contraseña</title>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <title>Establecer contraseña - CookBook</title>
+    <style>
+        label {
+            display: inline-block;
+            max-width: 100%;
+
+        }
+    </style>
 </head>
+
 <body>
 
-    
-    {% if validlink %}
-    <h1>Nueva contraseña</h1>
+    <div class="container">
+        {% if validlink %}
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>Nueva contraseña</h1>
+            </div>
+        </div>
 
-    <form method="post">
-        {% csrf_token %}
+        <div class="row">
+            <div class="col-12">
+                <form method="post">
+                    {% csrf_token %}
 
-        {{form.new_password1.errors}}
+                    <div class="row justify-content-center form-group">
+                        <label for="id_new_password1">Nueva contraseña:</label>
+                        {{form.new_password1}}
+                        {{form.new_password1.errors}}
+                    </div>
 
-        <label for="">Nueva contrasña:</label>
-        {{form.new_password1}}
+                    <div class="row justify-content-center form-group">
+                        <label for="id_new_password2">Confirme contraseña:</label>
+                        {{form.new_password2}}
+                        {{form.new_password2.errors}}
+                    </div>
 
-        {{form.new_password2.errors}}
+                    <div class="row justify-content-center">
+                        <input type="submit" value="Cambiar">
+                    </div>
 
-        <label for="">Cpnfirme contrasña:</label>
-        {{form.new_password2}}
 
-        <input type="submit" value="Cambiar">
-    </form>
-        
-    {% else %}
 
-    <h1>ENCALE INVALIDO</h1>
-        
-    {% endif %}
-        
-    
+
+                    
+                </form>
+            </div>
+        </div>
+
+
+        {% else %}
+
+        <h1>ENCALE INVALIDO</h1>
+
+        {% endif %}
+
+    </div>
+
+
+
+
+
 </body>
+
 </html>

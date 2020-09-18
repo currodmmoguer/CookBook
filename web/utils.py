@@ -6,7 +6,7 @@ from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
 
 # Paginación
-def paginator(request, lista, num=10):
+def paginator(request, lista, num=16):
     paginator = Paginator(lista, num)
     num_pagina = request.GET.get('page')
     obj_pagina = paginator.get_page(num_pagina)

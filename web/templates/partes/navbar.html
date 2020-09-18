@@ -1,7 +1,7 @@
 {% load static %}
 <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
-<script src="{% static 'js/fontawesome.js' %}"></script>
-<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/library/fontawesome.js' %}"></script>
+<script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 
 <nav class="navbar fixed-top navbar-expand-lg navbar-dark header">
   
@@ -85,7 +85,7 @@
               </div>
 
 
-              <a href="{% url 'perfil' username=user.username %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Pefil">
+              <a href="{% url 'perfil' username=user.username %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Perfil">
                 <i class="fa fa-user" style="font-size: 2rem;"></i>
                 <span class="textoMenu">Perfil</span>
               </a>
@@ -99,7 +99,7 @@
 
           <!-- BUSCADOR -->
           <form action="{% url 'busqueda' %}" method="get" class="form-inline ml-auto buscador">
-              <input type="text" name="name" class="form-control mt-sm-2 mr-sm-2" placeholder="Buscar..." >
+              <input type="text" name="name" class="form-control mt-sm-2 mr-sm-2" placeholder="Buscar..." autocomplete="off" >
               <button type="submit" class="btn btn-navbar mt-1">Buscar</button>
           </form>
       </div>

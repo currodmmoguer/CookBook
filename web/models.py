@@ -60,6 +60,10 @@ class Perfil(models.Model):
     descripcion = models.CharField(max_length=255, null=True, blank=True)
     imagen_perfil = models.ImageField(upload_to='perfil', default=_IMG_DEFAULT, null=True, blank=True, db_column="imagen")
     seguidores = models.ManyToManyField('self', blank=True, symmetrical=False, related_name='seguidor')
+    facebook = models.CharField(max_length=255, null=True, blank=True)
+    instagram = models.CharField(max_length=255, null=True, blank=True)
+    twitter = models.CharField(max_length=255, null=True, blank=True)
+    youtube = models.CharField(max_length=255, null=True, blank=True)
     
     class Meta:
         db_table = 'perfil'
