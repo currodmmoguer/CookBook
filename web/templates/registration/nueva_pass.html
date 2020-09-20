@@ -6,19 +6,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/olvidar-pass.css' %}">
+    <script src="{% static 'js/library/jquery-3.5.0.js' %}"></script>
     <title>Establecer contraseña - CookBook</title>
     <style>
-        label {
-            display: inline-block;
-            max-width: 100%;
-
-        }
+        
     </style>
 </head>
 
 <body>
 
-    <div class="container">
+    <header>
+        <div class="h-100 justify-content-center d-flex align-items-center py-2">
+            <div class="row">
+                <div class="col-12 text-center">
+                    <img id="logo" src="{% static 'img/logo-blanco.png' %}" alt="">
+                </div>
+                <div class="col-12 text-center"><span>CookBook</span></div>
+
+            </div>
+        </div>
+
+    </header>
+
+    <div class="container mt-3">
         {% if validlink %}
         <div class="row">
             <div class="col-12 text-center">
@@ -28,29 +40,36 @@
 
         <div class="row">
             <div class="col-12">
-                <form method="post">
+                <form method="post" id="beauty-form">
                     {% csrf_token %}
 
-                    <div class="row justify-content-center form-group">
-                        <label for="id_new_password1">Nueva contraseña:</label>
-                        {{form.new_password1}}
-                        {{form.new_password1.errors}}
+                    <div class="row justify-content-center ">
+                        <div class="col-10 col-sm-8 col-md-6 col-lg-4 form-group form-input">
+                            {{form.new_password1}}
+                            <label for="{{form.new_password1.auto_id}}" class="form-label">Nueva contraseña:</label>
+                            {{form.new_password1.errors}}
+                        </div>
+
                     </div>
 
-                    <div class="row justify-content-center form-group">
-                        <label for="id_new_password2">Confirme contraseña:</label>
-                        {{form.new_password2}}
-                        {{form.new_password2.errors}}
+                    <div class="row justify-content-center form-group form-input">
+                        <div class="col-10 col-sm-8 col-md-6 col-lg-4 form-group form-input">
+                            {{form.new_password2}}
+                            <label for="{{form.new_password2.auto_id}}" class="form-label">Confirme contraseña:</label>
+                            {{form.new_password2.errors}}
+                        </div>
                     </div>
 
                     <div class="row justify-content-center">
-                        <input type="submit" value="Cambiar">
+                        <div class="col-10 col-sm-8 col-md-6 col-lg-4 form-group form-input">
+                        <input type="submit" class="btn-border-rounded" value="Cambiar">
+                    </div>
                     </div>
 
 
 
 
-                    
+
                 </form>
             </div>
         </div>
@@ -65,7 +84,52 @@
     </div>
 
 
+    <script>
+        $(document).ready(function(){
+    
+    
+    var campos = $('#beauty-form .form-input input, #beauty-form .form-input textarea');
+    //console.log(campos)
+    var placeholders = {}
+    
+    campos.each(function(){
+        if ($(this).val() != ""){   // Si el campo tiene texto escrito, al siguiente elemento (label) le añade la clase indicada
+            $(this).next().addClass('with-text');
+        } else {
+            $(this).next().removeClass('with-text');
+        }
 
+        if ($(this).attr('placeholder') != null ){ // Añade los placeholder a un diccionario de datos
+            placeholders[$(this).attr('id')] = $(this).attr('placeholder')
+            $(this).attr('placeholder', '');
+        }
+    });
+
+    console.log(campos);
+
+    
+    /**
+     * Detecta la pérdida del foco de un campo input o textarea
+     * Comprueba si tiene texto escrito o no para añadir la clase indicada o no
+     */
+    campos.blur(function(){
+        if ($(this).val() != ""){
+            $(this).next().addClass('with-text');
+        } else {
+            $(this).next().removeClass('with-text');
+            $(this).attr('placeholder', '');
+        }
+    });
+
+    campos.focus(function (){
+        $(this).attr('placeholder', placeholders[$(this).attr('id')]);
+    });
+
+    
+
+    
+});
+    </script>
 
 
 </body>

@@ -1,0 +1,48 @@
+header {
+    background-color: black;
+}
+
+header span {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: white;
+}
+
+#logo {
+    height: 5rem;
+    width: 5rem;
+}
+
+.container {
+    margin-top: 1rem !important;
+}
+
+h1 {
+    font-size: 2rem !important;
+}
+
+.form-label {
+    left: auto !important;
+}
+
+.errorlist {
+    margin-top: 1rem;
+}
+
+.btn-border-rounded {
+    width: 100%;
+    border-radius: 1.5rem !important;
+    background-color: #b80d57;
+    color: white;
+}
+
+#volver {
+    position: absolute;
+    left: 2rem;
+    bottom: 2rem;
+    font-size: 1.2rem;
+}
+
+#volver span, #volver i {
+    color: #555 !important;
+}

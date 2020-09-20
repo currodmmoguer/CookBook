@@ -1,5 +1,5 @@
 
-Puedes restablecer tu contraseña de Spotify haciendo clic en el siguiente enlace:
+Puedes restablecer tu contraseña de CookBook haciendo clic en el siguiente enlace:
 {% block reset_link %}
 {{protocol}}://{{domain}}{% url 'password_reset_confirm' uidb64=uid token=token %}
 {% endblock %}
@@ -7,5 +7,5 @@ Tu nombre de usuario es: {{user.get_username}}
 	
 Si no solicitaste un restablecimiento de contraseña, puedes simplemente borrar este mensaje.
 
-Un saludo, el equipo de CookBook
+Un saludo, el equipo de CookBook.
 
