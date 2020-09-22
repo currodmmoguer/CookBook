@@ -463,7 +463,7 @@ def editar_perfil(request, username):
                 'email': request.user.email,
             })
 
-    return render(request, 'editar_perfil.html', {'form': form})
+    return render(request, 'editar_perfil.html', {'form': form, 'opc': 'perfil'})
 
 
 # Pantalla para cambiar la contraseña de la cuenta
@@ -483,11 +483,45 @@ def editar_pass(request, username):
         form = PasswordChangeForm(request.user) 
 
     context = {
-        'form': form
+        'form': form,
+        'opc': 'pass',
     }
 
     return render(request, 'editar_pass.html', context)
 
+@login_required
+def editar_rrss(request):
+    user = request.user
+    
+    if request.method == 'POST':
+        form = EditarRRSSForm(request.POST)
+
+        if form.is_valid():
+            cd = form.cleaned_data
+            # De cada campo comprueba que no se haya cambiado
+            if request.user.perfil.facebook != cd['facebook']:
+                request.user.perfil.facebook = cd['facebook']
+            
+            if request.user.perfil.instagram != cd['instagram']:
+                request.user.perfil.instagram = cd['instagram']
+            
+            if request.user.perfil.twitter != cd['twitter']:
+                request.user.perfil.twitter = cd['twitter']
+
+            if request.user.perfil.youtube != cd['youtube']:
+                request.user.perfil.youtube = cd['youtube']
+            
+            request.user.perfil.save()
+    
+    else:
+        form = EditarRRSSForm(initial = {
+            'facebook': request.user.perfil.facebook,
+            'instagram': request.user.perfil.instagram,
+            'twitter': request.user.perfil.twitter,
+            'youtube': request.user.perfil.youtube
+        })
+
+    return render(request, 'editar_rrss.html', {'form': form, 'opc': 'rrss'})
 
 #Busqueda avanzada de recetas 
 @login_required
@@ -778,3 +812,6 @@ def dejar_seguir(request, pk):
         return redirect('perfil', username=usuario.username)
 
 
+def error_404(request, exception):
+        data = {}
+        return render(request,'404.html', data)

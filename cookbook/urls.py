@@ -18,8 +18,11 @@ from django.urls import path, include, re_path
 from django.conf import settings
 from django.contrib.auth import views as auth_views
 from django.conf.urls.static import static
+from web import views
 
 from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+
+from django.conf.urls import handler404
 
 #from django.conf.urls import url
 
@@ -36,3 +39,4 @@ urlpatterns = [
 
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+handler404 = views.error_404

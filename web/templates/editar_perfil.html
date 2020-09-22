@@ -9,6 +9,8 @@
   <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 </head>
 
+<div ></div>
+
 <!-- Modal eliminar-->
 <div class="modal fade" id="modal-eliminar" tabindex="-1" role="dialog" aria-labelledby="modal-eliminar"
   aria-hidden="true">
@@ -35,105 +37,114 @@
   </div>
 </div>
 
-{% include 'partes/menu-editar-perfil.html' %}
+<div class="row pt-3">
 
-<form method="POST" enctype="multipart/form-data">
-  {% csrf_token %}
+  {% include 'partes/menu-editar-perfil.html' %}
 
-  <!-- IMG AVATAR -->
-  <div class="row ">
+  <div class="col-12 col-md-8 col-lg-9">
 
-    
 
-    <div class="col-md-5 col-sm-4 col-12 avatar">
-      <img id="img-perfil" src="../../media/{{user.perfil.imagen_perfil}}" class="img-fluid rounded-circle"
-        style="width: 30%">
-    </div>
+      <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
 
-    <div class="col-md-4 col-sm-6 col-7 align-self-center">
-      <div class="custom-file">
-        {{form.imagen_perfil}}
-        <label class="custom-file-label" for="{{form.imagen_perfil.auto_id}}">{{form.imagen_perfil.label}}</label>
+          <!-- IMG AVATAR -->
+          <div class="row ">
+
+
+
+              <div class="col-md-3 col-sm-4 col-12 avatar">
+                  <img id="img-perfil" src="../../media/{{user.perfil.imagen_perfil}}"
+                      class="img-fluid rounded-circle" style="width: 30%">
+              </div>
+
+              <div class="col-md-6 col-sm-6 col-7 ml-md-2 align-self-center">
+                  <div class="custom-file">
+                      {{form.imagen_perfil}}
+                      <label class="custom-file-label"
+                          for="{{form.imagen_perfil.auto_id}}">{{form.imagen_perfil.label}}</label>
+                  </div>
+              </div>
+
+              <div class="col-sm-2 col-4 align-self-center text-center ">
+                  <a href="{% url 'eliminar_foto' %}">
+                      <button type="button" class="btn-border-rounded">Eliminar foto</button>
+                  </a>
+              </div>
+
+          </div>
+
+          <!-- NOMBRE -->
+          <div class="row my-1">
+              <div class="col-12 col-md-3 label text-right">
+                  {{form.nombre.label}}
+              </div>
+              <div class="col-12 col-md-6 ml-md-2">
+                  <div class="form-group">
+                      {{form.nombre}}
+                  </div>
+              </div>
+          </div>
+
+          <!-- APPELIDO -->
+          <div class="row">
+              <div class="col-12 col-md-3 label text-right">
+                  {{form.apellido.label}}
+              </div>
+              <div class="col-12 col-md-6 ml-md-2">
+                  <div class="form-group">
+                      {{form.apellido}}
+                  </div>
+              </div>
+          </div>
+
+          <!-- DESCRIPCION -->
+          <div class="row">
+              <div class="col-12 col-md-3 label text-right">
+                  {{form.descripcion.label}}
+              </div>
+              <div class="col-12 col-md-6 ml-md-2">
+                  <div class="form-group">
+                      {{form.descripcion}}
+                  </div>
+              </div>
+          </div>
+
+          <!-- EMAIL -->
+          <div class="row">
+              <div class="col-12 col-md-3 label text-right">
+                  {{form.email.label}}
+              </div>
+              <div class="col-12 col-md-6 ml-md-2">
+                  <div class="form-group">
+                      {{form.email}}
+                  </div>
+              </div>
+          </div>
+
+
+          <!-- BOTONES -->
+          <div class="row justify-content-center">
+              <div class="col- mr-1">
+                  <button type="submit" class="btn-border-rounded">Guardar</button>
+              </div>
+              <div class="col- ml-1">
+                  <a href="{% url 'perfil' username=user.username %}">
+                      <button type="button" class="btn-border-rounded">Volver</button>
+                  </a>
+              </div>
+          </div>
+      </form>
+
+      <div class="row justify-content-center my-3">
+          <div class="col-12 text-center">
+              <button type="button" class="btn-border-rounded" data-toggle="modal" data-target="#modal-eliminar">
+                  Eliminar cuenta
+              </button>
+
+          </div>
       </div>
-    </div>
-
-    <div class="col-md-3 col-sm-2 col-4 align-self-center text-center ">
-      <a href="{% url 'eliminar_foto' %}">
-        <button type="button" class="btn-border-rounded">Eliminar foto</button>
-      </a>
-    </div>
-
   </div>
-
-  <!-- NOMBRE -->
-  <div class="row my-1">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.nombre.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.nombre}}
-      </div>
-    </div>
-  </div>
-
-  <!-- APPELIDO -->
-  <div class="row">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.apellido.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.apellido}}
-      </div>
-    </div>
-  </div>
-
-  <!-- DESCRIPCION -->
-  <div class="row">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.descripcion.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.descripcion}}
-      </div>
-    </div>
-  </div>
-
-  <!-- DESCRIPCION -->
-  <div class="row">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.email.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.email}}
-      </div>
-    </div>
-  </div>
-
-
-  <!-- BOTONES -->
-  <div class="row justify-content-center">
-    <div class="col- mr-1">
-      <button type="submit" class="btn-border-rounded">Guardar</button>
-    </div>
-    <div class="col- ml-1">
-      <a href="{% url 'perfil' username=user.username %}">
-        <button type="button" class="btn-border-rounded">Volver</button>
-      </a>
-    </div>
-  </div>
-</form>
-
-<div class="row justify-content-center my-3">
-  <div class="col-12 text-center">
-    <button type="button" class="btn-border-rounded" data-toggle="modal" data-target="#modal-eliminar">
-      Eliminar cuenta
-    </button>
-    
-  </div>
+  
 </div>
 
 <script src="{% static 'js/formulario.js' %}"></script>

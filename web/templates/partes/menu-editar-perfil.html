@@ -1,13 +1,41 @@
-<div class="row my-3">
-    <div class="col-12">
-      <ul class="nav justify-content-center">
-        <li class="nav-item">
-          <a class="nav-link active" href="{% url 'editar_perfil' username=user.username %}">Editar perfil</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'editar_pass' username=user.username %}">Cambiar contraseña</a>
-        </li>
-      </ul>
-    </div>
 
+<head>
+  <style>
+    .list-group {
+        border: 1px solid rgba(0, 0, 0, .125) !important;
+        border-radius: .25rem;
+    }
+
+    .list-group-item {
+        border: none !important;
+    }
+
+    .list-group-item.active {
+        background-color: transparent !important;
+        border-color: transparent !important;
+        color: black !important;
+        font-weight: bold;
+        border-left: 2px solid #000;
+    }
+</style>
+</head>
+  <div class="col-12 col-md-4 col-lg-3">
+    <div class="list-group">
+      <a class="list-group-item" id="list-perfil" href="{% url 'editar_perfil' username=request.user.username %}">Editar perfil</a>
+      <a class="list-group-item" id="list-pass" href="{% url 'editar_pass' username=request.user.username %}">Cambiar contraseña</a>
+      <a class="list-group-item" id="list-rrss" href="{% url 'editar_rrss' %}">Redes sociales</a>
+    </div>
   </div>
+
+  <script>
+    var opc = "{{opc}}"
+
+
+  if (opc == "" || opc == "perfil") {
+    $('#list-perfil').addClass('active');
+  } else if (opc == "pass") {
+    $('#list-pass').addClass('active');
+  } else if (opc == "rrss") {
+    $('#list-rrss').addClass('active');
+  }
+  </script>

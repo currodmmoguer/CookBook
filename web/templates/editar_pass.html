@@ -10,66 +10,77 @@
 </head>
 
 
-{% include 'partes/menu-editar-perfil.html' %}
-<form method="POST">
-  {% csrf_token %}
+<div class="row pt-3">
 
-  <!-- CONTRASEÑA ACTUAL -->
-  <div class="row">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.old_password.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.old_password}}
-      </div>
-    </div>
-  </div>
+  {% include 'partes/menu-editar-perfil.html' %}
 
-  <!-- CONTRASEÑA NUEVA -->
-  <div class="row">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.new_password1.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.new_password1}}
-      </div>
-    </div>
-  </div>
+  <div class="col-12 col-md-8 col-lg-9">
 
-  <!-- CONFIRMAR CONTRASEÑA -->
-  <div class="row">
-    <div class="col-12 col-md-5 label text-right">
-      {{form.new_password2.label}}
-    </div>
-    <div class="col-12 col-md-4 ml-md-2">
-      <div class="form-group">
-        {{form.new_password2}}
-      </div>
-    </div>
-  </div>
 
-  <!-- MENSAJE DE ERROR -->
-  <div class="row">
-    <div class="col-12 text-center">
-      {% if form.errors %}
-        {% for field in form %}
-          {% for error in field.errors %}
-            {{error|linebreaks}}
-          {% endfor %}
-        {% endfor %}
-      {% endif %}
-    </div>
-  </div>
+      
 
-  <!-- BOTÓN -->
-  <div class="row justify-content-center my-3">
-    <div class="col- mr-1">
-      <button type="submit" class="btn-border-rounded">Guardar</button>
-    </div>
-  </div>
-</form>
+      <form method="POST">
+          {% csrf_token %}
+
+          <!-- CONTRASEÑA ACTUAL -->
+          <div class="row">
+              <div class="col-12 col-md-5 label text-right">
+                  {{form.old_password.label}}
+              </div>
+              <div class="col-12 col-md-4 ml-md-2">
+                  <div class="form-group">
+                      {{form.old_password}}
+                  </div>
+              </div>
+          </div>
+
+          <!-- CONTRASEÑA NUEVA -->
+          <div class="row">
+              <div class="col-12 col-md-5 label text-right">
+                  {{form.new_password1.label}}
+              </div>
+              <div class="col-12 col-md-4 ml-md-2">
+                  <div class="form-group">
+                      {{form.new_password1}}
+                  </div>
+              </div>
+          </div>
+
+          <!-- CONFIRMAR CONTRASEÑA -->
+          <div class="row">
+              <div class="col-12 col-md-5 label text-right">
+                  {{form.new_password2.label}}
+              </div>
+              <div class="col-12 col-md-4 ml-md-2">
+                  <div class="form-group">
+                      {{form.new_password2}}
+                  </div>
+              </div>
+          </div>
+
+          <!-- MENSAJE DE ERROR -->
+          <div class="row">
+              <div class="col-12 text-center">
+                  {% if form.errors %}
+                  {% for field in form %}
+                  {% for error in field.errors %}
+                  {{error|linebreaks}}
+                  {% endfor %}
+                  {% endfor %}
+                  {% endif %}
+              </div>
+          </div>
+
+          <!-- BOTÓN -->
+          <div class="row justify-content-center my-3">
+              <div class="col- mr-1">
+                  <button type="submit" class="btn-border-rounded">Guardar</button>
+              </div>
+          </div>
+      </form>
+  
+
+</div>
 
 
 <script>

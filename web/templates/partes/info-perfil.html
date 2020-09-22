@@ -31,30 +31,51 @@
 
     <!-- REDES SOCIALES -->
 
-    <div class="row mb-2 justify-content-md-right">
+    <div class="row mb-2 justify-content-center justify-content-md-start">
+
+      
+      
+      {% if not user.perfil.facebook == "" %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.facebook.com">
+        <a href="http://www.facebook.com/{{user.perfil.facebook}}">
           <img class="img-fluid" src="{% static 'img/facebook-icon.png' %}" alt="">
         </a>
       </div>
+      {% endif %}
+        
+      
 
+      
+      {% if not user.perfil.instagram == "" %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.instagram.com">
+        <a href="http://www.instagram.com/{{user.perfil.instagram}}">
           <img class="img-fluid" src="{% static 'img/instagram-icon.png' %}" alt="">
         </a>
       </div>
+      {% endif %}
+        
+      
 
+      
+      {% if not user.perfil.twitter == "" %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.twitter.com">
+        <a href="http://www.twitter.com/{{user.perfil.twitter}}">
           <img class="img-fluid" src="{% static 'img/twitter-icon.png' %}" alt="">
         </a>
       </div>
-
+      {% endif %}
+        
+      
+      
+      {% if not user.perfil.youtube == "" %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.youtube.com">
+        <a href="http://www.youtube.com/{{user.perfil.youtube}}">
           <img class="img-fluid" src="{% static 'img/youtube-icon.png' %}" alt="">
         </a>
       </div>
+      {% endif %}
+        
+      
 
       
 

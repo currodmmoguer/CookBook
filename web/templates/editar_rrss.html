@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+<head>
+    <title>Cambiar redes sociales</title>
+</head>
+
+<div class="row pt-3">
+
+    {% include 'partes/menu-editar-perfil.html' %}
+
+    <div class="col-12 col-md-8 col-lg-9">
+
+
+
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- FACEBOOK -->
+            <div class="row my-1">
+                <div class="col-2 col-md-1 text-right">
+                    <img class="img-fluid" src="{% static 'img/facebook-icon.png' %}" alt="">
+                </div>
+                <div class="col-10 col-md-11">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">facebook.com/</span>
+                            </div>
+                            {{form.facebook}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INSTAGRAM -->
+            <div class="row my-1">
+                <div class="col-2 col-md-1 text-right">
+                    <img class="img-fluid" src="{% static 'img/instagram-icon.png' %}" alt="">
+                </div>
+                <div class="col-10 col-md-11">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">instagram.com/</span>
+                            </div>
+                            {{form.instagram}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TWITTER -->
+            <div class="row my-1">
+                <div class="col-2 col-md-1 text-right">
+                    <img class="img-fluid" src="{% static 'img/twitter-icon.png' %}" alt="">
+                </div>
+                <div class="col-10 col-md-11">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">twitter.com/</span>
+                            </div>
+                            {{form.twitter}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- YOUTUBE -->
+            <div class="row my-1">
+                <div class="col-2 col-md-1 text-right">
+                    <img class="img-fluid" src="{% static 'img/youtube-icon.png' %}" alt="">
+                </div>
+                <div class="col-10 col-md-11">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon3">youtube.com/</span>
+                            </div>
+                            {{form.youtube}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="submit" value="Enviar">
+        </form>
+    </div>
+</div>
+
+{% endblock %}

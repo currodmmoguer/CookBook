@@ -20,6 +20,7 @@ urlpatterns = [
     path('receta/nueva/', views.nueva_receta, name="nueva_receta"),  #Crear receta
     path('receta/<int:pk>/edit/', views.editar_receta, name="editar_receta"),   #Editar receta
     path('<username>/pass-edit/', views.editar_pass, name="editar_pass"),   #Editar contraseña
+    path('rrss-edit', views.editar_rrss, name="editar_rrss"),   #Editar las RRSS
     path('signup', views.registro, name="registro"),    #Vista registro
     path('<username>/guardadas/', views.recetas_guardadas, name='recetas_guardadas'),   #Vista recetas guardadas
     path('<username>/seguidores', views.seguidores, name="seguidores"), #Vista lista de seguidores

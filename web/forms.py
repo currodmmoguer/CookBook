@@ -52,7 +52,13 @@ class PasswordChangeForm(PasswordChangeForm):
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
             field.widget.attrs['autocomplete'] = 'off'
-            
+
+class EditarRRSSForm(forms.Form):
+    facebook = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
+    instagram = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
+    twitter = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
+    youtube = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
+
     
 
 class RecetaForm(forms.ModelForm):
