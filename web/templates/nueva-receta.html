@@ -298,6 +298,7 @@
   //Muestra la imagen de la receta
   $('#id_imagen_terminada').change(function () {
     readURL(this, $('#previa_imagen_terminada'));
+    console.log("hola");
   });
 
   //Muestra la imagen de los pasos
@@ -306,6 +307,7 @@
     readURL(this, img);
   });
 
+  // Opción para mover los ingredientes y pasos
   $('.moveup, .movedown').click(function (e) {
 
     // "padre" obtiene un string "ingrediente" o "pasos" según sea

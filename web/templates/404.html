@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 
@@ -5,15 +6,14 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}"/>
 
     <title>Página no encontrada · CookBook</title>
 
     <!-- Google font -->
     <link href="https://fonts.googleapis.com/css?family=Cabin:400,700" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:900" rel="stylesheet">
-
-    <!-- Custom stlylesheet -->
+    <script src="https://kit.fontawesome.com/e273f4e482.js" crossorigin="anonymous"></script>
 
     <style>
         * {
@@ -24,30 +24,29 @@
         body {
             padding: 0;
             margin: 0;
+            font-family: 'Cabin', sans-serif;
+            text-transform: uppercase;
         }
 
-        #notfound {
+        #root {
             position: relative;
             height: 100vh;
         }
 
-        #notfound .notfound {
+        #root .notfound {
             position: absolute;
             left: 50%;
             top: 50%;
             -webkit-transform: translate(-50%, -50%);
             -ms-transform: translate(-50%, -50%);
             transform: translate(-50%, -50%);
-        }
-
-        .notfound {
             max-width: 520px;
             width: 100%;
             line-height: 1.4;
             text-align: center;
         }
 
-        .notfound .notfound-404 {
+        #root .notfound .notfound-404 {
             position: relative;
             height: 240px;
         }
@@ -64,42 +63,43 @@
             font-weight: 900;
             margin: 0px;
             color: #262626;
-            text-transform: uppercase;
             letter-spacing: -40px;
             margin-left: -20px;
         }
 
         .notfound .notfound-404 h1>span {
-            text-shadow: -8px 0px 0px #fff;
+            text-shadow: -6px 3px 0px #fff;
         }
 
-        h3 {
-            font-family: 'Cabin', sans-serif;
+        .notfound h3 {
             position: relative;
             font-size: 16px;
             font-weight: 700;
-            text-transform: uppercase;
+            
             color: #262626;
             margin: 0px;
             letter-spacing: 3px;
             padding-left: 6px;
         }
 
-        h3 a {
+        .notfaund h3 a {
             text-decoration: none;
+            color: #262626;
         }
 
-        h3 a:hover,
+        h3 a:hover {
+            color: #262626;
+            text-decoration: underline;
+        }
+
         h3 a:visited {
             color: #262626;
         }
 
         .notfound h2 {
-            font-family: 'Cabin', sans-serif;
             font-size: 20px;
             font-weight: 400;
-            text-transform: uppercase;
-            color: #000;
+            color: #262626;
             margin-top: 0px;
             margin-bottom: 25px;
         }
@@ -131,29 +131,22 @@
         }
     </style>
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-		  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-		  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-		<![endif]-->
-
 </head>
 
 <body>
 
-    <div id="notfound">
+    <div id="root">
         <div class="notfound">
             <div class="notfound-404">
                 <h3>Página no encontrada</h3>
                 <h1><span>4</span><span>0</span><span>4</span></h1>
             </div>
             <h2>lo sentimos, pero la página solicitada no fue encontrada</h2>
-            <h3><a href="{% url 'index' %}">Volver a CookBook</a></h3>
+            <h3><a href="{% url 'index' %}"><i class="fas fa-arrow-left"></i>Volver a CookBook</a></h3>
 
         </div>
     </div>
 
-</body><!-- This templates was made by Colorlib (https://colorlib.com) -->
+</body>
 
 </html>

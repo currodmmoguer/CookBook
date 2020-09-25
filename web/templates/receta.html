@@ -140,7 +140,7 @@
 <!-- IMG -->
 <div class="row my-3">
   <div class="col-12 text-center">
-    <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid img-receta">
+    <img src="{{receta.imagen_terminada.url}}" class="img-fluid img-receta">
   </div>
 </div>
 
@@ -196,7 +196,7 @@
       <lu>
         <p>{{paso.posicion}}. {{paso.texto}}</p>
         {% if not paso.imagen_paso == "" %}
-        <img src="../../media/{{paso.imagen_paso}}">
+        <img src="{{paso.imagen_paso.url}}">
         {% endif %}
       </lu>
       {% endfor %}

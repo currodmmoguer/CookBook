@@ -25,10 +25,12 @@
         <div class="card-background"></div>
         
         <a href="{% url 'receta' pk=receta.pk %}">
-            <div class="card__img--hover" style="background-image: url('../../media/{{receta.imagen_terminada}}');">
+            <div class="card__img--hover" style="background-image: url('{{receta.imagen_terminada.url}}');">
             </div>
+
         </a>
         <div class="card-info-inf">
+            
             <div class="d-flex w-100 justify-content-between">
                 <a class="card-categoria" href="{% url 'busqueda_categoria' c=receta.categoria.pk %}">{{receta.categoria}}</a>
             <!-- Botón guardar -->

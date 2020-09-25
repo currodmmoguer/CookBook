@@ -5,7 +5,7 @@
   <!-- IMG -->
   <div class="col-3 col-md-2">
     <div class="img-fluid">
-      <img src="../../media/{{usuario.perfil.imagen_perfil}}" class="img-fluid rounded-circle" />
+      <img src="{{usuario.perfil.imagen_perfil.url}}" class="img-fluid rounded-circle" />
     </div>
   </div>
 
@@ -113,7 +113,8 @@
         "width": $(window).width(),
         "margin-left": -posicion,
         "padding-left": "1rem",
-        "padding-right": "1rem"
+        "padding-right": "1rem",
+        "margin-top": "1rem"
       });
     }
   });

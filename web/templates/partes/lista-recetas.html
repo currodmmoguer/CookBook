@@ -64,7 +64,7 @@
   <!-- IMAGEN -->
   <div class="col-12 col-sm-5 text-center">
     <a href="{% url 'receta' pk=receta.pk %}">
-      <img src="../../media/{{receta.imagen_terminada}}" class="img-fluid">
+      <img src="{{receta.imagen_terminada.url}}" class="img-fluid">
     </a>
   </div>
 </div>

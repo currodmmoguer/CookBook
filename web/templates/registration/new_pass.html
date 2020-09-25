@@ -83,54 +83,7 @@
 
     </div>
 
-
-    <script>
-        $(document).ready(function(){
-    
-    
-    var campos = $('#beauty-form .form-input input, #beauty-form .form-input textarea');
-    //console.log(campos)
-    var placeholders = {}
-    
-    campos.each(function(){
-        if ($(this).val() != ""){   // Si el campo tiene texto escrito, al siguiente elemento (label) le añade la clase indicada
-            $(this).next().addClass('with-text');
-        } else {
-            $(this).next().removeClass('with-text');
-        }
-
-        if ($(this).attr('placeholder') != null ){ // Añade los placeholder a un diccionario de datos
-            placeholders[$(this).attr('id')] = $(this).attr('placeholder')
-            $(this).attr('placeholder', '');
-        }
-    });
-
-    console.log(campos);
-
-    
-    /**
-     * Detecta la pérdida del foco de un campo input o textarea
-     * Comprueba si tiene texto escrito o no para añadir la clase indicada o no
-     */
-    campos.blur(function(){
-        if ($(this).val() != ""){
-            $(this).next().addClass('with-text');
-        } else {
-            $(this).next().removeClass('with-text');
-            $(this).attr('placeholder', '');
-        }
-    });
-
-    campos.focus(function (){
-        $(this).attr('placeholder', placeholders[$(this).attr('id')]);
-    });
-
-    
-
-    
-});
-    </script>
-
+    <script src="{% static 'js/formulario.js' %}"></script>
 
 </body>
 

@@ -27,6 +27,9 @@ from django.urls import reverse
 
 from django.core.exceptions import ObjectDoesNotExist
 
+# Recortar image
+from PIL import Image
+
 
 # Pantalla principal
 @login_required
@@ -445,12 +448,23 @@ def editar_perfil(request, username):
             request.user.last_name = cd['apellido']
             request.user.perfil.descripcion = cd['descripcion']
             request.user.email = cd['email']
+            #Obtiene los valores para recortar [x, y, w, h]
+            valores = list(map(float, cd['val_img'].split(";")))
 
             if not cd['imagen_perfil'] is None:
                 request.user.perfil.set_imagen(cd['imagen_perfil'])
 
             request.user.save()
             request.user.perfil.save()
+
+            # Guarda la imagen recortada
+            # Se hace ahora porque tiene que está guardada la imagen ya
+            if not cd['imagen_perfil'] is None:
+                image = Image.open(request.user.perfil.imagen_perfil)
+                cropped_image = image.crop((valores[0], valores[1], valores[0] + valores[2], valores[1] + valores[3]))
+                resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+                resized_image.save(request.user.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
+
         else:
             # No puede haber errores
             pass
@@ -813,5 +827,4 @@ def dejar_seguir(request, pk):
 
 
 def error_404(request, exception):
-        data = {}
-        return render(request,'404.html', data)
+        return render(request,'404.html', {})

@@ -48,7 +48,7 @@
                   {% for notificacion in notificaciones|slice:":5" %}
                     <div class="row px-2 my-1">
                       <div class="col-3">
-                        <img src="../../media/{{notificacion.usuario_origen.perfil.imagen_perfil}}" alt="" class="img-fluid rounded-circle">
+                        <img src="{{notificacion.usuario_origen.perfil.imagen_perfil.url}}" alt="" class="img-fluid rounded-circle">
                       </div>
                       <div class="col-9 align-self-center">
                         
