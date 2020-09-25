@@ -11,11 +11,35 @@
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
   <script src="https://kit.fontawesome.com/e273f4e482.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css">
 </head>
 
 <body>
 
   <div class="container" style="margin-top: 1rem;">
+
+    <!-- Modal foto subida-->
+<div class="modal fade" id="modal-crop" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalLabel">Recortar imagen</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="img-container">
+          <img id="image-crop-modal" class="img-fluid" src="">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="aceptar-recorte" type="button" class="btn" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
     <!-- LOGO -->
     <div class="row justify-content-center">
       <div class="col-5 col-md-3 col-lg-2">
@@ -124,7 +148,8 @@
         </div>
 
         <div class="col-md-3 col-12 text-center align-self-end">
-          <img id="img-perfil" class="img-fluid rounded-circle" style="width: 30%">
+          <!--img id="img-perfil" class="img-fluid rounded-circle" style="width: 30%"-->
+          <canvas id="canvas" class="img-fluid rounded-circle" hidden style="width: 50%;"></canvas>
           <label for="{{perfilForm.imagen_perfil.auto_id}}" class="subir-foto">
             <i class="fa fa-cloud-upload"></i> {{perfilForm.imagen_perfil.label}}
           </label>
@@ -141,11 +166,16 @@
   </div>
 
   <script src="{% static 'js/formulario.js' %}"></script>
+  <!-- JS BOOTSTRAP -->
+  <script src="{% static 'js/library/popper.min.js' %}"></script>
+  <script src="{% static 'js/library/bootstrap.min.js' %}"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.js"></script>
 
   <script type="text/javascript">
-
     $('#id_imagen_perfil').change(function () {
-      readURL(this, $('#img-perfil'));
+      readURL(this, $('#image-crop-modal'));
+      $('#modal-crop').modal(true);
+      recortarImage();
     });
 
   </script>

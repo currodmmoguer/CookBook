@@ -175,47 +175,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.js"></script>
 
 <script>
-    window.addEventListener('DOMContentLoaded', function () {
-      var image = document.getElementById('image-crop-modal');
-      var cropBoxData;
-      var canvasData;
-      var datosTotal;
-      var cropper;
-
-      $('#modal-crop').on('shown.bs.modal', function () {
-        cropper = new Cropper(image, {
-            aspectRatio: 1 / 1,
-            zoomable: false,
-            autoCropArea: 1,
-            ready: function () {
-                cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
-            }
-        });
-        
-      });
-      $('#aceptar-recorte').click(function () {
-        cropBoxData = cropper.getCropBoxData();
-        canvasData = cropper.getCanvasData();
-        datosTotal = cropper.getData();
-        var canvas = document.getElementById('canvas');
-        var contex = canvas.getContext('2d');
-
-        $('#img-perfil').attr('src', cropper.image.src);
-        canvas.width = datosTotal.width;
-        canvas.height = datosTotal.height;
-
-        contex.drawImage(image, datosTotal.x, datosTotal.y, datosTotal.width, datosTotal.height, 0, 0, datosTotal.width, datosTotal.height);
-
-        $('#val_img').val(datosTotal.x + ";" + datosTotal.y + ";" + datosTotal.width + ";" + datosTotal.height);
-        $('#img-perfil').attr('hidden', '');
-        $('#canvas').removeAttr('hidden');
-        cropper.destroy();
-      });
-    });
-
     $('#{{form.imagen_perfil.auto_id}}').change(function() {
     readURL(this, $('#image-crop-modal'));
     $('#modal-crop').modal(true);
+    recortarImage();
   });
 
   </script>

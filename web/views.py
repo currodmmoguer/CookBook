@@ -3,6 +3,7 @@ from django.utils import timezone
 from .models import *
 from .forms import *
 from . import utils
+from os import remove
 
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -452,6 +453,8 @@ def editar_perfil(request, username):
             valores = list(map(float, cd['val_img'].split(";")))
 
             if not cd['imagen_perfil'] is None:
+                if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
+                    remove(request.user.perfil.imagen_perfil.path) # Borra la imagen anterior
                 request.user.perfil.set_imagen(cd['imagen_perfil'])
 
             request.user.save()
@@ -702,6 +705,9 @@ def eliminar_cuenta(request):
 #Elimina la foto de perfil y redirecciona a pantalla de ajustes
 @login_required
 def eliminar_foto(request):
+    if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
+        remove(request.user.perfil.imagen_perfil.path) # Borra la imagen anterior
+    
     request.user.perfil.set_imagen(None)
     return redirect('editar_perfil', username=request.user.username)
 
