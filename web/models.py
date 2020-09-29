@@ -200,7 +200,7 @@ class Notificacion(models.Model):
     fecha = models.DateTimeField(default=timezone.now)
     visto = models.BooleanField(default=False)
     tipo = models.CharField(max_length=20, choices=choices, default=choices[0])
-    caso = models.CharField(max_length=255, blank=True, null=True)
+    receta = models.ForeignKey(Receta, null=True, blank=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         #db_table = 'notificacion'

@@ -1,0 +1,31 @@
+<div class="row justify-content-center">
+    <div class="col-12 col-md-3 col-lg-2">
+      
+      <!-- IMAGEN AVATAR PERFIL -->
+      <div class="row justify-content-center">
+        <div class="col-4 col-md-12">
+          <img src="{{respuesta.usuario.perfil.imagen_perfil.url}}" class="img rounded-circle img-fluid" />
+        </div>
+      </div>
+      
+      <!-- FECHA COMENTARIO -->
+      <div class="row">
+        <p class="text-secondary text-center col-12">{{respuesta.fecha_format}}</p>
+      </div>
+    </div>
+
+    <!-- CUERPO COMENTARIO-->
+    <div class="col-12 col-md-9 col-lg-10">
+      
+      <a href="{% url 'perfil' username=respuesta.usuario.username %}">{{respuesta.usuario}}</a>
+      <p>{{respuesta.texto}}</p>
+
+      <!-- BOTÓN RESPONDER -->
+      <button type="button" class="float-right btn-border-rounded btn-responder">
+        <i class="fa fa-reply"></i> Responder
+      </button>
+
+      <!-- RESPUESTAS -->
+      {% include 'partes/input-respuesta.html' %}
+    </div>
+  </div>

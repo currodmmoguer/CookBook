@@ -1,21 +1,21 @@
 @media (max-width: 575.9px) {
-  .textoMenu{
-    font-size: 1rem !important;
+  .textoMenu {
+    font-size: 1.5rem !important;
+    padding-left: 1rem;
   }
 
   .menu a i {
-    font-size: 1rem !important;
+    font-size: 2rem !important;
   }
 
-  .buscador  {
+  .buscador {
     flex-direction: column;
     align-items: stretch;
   }
 }
 
-
 @media (min-width: 991.9px) {
-  .textoMenu{
+  .textoMenu {
     display: none !important;
   }
 
@@ -24,9 +24,9 @@
   }
 }
 
-.header{
+.header {
   background-color: #fff;
-  box-shadow: 0 .5px 2px 0 rgba(0,0,0,.3);
+  box-shadow: 0 0.5px 2px 0 rgba(0, 0, 0, 0.3);
   margin-bottom: 10px;
 }
 
@@ -38,11 +38,11 @@
   display: inherit;
   height: auto;
   font-size: 2rem !important;
-  margin-left: .5rem;
+  margin-left: 0.5rem;
   color: #721b65 !important;
 }
 
-.menu{
+.menu {
   margin-left: 5%;
 }
 
@@ -50,22 +50,39 @@
   color: #721b65 !important;
 }
 
-#btn-notification {
-  text-decoration: none;
-  position: relative;
-  display: inline-block;
-  color: #721b65 !important;
-}
-
 #btn-notification .badge {
   position: absolute;
   top: -10px;
   right: -10px;
-  padding: 5px 10px;
+  padding: 3px 5px;
   border-radius: 50%;
-  background: rgba(255,255,255,.5);
-  color: #721b65;
+  background-color: #721b65 !important;
+  color: white !important;
 }
+
+#btn-notificacion {
+  position: relative;
+}
+#btn-notificacion .badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #721b65;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 5px;
+}
+
+#badge-not {
+  position: absolute;
+  top: 0;
+  background-color: #721b65;
+  color: white;
+  border-radius: 50%;
+  width: .5rem;
+  height: .5rem;
+}
+
 .menu #notificacion .dropdown-menu {
   width: 300px;
 }
@@ -79,7 +96,7 @@
   border: none;
 }
 
-.textoMenu{
+.textoMenu {
   font-size: 2rem;
 }
 
@@ -87,17 +104,11 @@
   color: #721b65 !important;
   border: 1px solid #721b65;
   background-color: white !important;
-  transition: all .5s;
+  transition: all 0.5s;
 }
 
-.btn-navbar:hover{
+.btn-navbar:hover {
   color: white !important;
   background-color: #721b65 !important;
   border: 1px solid white !important;
 }
-
-
-
-
-
-

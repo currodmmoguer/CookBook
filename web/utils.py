@@ -5,6 +5,8 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
 
+
+
 # Paginación
 def paginator(request, lista, num=16):
     paginator = Paginator(lista, num)
@@ -29,13 +31,16 @@ def valoracion_media(receta):
         return 0
     else:
         return media
+
+
     
-def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0):
+def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0, comentario=None):
 
     if not usuario_origen == usuario_destino:
         notificacion = Notificacion.objects.create(usuario_origen=usuario_origen, usuario_destino=usuario_destino, tipo=tipo)
-        
+        print(notificacion)
         # En caso que sea comentario o valoracion se debe almacenar a la receta que hace referencia
         if not tipo == "siguiendo":
-            notificacion.caso = receta.pk
+            notificacion.caso = receta
             notificacion.save()
+        

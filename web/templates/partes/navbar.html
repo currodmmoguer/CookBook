@@ -31,58 +31,15 @@
                 
                 <span class="textoMenu">Búsqueda avanzada</span>
               </a>
-              <div class="btn-group" id="notificacion">
-                <button id="btn-notification" class="nav-item nav-link" type="button" 
-                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                  data-url="{% url 'vaciar_notificaciones' %}" style="background-color: transparent; border: none;">
-                  
+              <a href="{% url 'notificaciones' %}" id="btn-notificacion" class="nav-item nav-link" data-placement="bottom" title="Notificaciones">
                   <i class="fas fa-bell"  style="font-size: 2rem;"></i>
-                  {% if notificaciones.count > 0 %}
+                  <!--{% if notificaciones.count > 0 %}
                     <span class="badge">{{notificaciones.count}}</span>
-                  {% endif %}
+                  {% endif %}-->
+                  <div id="badge-not" hidden=""></div>
                   <span class="textoMenu">Notificaciones</span>
-                
-                </button>
-                <div class="dropdown-menu" aria-labelledby="btn-notification">
-                  
-                  {% for notificacion in notificaciones|slice:":5" %}
-                    <div class="row px-2 my-1">
-                      <div class="col-3">
-                        <img src="{{notificacion.usuario_origen.perfil.imagen_perfil.url}}" alt="" class="img-fluid rounded-circle">
-                      </div>
-                      <div class="col-9 align-self-center">
-                        
-                        {% if notificacion.tipo == "siguiendo" %}
-                          {{notificacion.usuario_origen}} te ha seguido
-                        {% else %}
-                        
-                          <a href="{% url 'receta' pk=notificacion.caso %}">
-                            {% if notificacion.tipo == "comentario" %}
-                              {{notificacion.usuario_origen}} ha comentado tu receta
-                            {% elif notificacion.tipo == "respuesta" %}
-                              {{notificacion.usuario_origen}} ha respondido tu comentario
-                            {% elif notificacion.tipo == "respuesta" %}
-                              {{notificacion.usuario_origen}} ha valorado tu receta
-                            {% endif %}
-                          </a>
-                        {% endif %}
-                        
-                          
-                      </div>
-                    </div>
-                  {% endfor %}
+              </a>
 
-                  
-                  {% if notificaciones.count > 5 or notificaciones.count == 0 %}
-                    <div class="col-12 my-2 text-center">
-                      <button>Ver todas</button>
-                    </div>
-                     
-                  {% endif %}
-                    
-                    
-                </div>
-              </div>
 
 
               <a href="{% url 'perfil' username=user.username %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Perfil">

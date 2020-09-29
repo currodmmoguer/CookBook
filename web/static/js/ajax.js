@@ -10,7 +10,7 @@ $(".btn-guardar").click(function () {
     data: { receta_id: id },
     success: function (data) {
       var clase = btn.children($(".fa-bookmark")).attr("class");
-      
+      console.log(url);
       // Cambia la clase el icono de guardar para que esté marcado o desmarcado
       if (clase.includes("far")) {
         btn.children().removeClass("far").addClass("fas");
@@ -79,6 +79,8 @@ $("#submit-sugerencia").click(function () {
 });
 
 // Notificaciones
+/*
+
 $("#btn-notification").click(function () {
   var url = $(this).attr("data-url");
   var badge = $(this).find(".badge");
@@ -90,4 +92,18 @@ $("#btn-notification").click(function () {
       badge.attr("hidden", "");
     },
   });
+});
+*/
+$(document).ready(function(){
+  $.ajax({
+    type: "GET",
+    url: "/hay_notificaciones/",
+    success: function(){
+      $('#badge-not').removeAttr("hidden");
+    },
+    error: function(){
+      console.log("No hay notificaciones")
+   },
+  });
+
 });

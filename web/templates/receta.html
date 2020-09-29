@@ -12,10 +12,11 @@
 </head>
 
 <!-- Modal eliminar-->
-<div class="modal fade" id="modal-eliminar" tabindex="-1" role="dialog" aria-labelledby="modal-eliminar" aria-hidden="true">
+<div class="modal fade" id="modal-eliminar" tabindex="-1" role="dialog" aria-labelledby="modal-eliminar"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-      
+
       <div class="modal-header">
         <h5 class="modal-title" id="exampleModalLabel">¿Seguro que deseas eliminar la receta?</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -33,7 +34,8 @@
 </div>
 
 <!-- Modal valorar-->
-<div class="modal fade" id="modal-valorar" tabindex="-1" role="dialog" aria-labelledby="modal-valorar" aria-hidden="true">
+<div class="modal fade" id="modal-valorar" tabindex="-1" role="dialog" aria-labelledby="modal-valorar"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
 
@@ -46,7 +48,8 @@
 
       <div class="modal-footer">
         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn" id="modal-submit" data-recetaid="{{receta.pk}}" data-url="{% url 'valorar_seguro' %}">Valorar</button>
+        <button type="button" class="btn" id="modal-submit" data-recetaid="{{receta.pk}}"
+          data-url="{% url 'valorar_seguro' %}">Valorar</button>
       </div>
 
     </div>
@@ -54,20 +57,21 @@
 </div>
 
 <!-- Modal imagen preview -->
-<div class="modal fade" id="modal-img-preview" tabindex="-1" role="dialog" aria-labelledby="modal-img-preview" aria-hidden="true">
+<div class="modal fade" id="modal-img-preview" tabindex="-1" role="dialog" aria-labelledby="modal-img-preview"
+  aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
-        <div class="modal-body">
-            <img src="" id="img-preview" class="d-block w-100">
-        </div>
+      <div class="modal-body">
+        <img src="" id="img-preview" class="d-block w-100">
+      </div>
     </div>
-</div>
+  </div>
 </div>
 
 <!-- Imagen grande-->
 
 <div id="dialog" class="window">
-    <img id="imgBig" class="img-fluid"/>
+  <img id="imgBig" class="img-fluid" />
 </div>
 <div id="mask"></div>
 
@@ -79,11 +83,11 @@
     <h2 class="">
       {{ receta.titulo }}
       {% if receta.usuario == user %}
-        {% if receta.publico %}
-          <i class="fas fa-lock-open" style="color: #888"></i>
-        {% else %}
-          <i class="fas fa-lock" style="color: #888"></i>
-        {% endif %}
+      {% if receta.publico %}
+      <i class="fas fa-lock-open" style="color: #888"></i>
+      {% else %}
+      <i class="fas fa-lock" style="color: #888"></i>
+      {% endif %}
       {% endif %}
     </h2>
   </div>
@@ -118,7 +122,7 @@
 
         <!-- ELIMINAR -->
         <a href="#modal-eliminar" data-toggle="modal" data-target="#modal-eliminar">
-          <i class="fas fa-trash" style='font-size:1rem' ></i> Eliminar
+          <i class="fas fa-trash" style='font-size:1rem'></i> Eliminar
         </a>
 
       </div>
@@ -148,7 +152,7 @@
 <div class="row justify-content-between">
   <div class="col-5">
     {% if not receta.tiempo_estimado is None %}
-      <i class="far fa-clock"></i> {{receta.tiempo_estimado}}
+    <i class="far fa-clock"></i> {{receta.tiempo_estimado}}
     {% endif %}
   </div>
 
@@ -161,13 +165,16 @@
 <div id="ingredientes" class="my-4">
 
   <div class="row">
-    <div class="col-12"><h2>Ingredientes</h2></div>
-    
+    <div class="col-12">
+      <h2>Ingredientes</h2>
+    </div>
+
     <div class="align-self-center ml-3">
       {% if not receta.raciones is None %}
-      Para  <input id="cantidad" type="number" value="{{receta.raciones}}" style="width: 30px; -moz-appearance: textfield; -webkit-appearance: textfield;" autocomplete="off"> raciones
+      Para <input id="cantidad" type="number" value="{{receta.raciones}}"
+        style="width: 30px; -moz-appearance: textfield; -webkit-appearance: textfield;" autocomplete="off"> raciones
       {% endif %}
-      
+
     </div>
   </div>
 
@@ -175,7 +182,8 @@
     <ul>
       {% for ingrediente in receta.ingredientes.all %}
       <lu data-ingrediente="{{ingrediente.pk}}">
-        <b>{{ingrediente.cantidad}}</b> <b>{{ingrediente.unidad_medida.nombre}}</b> de {{ingrediente.ingrediente.nombre}}
+        <b>{{ingrediente.cantidad}}</b> <b>{{ingrediente.unidad_medida.nombre}}</b> de
+        {{ingrediente.ingrediente.nombre}}
         <br>
       </lu>
       {% endfor %}
@@ -188,7 +196,9 @@
 <div id="pasos" class="my-4">
 
   <div class="row">
-    <div class="col-12"><h2>Pasos</h2></div>
+    <div class="col-12">
+      <h2>Pasos</h2>
+    </div>
   </div>
   <div class="row pr-3">
     <ul>
@@ -213,15 +223,17 @@
   <div class="row">
     <div class="col-12 text-center">
       <span id="valoracion_media">
-        {% if not receta.valoracion_media %} <!-- si no tiene valoraciones -->
-          {% if user != receta.usuario %} <!-- si no es el mismo usuario que ha creado la receta-->
-            Sé el primero en valorar
-          {% else %}
-            Aún no tiene valoraciones
-          {% endif %}
+        {% if not receta.valoracion_media %}
+        <!-- si no tiene valoraciones -->
+        {% if user != receta.usuario %}
+        <!-- si no es el mismo usuario que ha creado la receta-->
+        Sé el primero en valorar
         {% else %}
-          {{receta.valoracion_media}}</span>
+        Aún no tiene valoraciones
         {% endif %}
+        {% else %}
+        {{receta.valoracion_media}}</span>
+      {% endif %}
       </span>
     </div>
   </div>
@@ -234,7 +246,8 @@
         <input type="radio" id="star4" name="valoracion" value="4" /><label class="fa fa-star" for="star4"></label>
         <input type="radio" id="star3" name="valoracion" value="3" /><label class="fa fa-star" for="star3"></label>
         <input type="radio" id="star2" name="valoracion" value="2" /><label class="fa fa-star" for="star2"></label>
-        <input type="radio" id="star1" name="valoracion" value="1" required /><label class="fa fa-star" for="star1"></label>
+        <input type="radio" id="star1" name="valoracion" value="1" required /><label class="fa fa-star"
+          for="star1"></label>
       </div>
     </div>
   </div>
@@ -244,7 +257,8 @@
   {% if receta.usuario != user %}
   <div class="row justify-content-center my-3">
     <div class="col-12 text-center">
-      <input type="submit" class="btn-border-rounded btn-valorar" value="Valorar" data-recetaid="{{receta.pk}}" data-url="{% url 'valorar' %}">
+      <input type="submit" class="btn-border-rounded btn-valorar" value="Valorar" data-recetaid="{{receta.pk}}"
+        data-url="{% url 'valorar' %}">
     </div>
   </div>
   {% endif %}
@@ -265,7 +279,7 @@
       <div class="col-12">
         {{comentarioForm.texto}}
       </div>
-      
+
 
     </div>
     <div class="row">
@@ -291,7 +305,7 @@
       {% for respuesta in comentario.respuestas.all %}
       <div class="card card-inner my-3" id="comentario-{{respuesta.pk}}">
         <div class="card-body">
-          {% include 'partes/comentario.html' %}
+          {% include 'partes/comentario-respuesta.html' %}
         </div>
       </div>
       {% endfor %}
@@ -310,54 +324,58 @@
 <script>
 
   $(document).ready(function () {
-    var defaultRaciones = {{receta.raciones}};
-    var ingredientes = $('#lista-ingredientes').children();
-    var cantidadesIngredientes = [];
-    ingredientes.children().each(function(){
-        var oldCantidad = this.childNodes[1].textContent.replace(',','.');
-        cantidadesIngredientes.push(oldCantidad)
-      });
-    console.log(cantidadesIngredientes);
+    var defaultRaciones = {{ receta.raciones }
+  };
+  var ingredientes = $('#lista-ingredientes').children();
+  var cantidadesIngredientes = [];
+  ingredientes.children().each(function () {
+    var oldCantidad = this.childNodes[1].textContent.replace(',', '.');
+    cantidadesIngredientes.push(oldCantidad)
+  });
+  console.log(cantidadesIngredientes);
 
 
   // Hace que el campo cantidad en ingrediente no se pueda introducir letras
-  $("#cantidad").keyup(function(event){
+  if (default != None) {
+    $("#cantidad").keyup(function (event) {
 
-    
-    if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105  || event.which == 8) {
-      
-      var newRaciones = $('#cantidad').val();
-      
-      ingredientes.children().each(function(i){
-        //var oldCantidad = this.childNodes[1].textContent.replace(',','.');
-        // Comprobar si es fracción
-        //oldCantidad = Number(oldCantidad);
-        //console.log(cantidadesIngredientes[i] + ' x ' + newRaciones + ' / ' + defaultRaciones);
-        var newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
-        this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
-      });
-    
-    }
-  }).on('paste', function (event) {
-    event.preventDefault();
+
+      if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105 || event.which == 8) {
+
+        var newRaciones = $('#cantidad').val();
+
+        ingredientes.children().each(function (i) {
+          //var oldCantidad = this.childNodes[1].textContent.replace(',','.');
+          // Comprobar si es fracción
+          //oldCantidad = Number(oldCantidad);
+          //console.log(cantidadesIngredientes[i] + ' x ' + newRaciones + ' / ' + defaultRaciones);
+          var newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
+          this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
+        });
+
+      }
+    }).on('paste', function (event) {
+      event.preventDefault();
+    });
+  }
+
+
+  $('.form-respuesta').hide();
+
+  $('.btn-responder').click(function () {
+    var elemento = $(this).parent().children('div.form-respuesta');
+    elemento.slideToggle('slow');
   });
 
-    $('.form-respuesta').hide();
+  $('#pasos img').click(function () {
 
-    $('.btn-responder').click(function () {
-      var elemento = $(this).parent().children('div.form-respuesta');
-      elemento.slideToggle('slow');
-    });
+    if ($(window).width() >= 992) {
+      var src = $(this).attr('src');
+      $('#img-preview').attr('src', src);
+      $('#modal-img-preview').modal('show');
+    }
 
-    $('#pasos img').click(function(){
-        
-        if ($(window).width() >= 992 ){
-          var src = $(this).attr('src');
-          $('#img-preview').attr('src', src);
-          $('#modal-img-preview').modal('show');
-        }
-        
-    });
+  });
    
    
   });

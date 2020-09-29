@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load filters %}
+
+{% block content %}
+
+
+{% for notificacion in notificaciones %}
+<div class="row px-2 my-1">
+    <div class="col-3 col-md-2 col-lg-1">
+        <img src="{{notificacion.usuario_origen.perfil.imagen_perfil.url}}" alt="" class="img-fluid rounded-circle">
+    </div>
+    <div class="col-9 col-md-10 col-lg-11 align-self-center">
+
+        {% if notificacion.tipo == "siguiendo" %}
+        <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}"><span style="font-weight: bold;">{{notificacion.usuario_origen}}</span> te ha seguido.
+            <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span></a>
+        {% else %}
+            
+            <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}" style="font-weight: bold;">{{notificacion.usuario_origen}}</a>
+            
+            <a href="{% url 'receta' pk=notificacion.receta %}">
+            {% if notificacion.tipo == "comentario" %}
+                ha comentado tu receta "{{notificacion.comentario.receta.titulo}}": "{{notificacion.comentario.texto|slice:":50"}}".
+                <br><span class="fecha">hace {{notificacion.fecha|fecha_hasta_hoy}}</span>
+            {% elif notificacion.tipo == "respuesta" %}
+                ha respondido tu comentario de "{{notificacion.comentario.receta.titulo}}".
+                <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
+            {% elif notificacion.tipo == "valoracion" %}
+                ha valorado tu receta.
+                <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
+            {% endif %}
+            </a>
+        
+        {% endif %}
+
+
+    </div>
+</div>
+
+{% empty %}
+<h2>Aún no tienes notificaciones</h2>
+{% endfor %}
+
+{% endblock %}

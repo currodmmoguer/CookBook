@@ -43,6 +43,12 @@ def index(request):
         return redirect('login')
 
     notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
+
+    if notificaciones:
+        print("Hay notificaciones")
+    else:
+        print("No hay notificaciones")
+
     for notificacion in notificaciones:
         pass
    
@@ -106,9 +112,9 @@ def receta(request, pk):
             texto = respuestaForm.cleaned_data['texto']
             padre = Comentario.objects.get(
                 pk=int(request.POST['comentario-respuesta']))
-            Comentario.objects.create(
+            comentario = Comentario.objects.create(
                 texto=texto, receta=receta, usuario=request.user, comentario_respuesta=padre)
-            utils.add_notificacion(request.user, receta.usuario, "respuesta", receta)
+            utils.add_notificacion(request.user, padre.usuario, "respuesta", receta.pk, comentario)
 
 
     # Formulario escribir comentario
@@ -121,7 +127,7 @@ def receta(request, pk):
             comentario.receta = Receta.objects.get(pk=pk)  # Le añade la receta
             comentario.save()
             
-            utils.add_notificacion(request.user, receta.usuario, "comentario", receta)
+            utils.add_notificacion(request.user, receta.usuario, "comentario", receta.pk, comentario)
 
     comentarioFrom = ComentarioForm()
     valoracionForm = ValoracionForm()
@@ -132,8 +138,7 @@ def receta(request, pk):
     
     context = {'receta': receta, 'valoracionForm': valoracionForm,
                'comentarioForm': comentarioFrom, 'respuestaForm': respuestaForm}
-    for i in receta.ingredientes.all():
-        print(i.__dict__)
+    
     return render(request, 'receta.html', context)
 
 
@@ -540,6 +545,21 @@ def editar_rrss(request):
 
     return render(request, 'editar_rrss.html', {'form': form, 'opc': 'rrss'})
 
+#Notificaciones
+@login_required
+def notificaciones(request):
+    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).order_by('-fecha')[:50]
+    context = {
+        'notificaciones': notificaciones
+    }
+    notificaciones_vistas = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
+
+    for notificacion in notificaciones_vistas:
+        notificacion.visto = True
+        notificacion.save()
+    
+    # Falta poner paginación o limite
+    return render(request, 'notificaciones.html', context)
 #Busqueda avanzada de recetas 
 @login_required
 def busqueda_avanzada(request):
@@ -553,7 +573,8 @@ def busqueda_avanzada(request):
             
             for form in formset:   #Por cada input del formulario, obtiene el objeto ingrediente
                 try:
-                    ingrediente = Ingrediente.objects.get(nombre=form.cleaned_data['ingrediente']) #Obtiene el objeto ingrediente a través del nombre
+                    ingrediente = Ingrediente.objects.filter(nombre__iexact=form.cleaned_data['ingrediente']).first() #Obtiene el objeto ingrediente a través del nombre
+
                     if not ingrediente in ingredientes: #Comprueba que no esté en la lista para que no haya repetidos
                         ingredientes.append(ingrediente)
                 except Ingrediente.DoesNotExist:    #Excepción en caso de que no exista un ingrediente con el nombre introducido
@@ -698,7 +719,17 @@ def registro(request):
 #Elimina la cuenta logueada y redirecciona a la pantalla de logueo
 @login_required
 def eliminar_cuenta(request):
+    for receta in request.user.recetas.all():
+        remove(receta.imagen_terminada.path)
+        for paso in receta.pasos.all():
+            if paso.imagen_paso:
+                remove(paso.imagen_paso.path)
+    
+    if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
+        remove(request.user.imagen_perfil.path)
+    
     request.user.delete()
+    
     return redirect('login')
 
 
@@ -717,7 +748,12 @@ def eliminar_foto(request):
 def eliminar_receta(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
     
+    
     if request.user == receta.usuario:  # Comprueba que la receta pertenezca al usuario logueado
+        remove(receta.imagen_terminada.path)
+        for paso in receta.pasos.all():
+            if paso.imagen_paso:
+                remove(paso.imagen_paso.path)
         receta.delete()
         return redirect('perfil', username=request.user.username)
 
@@ -802,6 +838,18 @@ def sugerencia(request):
         return HttpResponse()
 
     return HttpResponse("unsuccessful")
+
+@login_required
+def hay_notificaciones(request):
+    print("Entra")
+    if request.method == "GET":
+        notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
+
+        if notificaciones:
+            print("Hay notis")
+            return HttpResponse("success")
+        print("No hay notis")
+        return None
 
 @login_required
 def vaciar_notificaciones(request):

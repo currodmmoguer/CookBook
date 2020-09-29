@@ -1,12 +1,9 @@
 from django.urls import path
 from . import views
-from django.conf.urls.static import static
-from django.conf.urls import url
-
-
 
 urlpatterns = [
     path('vaciar-notificaciones', views.vaciar_notificaciones, name="vaciar_notificaciones"),
+    path('hay_notificaciones/', views.hay_notificaciones, name="hay_notificaciones"),
     path('sugerencia/', views.sugerencia, name="sugerencia"),
     path('valorar/', views.valorar, name="valorar"),    #Sirve para cuando se da al botón valorar
     path('valorar-seg/', views.valorar_seguro, name="valorar_seguro"),  #Sirve cuando se valora desde el modal
@@ -21,6 +18,7 @@ urlpatterns = [
     path('receta/<int:pk>/edit/', views.editar_receta, name="editar_receta"),   #Editar receta
     path('<username>/pass-edit/', views.editar_pass, name="editar_pass"),   #Editar contraseña
     path('rrss-edit', views.editar_rrss, name="editar_rrss"),   #Editar las RRSS
+    path('notificaciones', views.notificaciones, name="notificaciones"),    #Muestra las notificaciones
     path('signup', views.registro, name="registro"),    #Vista registro
     path('<username>/guardadas/', views.recetas_guardadas, name='recetas_guardadas'),   #Vista recetas guardadas
     path('<username>/seguidores', views.seguidores, name="seguidores"), #Vista lista de seguidores
@@ -32,7 +30,4 @@ urlpatterns = [
     path('eliminar-foto', views.eliminar_foto, name="eliminar_foto"),   #Eliminar foto de perfil
     path('eliminar-receta/<pk>/', views.eliminar_receta, name="eliminar_receta"),   #Eliminar receta
     path('receta/<pk>/publicar', views.publicar, name="publicar"),  #Publicar o no una receta
-    
-
 ]
-

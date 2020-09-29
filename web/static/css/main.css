@@ -372,4 +372,9 @@ input[type="file"]{
 }
 
 
+/* Notificaciones */
 
+.fecha {
+  font-size: .8rem;
+  color: #868686;
+}
