@@ -79,31 +79,15 @@ $("#submit-sugerencia").click(function () {
 });
 
 // Notificaciones
-/*
-
-$("#btn-notification").click(function () {
-  var url = $(this).attr("data-url");
-  var badge = $(this).find(".badge");
-
-  $.ajax({
-    type: "GET",
-    url: url,
-    success: function () {
-      badge.attr("hidden", "");
-    },
-  });
-});
-*/
 $(document).ready(function(){
   $.ajax({
     type: "GET",
     url: "/hay_notificaciones/",
-    success: function(){
-      $('#badge-not').removeAttr("hidden");
+    success: function(e){
+      if (e === "si-notificacion") {
+        $('#badge-not').removeAttr("hidden");
+      } 
     },
-    error: function(){
-      console.log("No hay notificaciones")
-   },
   });
 
 });

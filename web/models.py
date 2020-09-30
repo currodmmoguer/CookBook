@@ -201,6 +201,7 @@ class Notificacion(models.Model):
     visto = models.BooleanField(default=False)
     tipo = models.CharField(max_length=20, choices=choices, default=choices[0])
     receta = models.ForeignKey(Receta, null=True, blank=True, on_delete=models.DO_NOTHING)
+    comentario = models.ForeignKey(Comentario, null=True, blank=True, on_delete=models.DO_NOTHING)
 
     class Meta:
         #db_table = 'notificacion'

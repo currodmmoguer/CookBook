@@ -28,14 +28,10 @@
 
               <a href="{% url 'busqueda_avanzada' %}" class="nav-item nav-link" data-toggle="tooltip" data-placement="bottom" title="Búsqueda avanzada">
                 <i class="fas fa-search"  style="font-size: 2rem;"></i>
-                
                 <span class="textoMenu">Búsqueda avanzada</span>
               </a>
               <a href="{% url 'notificaciones' %}" id="btn-notificacion" class="nav-item nav-link" data-placement="bottom" title="Notificaciones">
                   <i class="fas fa-bell"  style="font-size: 2rem;"></i>
-                  <!--{% if notificaciones.count > 0 %}
-                    <span class="badge">{{notificaciones.count}}</span>
-                  {% endif %}-->
                   <div id="badge-not" hidden=""></div>
                   <span class="textoMenu">Notificaciones</span>
               </a>

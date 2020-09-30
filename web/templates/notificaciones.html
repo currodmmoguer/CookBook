@@ -5,34 +5,40 @@
 
 {% block content %}
 
-
 {% for notificacion in notificaciones %}
 <div class="row px-2 my-1">
     <div class="col-3 col-md-2 col-lg-1">
-        <img src="{{notificacion.usuario_origen.perfil.imagen_perfil.url}}" alt="" class="img-fluid rounded-circle">
+        <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}"><img src="{{notificacion.usuario_origen.perfil.imagen_perfil.url}}" alt="" class="img-fluid rounded-circle"></a>
     </div>
+
     <div class="col-9 col-md-10 col-lg-11 align-self-center">
 
         {% if notificacion.tipo == "siguiendo" %}
-        <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}"><span style="font-weight: bold;">{{notificacion.usuario_origen}}</span> te ha seguido.
-            <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span></a>
+        <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}"><span
+                style="font-weight: bold;">{{notificacion.usuario_origen}}</span> te ha seguido.
+            <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
+        </a>
         {% else %}
-            
-            <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}" style="font-weight: bold;">{{notificacion.usuario_origen}}</a>
-            
-            <a href="{% url 'receta' pk=notificacion.receta %}">
+
+        <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}"
+            style="font-weight: bold;">{{notificacion.usuario_origen}}</a>
+
+        <a href="{% url 'receta' pk=notificacion.receta.pk %}">
             {% if notificacion.tipo == "comentario" %}
-                ha comentado tu receta "{{notificacion.comentario.receta.titulo}}": "{{notificacion.comentario.texto|slice:":50"}}".
-                <br><span class="fecha">hace {{notificacion.fecha|fecha_hasta_hoy}}</span>
+            <!-- Muestra el nombre de la receta y el texto como máximo 50 caracteres-->
+            ha comentado tu receta "{{notificacion.receta}}":
+            "{{notificacion.comentario.texto|slice:":50"}}{% if notificacion.comentario.texto|length > 50 %}...{% endif %}".
+            <br><span class="fecha">hace {{notificacion.fecha|fecha_hasta_hoy}}</span>
             {% elif notificacion.tipo == "respuesta" %}
-                ha respondido tu comentario de "{{notificacion.comentario.receta.titulo}}".
-                <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
+            ha respondido tu comentario de "{{notificacion.receta}}":
+            "{{notificacion.comentario.texto|slice:":50"}}{% if notificacion.comentario.texto|length > 50 %}...{% endif %}".
+            <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
             {% elif notificacion.tipo == "valoracion" %}
-                ha valorado tu receta.
-                <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
+            ha valorado tu receta "{{notificacion.receta}}".
+            <br><span class="fecha">{{notificacion.fecha|fecha_hasta_hoy}}</span>
             {% endif %}
-            </a>
-        
+        </a>
+
         {% endif %}
 
 
@@ -40,7 +46,10 @@
 </div>
 
 {% empty %}
-<h2>Aún no tienes notificaciones</h2>
+<div class="row justify-content-center">
+    <h2>Aún no tienes notificaciones</h2>
+</div>
+
 {% endfor %}
 
 {% endblock %}

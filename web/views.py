@@ -42,16 +42,6 @@ def index(request):
         logout(request)
         return redirect('login')
 
-    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
-
-    if notificaciones:
-        print("Hay notificaciones")
-    else:
-        print("No hay notificaciones")
-
-    for notificacion in notificaciones:
-        pass
-   
     if request.method == "POST":
         if "new" in request.POST:
             recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
@@ -114,7 +104,7 @@ def receta(request, pk):
                 pk=int(request.POST['comentario-respuesta']))
             comentario = Comentario.objects.create(
                 texto=texto, receta=receta, usuario=request.user, comentario_respuesta=padre)
-            utils.add_notificacion(request.user, padre.usuario, "respuesta", receta.pk, comentario)
+            utils.add_notificacion(request.user, padre.usuario, "respuesta", receta, comentario)
 
 
     # Formulario escribir comentario
@@ -127,7 +117,7 @@ def receta(request, pk):
             comentario.receta = Receta.objects.get(pk=pk)  # Le añade la receta
             comentario.save()
             
-            utils.add_notificacion(request.user, receta.usuario, "comentario", receta.pk, comentario)
+            utils.add_notificacion(request.user, receta.usuario, "comentario", receta, comentario)
 
     comentarioFrom = ComentarioForm()
     valoracionForm = ValoracionForm()
@@ -797,7 +787,7 @@ def valorar(request):
         if not Valoracion.objects.filter(receta=receta).filter(usuario=request.user).exists():
             Valoracion.objects.create(valoracion=valoracion, receta=receta, usuario=request.user)
             receta.valoracion_media = utils.valoracion_media(receta)
-            utils.add_notificacion(request.user, receta.usuario, "valoracion", receta.pk)
+            utils.add_notificacion(request.user, receta.usuario, "valoracion", receta)
             return HttpResponse(receta.valoracion_media)
         else:
             return HttpResponse('existe')
@@ -816,7 +806,7 @@ def valorar_seguro(request):
         valoracion.valoracion = puntos
         valoracion.save()
         receta.valoracion_media = utils.valoracion_media(receta)
-        utils.add_notificacion(request.user, receta.usuario, "valoracion", receta.pk)
+        utils.add_notificacion(request.user, receta.usuario, "valoracion", receta)
         
         return HttpResponse(receta.valoracion_media)
     
@@ -841,26 +831,16 @@ def sugerencia(request):
 
 @login_required
 def hay_notificaciones(request):
-    print("Entra")
+
     if request.method == "GET":
         notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
 
         if notificaciones:
-            print("Hay notis")
-            return HttpResponse("success")
-        print("No hay notis")
-        return None
+            return HttpResponse("si-notificacion")
+        
+        return HttpResponse("no-notificacion")
 
-@login_required
-def vaciar_notificaciones(request):
 
-    if request.method == "GET":
-
-        notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
-        for notificacion in notificaciones:
-            notificacion.visto = True
-            notificacion.save()
-        return HttpResponse()
 
 @login_required
 def seguir(request, pk):

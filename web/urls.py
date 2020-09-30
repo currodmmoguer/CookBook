@@ -2,8 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('vaciar-notificaciones', views.vaciar_notificaciones, name="vaciar_notificaciones"),
-    path('hay_notificaciones/', views.hay_notificaciones, name="hay_notificaciones"),
+    path('hay_notificaciones/', views.hay_notificaciones, name="hay_notificaciones"),   #Ajax-Comprueba que el usuario tenga notificaciones
     path('sugerencia/', views.sugerencia, name="sugerencia"),
     path('valorar/', views.valorar, name="valorar"),    #Sirve para cuando se da al botón valorar
     path('valorar-seg/', views.valorar_seguro, name="valorar_seguro"),  #Sirve cuando se valora desde el modal

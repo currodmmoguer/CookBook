@@ -35,12 +35,17 @@ def valoracion_media(receta):
 
     
 def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0, comentario=None):
-
+    print(receta)
     if not usuario_origen == usuario_destino:
         notificacion = Notificacion.objects.create(usuario_origen=usuario_origen, usuario_destino=usuario_destino, tipo=tipo)
-        print(notificacion)
+        
         # En caso que sea comentario o valoracion se debe almacenar a la receta que hace referencia
         if not tipo == "siguiendo":
-            notificacion.caso = receta
+            notificacion.receta = receta
+            if not tipo == "valoracion":    # Solo si es comentario o respuesta
+                notificacion.comentario = comentario
             notificacion.save()
+            
+
+
         
