@@ -71,11 +71,11 @@
 { color: #222222; } /* Color de la estrella cuando no se hace clic*/
 
 
-.starrating input:checked ~ label
-{ color: #F9A31A ; } /* Color de la estrella una vez seleccionada*/
 
-.starrating input:hover ~ label
-{ color: #F9A31A ;  } /* Color de la estrella con el pulsor encima */
+.starrating input:checked ~ label, .starrating input:hover ~ label
+{ color: #F9A31A ; }  /* Color de la estrella una vez seleccionada*/
+                        /* Color de la estrella con el pulsor encima */
+
 
 .txt-respuesta{
     border: none;

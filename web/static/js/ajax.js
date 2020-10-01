@@ -47,7 +47,7 @@ $(".btn-valorar").click(function () {
   var id = $(this).attr("data-recetaid");
   var url = $(this).attr("data-url");
   var valoracion = $("input[type=radio]:checked").val();
-
+  alert(valoracion);
   $.ajax({
     type: "GET",
     url: url,

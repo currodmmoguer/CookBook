@@ -25,7 +25,7 @@ class CategoriaReport(admin.ModelAdmin):
 
 @admin.register(Perfil)
 class Perfil(admin.ModelAdmin):
-    #exclude = ('seguidores',)   # Elimina el campo seguidores del administrador
+    exclude = ('seguidores',)   # Elimina el campo seguidores del administrador
 
     # Obtiene los 10 perfiles con más recetas creadas
     perfiles = User.objects.filter(perfil__isnull=False).annotate(num_recetas=Count('recetas')).filter(num_recetas__gt=0).order_by('-num_recetas')[:5]
