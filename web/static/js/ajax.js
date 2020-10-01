@@ -1,3 +1,24 @@
+// Seguir/Dejar de seguir
+$(".seguir").click(function(){
+  var idUser = $(this).attr("data-user");
+  var url = $(this).attr("data-url");
+  var button = this;
+  $.ajax({
+    type: "GET",
+    url: url,
+    data: {user_id: idUser},
+    success: function(data) {
+      // Cambia el texto del botón
+      // Cambiar el número de seguidores
+      if (data == "siguiendo"){
+        $(button).html("Dejar de seguir");
+      } else if (data == "dejado"){
+        $(button).html("Seguir");
+      }
+    },
+  });
+});
+
 // Guardar receta
 $(".btn-guardar").click(function () {
   var id = $(this).attr("id");

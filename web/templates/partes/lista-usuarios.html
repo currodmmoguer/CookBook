@@ -1,5 +1,5 @@
 
-{% for usuario in lista_usuarios %}
+{% for usuario in lista_usuarios %} <!-- usuario es objeto perfil -->
 <div class="row px-md-5 my-3 justify-content-md-center">
 
   <!-- IMAGEN AVATAR-->
@@ -14,13 +14,19 @@
 
     <!-- BOTÓN -->
     <div class="col-5 col-sm-3 text-right">
-        {% if usuario.usuario.pk == user.pk %}
-        <a href="{% url 'editar_perfil' username=user.username %}"><button type="button" class="btn-border-rounded">Editar</button></a>
-        {% elif user.perfil in usuario.seguidores.all %}
-        <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Dejar de seguir</button></a>
+
+        {% if user.pk == usuario.pk %}
+      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
+        class="btn-border-rounded">Editar</button></a>
+    {% else %}
+      <button type="button" class="btn-border-rounded seguir" data-user="{{usuario.pk}}" data-url="{% url 'seguir' pk=usuario.pk %}">
+        {% if user.perfil in usuario.seguidores.all %}
+          Dejar de seguir
         {% else %}
-        <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Seguir</button></a>
+          Seguir
         {% endif %}
+      </button>
+    {% endif %}
     </div>
 
   </div>

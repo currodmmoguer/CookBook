@@ -33,8 +33,8 @@
 
     <div class="row mb-2 justify-content-center justify-content-md-start">
 
-      
-      
+
+
       {% if not user.perfil.facebook == "" %}
       <div class="col-3 col-md-2 col-lg-1">
         <a href="http://www.facebook.com/{{user.perfil.facebook}}">
@@ -42,10 +42,10 @@
         </a>
       </div>
       {% endif %}
-        
-      
 
-      
+
+
+
       {% if not user.perfil.instagram == "" %}
       <div class="col-3 col-md-2 col-lg-1">
         <a href="http://www.instagram.com/{{user.perfil.instagram}}">
@@ -53,10 +53,10 @@
         </a>
       </div>
       {% endif %}
-        
-      
 
-      
+
+
+
       {% if not user.perfil.twitter == "" %}
       <div class="col-3 col-md-2 col-lg-1">
         <a href="http://www.twitter.com/{{user.perfil.twitter}}">
@@ -64,9 +64,9 @@
         </a>
       </div>
       {% endif %}
-        
-      
-      
+
+
+
       {% if not user.perfil.youtube == "" %}
       <div class="col-3 col-md-2 col-lg-1">
         <a href="http://www.youtube.com/{{user.perfil.youtube}}">
@@ -74,11 +74,6 @@
         </a>
       </div>
       {% endif %}
-        
-      
-
-      
-
 
     </div>
 
@@ -87,13 +82,17 @@
   <!-- BOTÓN SEGUIR -->
   <div class="col-2 ml-1 div-seguir">
     {% if user.get_username == usuario.username %}
-    <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
+      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
         class="btn-border-rounded">Editar</button></a>
-    {% elif user.perfil in usuario.perfil.seguidores.all %}
-    <a href="{% url 'dejar_seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Dejar de
-        seguir</button></a>
     {% else %}
-    <a href="{% url 'seguir' pk=usuario.pk %}"><button type="button" class="btn-border-rounded">Seguir</button></a>
+    
+      <button type="button" class="btn-border-rounded seguir" data-user="{{usuario.pk}}" data-url="{% url 'seguir' pk=usuario.pk %}">
+        {% if user.perfil in usuario.perfil.seguidores.all %}
+          Dejar de seguir
+        {% else %}
+          Seguir
+        {% endif %}
+      </button>
     {% endif %}
   </div>
 
@@ -102,7 +101,7 @@
 </div>
 
 <script>
-  console.log($(window).width());
+
   $(document).ready(function () {
 
     if ($(window).width() < 576) {

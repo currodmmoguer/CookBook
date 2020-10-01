@@ -390,6 +390,7 @@ def seguidores(request, username):
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     seguidores = user.perfil.seguidores.all()   # Obtiene la lista seguidores
+    print(seguidores)
 
     if user == request.user:
         mensaje_vacio = "Aún no tienes seguidores"
@@ -415,7 +416,7 @@ def siguiendo(request, username):
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     siguiendo = Perfil.objects.filter(seguidores=user.perfil)   # Obtiene la lista de usuarios siguiendo
-
+    print(user.perfil.seguidores.all())
     if user == request.user:
         mensaje_vacio = "Aún no sigues a nadie"
     else:
@@ -841,7 +842,39 @@ def hay_notificaciones(request):
         return HttpResponse("no-notificacion")
 
 
+@login_required
+def seguir_dejar(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
 
+    if not request.user == usuario:
+        print(usuario.perfil.seguidores.all())
+        if not request.user.perfil in usuario.perfil.seguidores.all():
+            usuario.perfil.add_seguidor(request.user.perfil)
+            utils.add_notificacion(request.user, usuario, "siguiendo")
+            return HttpResponse("siguiendo")
+        else:
+            print("entra")
+            usuario.perfil.dejar_seguir(request.user.perfil)
+            return HttpResponse("dejado")
+    return redirect('error_404')
+
+@login_required
+def seguir(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+
+    if not request.user == usuario:
+        usuario.perfil.add_seguidor(request.user.perfil)
+        utils.add_notificacion(request.user, usuario, "siguiendo")
+        return HttpResponse("ok")
+
+
+@login_required
+def dejar_seguir(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    if not request.user == usuario:
+        usuario.perfil.dejar_seguir(request.user.perfil)
+        return HttpResponse("ok")
+"""
 @login_required
 def seguir(request, pk):
     usuario = get_object_or_404(User, pk=pk)
@@ -857,7 +890,7 @@ def dejar_seguir(request, pk):
     usuario = get_object_or_404(User, pk=pk)
     if not request.user == usuario:
         usuario.perfil.dejar_seguir(request.user.perfil)
-        return redirect('perfil', username=usuario.username)
+        return redirect('perfil', username=usuario.username)"""
 
 
 def error_404(request, exception):
