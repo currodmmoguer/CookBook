@@ -6,7 +6,7 @@
 {% block content %}
 
 <head>
-  <title>Receta</title>
+  <title>{{receta}} · CookBook</title>
   <link rel="stylesheet" href="{% static 'css/receta.css' %}">
   <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 </head>
@@ -68,12 +68,7 @@
   </div>
 </div>
 
-<!-- Imagen grande-->
 
-<div id="dialog" class="window">
-  <img id="imgBig" class="img-fluid" />
-</div>
-<div id="mask"></div>
 
 <!-- HEAD -->
 <div class="row justify-content-between my-4">
@@ -247,7 +242,8 @@
         <input type="radio" id="star4" name="valoracion" value="4" /><label class="fa fa-star" for="star4"></label>
         <input type="radio" id="star3" name="valoracion" value="3" /><label class="fa fa-star" for="star3"></label>
         <input type="radio" id="star2" name="valoracion" value="2" /><label class="fa fa-star" for="star2"></label>
-        <input type="radio" id="star1" name="valoracion" value="1" required /><label class="fa fa-star" for="star1"></label>
+        <input type="radio" id="star1" name="valoracion" value="1" required /><label class="fa fa-star"
+          for="star1"></label>
       </div>
     </div>
   </div>
@@ -324,175 +320,130 @@
 <script>
 
   $(document).ready(function () {
+
+    // CAMBIAR CANTIDADES DE INGREDIENTES
+
     var defaultRaciones;
-
-    if ("{{receta.raciones}}" === "None") {
-      defaultRaciones = null;
-    } else {
-      defaultRaciones = {{ receta.raciones }}
-  }
-  
-    
-  
-  var ingredientes = $('#lista-ingredientes').children();
-  var cantidadesIngredientes = [];
-  ingredientes.children().each(function () {
-    var oldCantidad = this.childNodes[1].textContent.replace(',', '.');
-    cantidadesIngredientes.push(oldCantidad)
-  });
-  //console.log(cantidadesIngredientes);
-
-
-  // Hace que el campo cantidad en ingrediente no se pueda introducir letras
-  if (defaultRaciones != null) {
-    $("#cantidad").keyup(function (event) {
-
-
-      if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105 || event.which == 8) {
-
-        var newRaciones = $('#cantidad').val();
-
-        ingredientes.children().each(function (i) {
-          //var oldCantidad = this.childNodes[1].textContent.replace(',','.');
-          // Comprobar si es fracción
-          //oldCantidad = Number(oldCantidad);
-          //console.log(cantidadesIngredientes[i] + ' x ' + newRaciones + ' / ' + defaultRaciones);
-          var newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
-          this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
-        });
-
-      }
-    }).on('paste', function (event) {
-      event.preventDefault();
+    var ingredientes = $('#lista-ingredientes').children();
+    var cantidadesIngredientes = [];
+    ingredientes.children().each(function () {  // Guarda en un lista las cantidades originales de los ingredientes
+      let oldCantidad = this.childNodes[1].textContent.replace(',', '.');
+      cantidadesIngredientes.push(oldCantidad)
     });
-  }
 
+    try { // Se hace con excepción porque a ser un atributo de Django si no existe devuelve None en vez de null
+      defaultRaciones = {{receta.raciones}};
+    } catch(err){
+      defaultRaciones = null;
+    }
+  
+    if (defaultRaciones != null) {
+      $("#cantidad").keyup(function (event) { //Cuando se escribe en el campo cantidad
 
-  $('.form-respuesta').hide();
+        // Hace que el campo cantidad de raciones en ingrediente no se pueda introducir letras
+        if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105 || event.which == 8) {
 
-  $('.btn-responder').click(function () {
-    var elemento = $(this).parent().children('div.form-respuesta');
-    elemento.slideToggle('slow');
-  });
+          let newRaciones = $(this).val();
 
-  $('#pasos img').click(function () {
+          ingredientes.children().each(function (i) {
+            // Regla de 3: cantidadOriginal x nuevaRaciones / racionesOriginal
+            let newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
+            this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
+          });
 
-    if ($(window).width() >= 992) {
-      var src = $(this).attr('src');
-      $('#img-preview').attr('src', src);
-      $('#modal-img-preview').modal('show');
+        }
+      }).on('paste', function (event) {
+        event.preventDefault(); // No permite que se pueda pegar(Ctrl+V) en el campo
+      });
     }
 
-  });
+
+    // COMENTARIOS
+    $('.form-respuesta').hide();
+
+    $('.btn-responder').click(function () {
+      let elemento = $(this).parent().children('div.form-respuesta');
+      elemento.slideToggle('slow');
+    });
+
+    // Mostrar imagen de los pasos en grande
+    $('#pasos img').click(function () {
+
+      if ($(window).width() >= 992) {
+        var src = $(this).attr('src');
+        $('#img-preview').attr('src', src);
+        $('#modal-img-preview').modal('show');
+      }
+
+    });
 
 
 
   // VALORACIÓN
 
-  var valoracion = "{{receta.valoracion_media}}";
-  valoracion = parseFloat(valoracion);
-  var idCheck;
-  var isCheck;
+  var valoracion = parseFloat("{{receta.valoracion_media}}");
+  var idCheck;  // id de input(estrella) que se ha pulsado
+  var isCheck;  // true si se ha pulsado alguna estrella
+  var estrellas = $('.starrating label');
 
   // Colorea las estrellas según la valoración media
-  $($('.starrating label').get().reverse()).each(function (e) {
-    if (e < valoracion) {
-      $(this).css("color", "#F9A31A ");
-    }
-  });
+  function colorearEstrellas(cantidad){
+    $($(estrellas).get().reverse()).each(function (e) {
+      if (e < cantidad) {
+        $(this).css("color", "#F9A31A ");
+      }
+    });
+  }
+
+  colorearEstrellas(valoracion);
+  
 
   // Desctivar hover de valoracion de la receta en caso de que sea el autor
-  if ("{{receta.usuario}}" === "{{request.user}}") {
-    // Es el mismo usuario
-    $('.starrating label').each(function () {
+  if ("{{receta.usuario}}" === "{{request.user}}") {  // Es el mismo usuario
+    $(estrellas).each(function () {
       $(this).attr("for", "");
     });
   } else {
 
     // Desactiva el coloreo de las estrella segun el número la media
-    $('.starrating').mouseover(function () {
-      console.log("hover");
-      var elem = $(this).children("label");
-      $(elem).css("color", "");
+    $('.starrating').mouseover(function () {  // Cuando se pone el cursor encima
+      $(this).children("label").css("color", ""); // Quita los colores de las estrellas, para que solo se coloree la actual y las anteriores
 
+      // Si se ha seleccionado una estrella, hay que quitar la que está seleccionada para poder hacer el efecto de colorear
+      // las estrellas que se sobrepone el cursos
       if (isCheck) {
-        /*$('.starrating').children("input").each(function () {
-          console.log(this.id + " - " + this.checked);
-        });*/
+
         $('.starrating').children("input").each(function () {
+          // Almacena el elemento que se ha seleccionado
           if (this.checked) {
-            console.log(this.id + " - " + this.checked);
             idCheck = this.id;
             this.checked = false;
-            console.log(this.id + " - " + this.checked);
           }
-
         });
-      } else {
-
       }
-
-
     });
 
-
+    // Cuando el usuario quita el cursor de las estrallas
     $('.starrating').mouseleave(function () {
-      console.log("mouseleave");
 
-      if (!isCheck) {
-        console.log("No se ha valorado")
-        $($('.starrating label').get().reverse()).each(function (e) {
-          if (e < valoracion) {
-            $(this).css("color", "#F9A31A");
-          }
-
-        });
+      if (!isCheck) { //Si no se ha pulsado ninguna estrella
+        // Colorea según la valoración media que tiene
+        colorearEstrellas(valoracion);
       } else {
-        console.log("se ha valorado: " + idCheck);
-        console.log($("#" + idCheck).val());
-
-        $($('.starrating label').get().reverse()).each(function (e) {
-          if (e < $("#" + idCheck).val()) {
-            $(this).css("color", "#F9A31A ");
-          }
-        });
-
-
+        // Colorea segun la estrella que haya pulsado
+        colorearEstrellas($("#" + idCheck).val());
+        // "Pulsa" la que se habia pulsado porque en hover se pierde
+        $("#" + idCheck).get(0).checked = true;
       }
 
     });
 
-
-    $('.starrating').children("input").each(function () {
-      //console.log(this.id + " - " + this.checked);
-    });
-
-
-
+    // Cuando se hace clic en una estrella
     $('.starrating label').mousedown(function () {
-      console.log("Click");
-      //console.log($(this).val());
-      //console.log($(this).attr("for"));
-      idCheck = $(this).attr("for")
-      //console.log($("#" + idChecked).val());
-      //console.log($("#" + idChecked).next())
-      $(this).parent().children("input").each(function () {
-        //console.log(this.id + " - " + this.checked);
-        //console.log(this);
-      });
+      idCheck = $(this).attr("for");
       isCheck = true;
     });
   }
-
-
-  
-
-  
-
-  
-
-  
-   
    
   });
 

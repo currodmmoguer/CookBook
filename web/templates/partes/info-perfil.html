@@ -35,9 +35,9 @@
 
 
 
-      {% if not user.perfil.facebook == "" %}
+      {% if usuario.perfil.facebook|is_nothing %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.facebook.com/{{user.perfil.facebook}}">
+        <a href="http://www.facebook.com/{{usuario.perfil.facebook}}">
           <img class="img-fluid" src="{% static 'img/facebook-icon.png' %}" alt="">
         </a>
       </div>
@@ -46,9 +46,9 @@
 
 
 
-      {% if not user.perfil.instagram == "" %}
+      {% if usuario.perfil.instagram|is_nothing %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.instagram.com/{{user.perfil.instagram}}">
+        <a href="http://www.instagram.com/{{usuario.perfil.instagram}}">
           <img class="img-fluid" src="{% static 'img/instagram-icon.png' %}" alt="">
         </a>
       </div>
@@ -57,9 +57,9 @@
 
 
 
-      {% if not user.perfil.twitter == "" %}
+      {% if usuario.perfil.twitter|is_nothing %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.twitter.com/{{user.perfil.twitter}}">
+        <a href="http://www.twitter.com/{{usuario.perfil.twitter}}">
           <img class="img-fluid" src="{% static 'img/twitter-icon.png' %}" alt="">
         </a>
       </div>
@@ -67,9 +67,9 @@
 
 
 
-      {% if not user.perfil.youtube == "" %}
+      {% if usuario.perfil.youtube|is_nothing %}
       <div class="col-3 col-md-2 col-lg-1">
-        <a href="http://www.youtube.com/{{user.perfil.youtube}}">
+        <a href="http://www.youtube.com/{{usuario.perfil.youtube}}">
           <img class="img-fluid" src="{% static 'img/youtube-icon.png' %}" alt="">
         </a>
       </div>
@@ -81,19 +81,7 @@
 
   <!-- BOTÓN SEGUIR -->
   <div class="col-2 ml-1 div-seguir">
-    {% if user.get_username == usuario.username %}
-      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
-        class="btn-border-rounded">Editar</button></a>
-    {% else %}
-    
-      <button type="button" class="btn-border-rounded seguir" data-user="{{usuario.pk}}" data-url="{% url 'seguir' pk=usuario.pk %}">
-        {% if user.perfil in usuario.perfil.seguidores.all %}
-          Dejar de seguir
-        {% else %}
-          Seguir
-        {% endif %}
-      </button>
-    {% endif %}
+    {% include 'partes/boton-seguir.html' %}
   </div>
 
 

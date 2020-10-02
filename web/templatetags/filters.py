@@ -16,11 +16,19 @@ def times(num):
 
 # Devuelve una cadena vacía en caso de que el valor sea Nono
 @register.filter
-def is_none(valor):
-    if valor is None:
+def is_none(val):
+    if val is None:
         return ""
     else:
-        return valor
+        return val
+
+# Devuelve false si no es "" o None
+@register.filter
+def is_nothing(val):
+    if val is "" or val is None:
+        return False
+    else:
+        return True
 
 # Devuelve un booleano comprobando si un usuario tiene una receta guardada
 @register.filter

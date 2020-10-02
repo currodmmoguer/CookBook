@@ -1,0 +1,12 @@
+{% if user.pk == usuario.pk %}
+      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
+        class="btn-border-rounded">Editar</button></a>
+    {% else %}
+      <button type="button" class="btn-border-rounded seguir" data-user="{{usuario.pk}}" data-url="{% url 'seguir' pk=usuario.pk %}">
+        {% if user.perfil in usuario.perfil.seguidores.all %}
+          Dejar de seguir
+        {% else %}
+          Seguir
+        {% endif %}
+      </button>
+    {% endif %}

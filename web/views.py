@@ -390,16 +390,19 @@ def seguidores(request, username):
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     seguidores = user.perfil.seguidores.all()   # Obtiene la lista seguidores
-    print(seguidores)
-
+    
+    user_seguidores = []
+    for i in seguidores:
+        user_seguidores.append(i.usuario)
+    
     if user == request.user:
         mensaje_vacio = "Aún no tienes seguidores"
     else:
         mensaje_vacio = username + " no tiene seguidores"
-
+    
     context = {
         'usuario': user,
-        'lista_usuarios': utils.paginator(request, seguidores),
+        'lista_usuarios': utils.paginator(request, user_seguidores),
         'mensaje_vacio': mensaje_vacio,
         'lista_es_receta': False,
     }
@@ -416,7 +419,10 @@ def siguiendo(request, username):
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     siguiendo = Perfil.objects.filter(seguidores=user.perfil)   # Obtiene la lista de usuarios siguiendo
-    print(user.perfil.seguidores.all())
+    user_siguiendo = []
+    for i in siguiendo:
+        user_siguiendo.append(i.usuario)
+
     if user == request.user:
         mensaje_vacio = "Aún no sigues a nadie"
     else:
@@ -424,7 +430,7 @@ def siguiendo(request, username):
 
     context = {
         'usuario': user,
-        'lista_usuarios': utils.paginator(request, siguiendo),
+        'lista_usuarios': utils.paginator(request, user_siguiendo),
         'mensaje_vacio': mensaje_vacio,
         'lista_es_receta': False,
     }
@@ -551,6 +557,8 @@ def notificaciones(request):
     
     # Falta poner paginación o limite
     return render(request, 'notificaciones.html', context)
+
+
 #Busqueda avanzada de recetas 
 @login_required
 def busqueda_avanzada(request):
@@ -565,8 +573,8 @@ def busqueda_avanzada(request):
             for form in formset:   #Por cada input del formulario, obtiene el objeto ingrediente
                 try:
                     ingrediente = Ingrediente.objects.filter(nombre__iexact=form.cleaned_data['ingrediente']).first() #Obtiene el objeto ingrediente a través del nombre
-
-                    if not ingrediente in ingredientes: #Comprueba que no esté en la lista para que no haya repetidos
+                    #Comprueba que no esté en la lista para que no haya repetidos y que exista
+                    if not ingrediente in ingredientes and not ingrediente is None: 
                         ingredientes.append(ingrediente)
                 except Ingrediente.DoesNotExist:    #Excepción en caso de que no exista un ingrediente con el nombre introducido
                     pass    # No hace nada, lo deja pasar
@@ -589,17 +597,20 @@ def busqueda_avanzada(request):
             recetas.sort(key=lambda x: x.num, reverse=True) #Ordena la receta por cantidad de coincidencias de mayor a menor
 
             # Mensaje indicando los ingredientes que busca
-            mensaje = "Resultados de "
+            print(ingredientes)
+            if ingredientes:
+                mensaje = "Resultados de "
+                for ingrediente in ingredientes:
+                    mensaje += ingrediente.nombre + ", "
+                
+                mensaje = mensaje[:-2]  #Borra los 2 último caracteres del string
             
-            for ingrediente in ingredientes:
-                mensaje += ingrediente.nombre + ", "
+            if not recetas:
+                mensaje = "No se han encontrado recetas"
             
-            mensaje = mensaje[:-2]  #Borra los 2 último caracteres del string
-
             context = {
                 'recetas': utils.paginator(request, recetas), 
-                'mensaje_titulo': mensaje if len(recetas) > 0 else "",
-                'mensaje_vacio': "No se han encontrado recetas"
+                'mensaje_titulo': mensaje
             }
             
             return render(request, 'resultado_busqueda.html', context)
@@ -625,10 +636,14 @@ def resultado_busqueda(request):
     except ObjectDoesNotExist:  # Si no hay, obtiene las recetas que se llamen como se ha introducido en el buscador
         recetas = Receta.objects.filter(Q(titulo__icontains=query))
 
+    if recetas:
+        mensaje = "Resultados de " + query
+    else:
+        mensaje = 'No se ha encontrado ninguna receta con "' + query + '"'
+
     context = {
         'recetas': utils.paginator(request, recetas),
-        'mensaje_titulo': "Resultados de " + query if len(recetas) > 0 else "",
-        'mensaje_vacio': 'No se ha encontrado ninguna receta con "' + query + '"',
+        'mensaje_titulo': mensaje
     }
 
     return render(request, 'resultado_busqueda.html', context)
@@ -638,10 +653,14 @@ def resultado_busqueda_categoria(request, c):
     categoria = Categoria.objects.get(pk=c)
     recetas = Receta.objects.filter(categoria=c).order_by('-fecha')
     print(recetas.__dict__)
+    if recetas:
+        mensaje = "Resultados de " + categoria.nombre
+    else:
+        mensaje = 'No se ha encontrado ninguna receta de la categoría ' + categoria.nombre
+
     context = {
         'recetas': utils.paginator(request, recetas),
-        'mensaje_titulo': "Resultados de " + categoria.nombre,
-        'mensaje_vacio': 'No se ha encontrado ninguna receta de la categoría ' + categoria.nombre + '',
+        'mensaje_titulo': mensaje
     }
 
     return render(request, 'resultado_busqueda.html', context)

@@ -4,29 +4,17 @@
 
   <!-- IMAGEN AVATAR-->
     <div class="col-md-1 col-2 align-self-center">
-      <img src="{{usuario.imagen_perfil.url}}" class="img-fluid rounded-circle">
+      <img src="{{usuario.perfil.imagen_perfil.url}}" class="img-fluid rounded-circle">
     </div>
 
     <!-- NOMBRE DE USUARIO-->
     <div class="col-5 col-sm-7 col-md-5 align-self-center">
-      <a href="{% url 'perfil' username=usuario.usuario.username %}"><h3>{{usuario.usuario.get_full_name}}</h3></a>
+      <a href="{% url 'perfil' username=usuario.username %}"><h3>{{usuario.get_full_name}}</h3></a>
     </div>
 
     <!-- BOTÓN -->
     <div class="col-5 col-sm-3 text-right">
-
-        {% if user.pk == usuario.pk %}
-      <a href="{% url 'editar_perfil' username=user.username %}"><button type="button"
-        class="btn-border-rounded">Editar</button></a>
-    {% else %}
-      <button type="button" class="btn-border-rounded seguir" data-user="{{usuario.pk}}" data-url="{% url 'seguir' pk=usuario.pk %}">
-        {% if user.perfil in usuario.seguidores.all %}
-          Dejar de seguir
-        {% else %}
-          Seguir
-        {% endif %}
-      </button>
-    {% endif %}
+      {% include 'partes/boton-seguir.html' %}
     </div>
 
   </div>

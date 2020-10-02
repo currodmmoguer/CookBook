@@ -70,7 +70,7 @@ class Perfil(models.Model):
         verbose_name_plural = 'Perfiles'
 
     def __str__(self):
-    	return self.usuario.username
+    	return "<Perfil> " + self.usuario.username
 
     def total_seguidores(self): #Obtiene el número total de seguidores
     	if not self.seguidores.all():

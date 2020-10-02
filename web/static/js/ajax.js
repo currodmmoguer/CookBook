@@ -47,20 +47,24 @@ $(".btn-valorar").click(function () {
   var id = $(this).attr("data-recetaid");
   var url = $(this).attr("data-url");
   var valoracion = $("input[type=radio]:checked").val();
-  alert(valoracion);
-  $.ajax({
-    type: "GET",
-    url: url,
-    data: { receta_id: id, valoracion: valoracion },
-    success: function (data) {
-      // Si ya ha valorado antes la receta, abre un modal para modificarla
-      if (data == "existe") {
-        $("#modal-valorar").modal("show");
-      } else {
-        $("#valoracion_media").html(data);
-      }
-    },
-  });
+  if (valoracion != undefined) {
+    $.ajax({
+      type: "GET",
+      url: url,
+      data: { receta_id: id, valoracion: valoracion },
+      success: function (data) {
+        // Si ya ha valorado antes la receta, abre un modal para modificarla
+        if (data == "existe") {
+          $("#modal-valorar").modal("show");
+        } else {
+          $("#valoracion_media").html(data);
+        }
+      },
+    });
+  } else {
+    alert("Tienes que valorar");
+  }
+  
 });
 
 $("#modal-submit").click(function () {

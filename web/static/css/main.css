@@ -85,7 +85,7 @@ a, a:hover {
 }
 
 /* RECETA */
-.card {
+#lista-recetas .card {
   transition: all 1s cubic-bezier(0.175, 0.885, 0, 1);
   border-radius: 12px;
   /*
@@ -177,26 +177,26 @@ a, a:hover {
 }
 
 @media (hover: hover){
-  .card:hover {
+  #lista-recetas .card:hover {
       box-shadow: 0px 30px 18px -8px rgba(0, 0, 0, 0.1);
       transform: scale(1.10, 1.10);
   }
   
-  .card:hover .card__img--hover {
+  #lista-recetas .card:hover .card__img--hover {
       height: 100%;
       opacity: 0.3;
       border-radius: 12px;
   }
   
-  .card:hover .card-info-inf {
+  #lista-recetas .card:hover .card-info-inf {
       position: relative;
   }
   
-  .card:hover .card-info-sup {
+  #lista-recetas .card:hover .card-info-sup {
       opacity: 1;
   }
 
-  .card__autor:hover {
+  #lista-recetas .card__autor:hover {
       color: #b80d57;
   }
 }
