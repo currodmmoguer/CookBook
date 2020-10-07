@@ -35,7 +35,6 @@ def valoracion_media(receta):
 
     
 def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0, comentario=None):
-    print(receta)
     if not usuario_origen == usuario_destino:
         notificacion = Notificacion.objects.create(usuario_origen=usuario_origen, usuario_destino=usuario_destino, tipo=tipo)
         

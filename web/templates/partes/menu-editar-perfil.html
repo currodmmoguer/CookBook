@@ -1,24 +1,4 @@
 
-<head>
-  <style>
-    .list-group {
-        border: 1px solid rgba(0, 0, 0, .125) !important;
-        border-radius: .25rem;
-    }
-
-    .list-group-item {
-        border: none !important;
-    }
-
-    .list-group-item.active {
-        background-color: transparent !important;
-        border-color: transparent !important;
-        color: black !important;
-        font-weight: bold;
-        border-left: 2px solid #000;
-    }
-</style>
-</head>
   <div class="col-12 col-md-4 col-lg-3 mb-3">
     <div class="list-group">
       <a class="list-group-item" id="list-perfil" href="{% url 'editar_perfil' username=request.user.username %}">Editar perfil</a>

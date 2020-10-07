@@ -43,7 +43,6 @@ class Perfil(admin.ModelAdmin):
         extra_context = extra_context or {"chart_data": as_json}
         return super().changelist_view(request, extra_context=extra_context)
 
-        
 
 @admin.register(Sugerencia)
 class Sugerencia(admin.ModelAdmin):
@@ -57,6 +56,8 @@ class Notificacion(admin.ModelAdmin):
 
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
+admin.site.register(Receta)
+
 
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)

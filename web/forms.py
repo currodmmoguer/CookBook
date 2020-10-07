@@ -19,7 +19,9 @@ class RegistroUserForm(forms.ModelForm):
         }
         widgets = {
             'email': forms.TextInput(attrs={'required': "required"}),
-            'first_name': forms.TextInput(attrs={'required': "required"})
+            'first_name': forms.TextInput(attrs={'required': "required"}),
+            'password': forms.PasswordInput()
+        
         }
     
 

@@ -1,6 +1,6 @@
 $(document).ready(function () {
   var campos = $(
-    "#beauty-form .form-input input, #beauty-form .form-input textarea"
+    ".beauty-form .form-input input, .beauty-form .form-input textarea"
   );
   //console.log(campos)
   var placeholders = {};
@@ -42,8 +42,8 @@ $(document).ready(function () {
    * Comprueba que los 2 campos de contraseña coincidad, tenga como mínimo 8 caracteres y no sea solo número
    */
   $("input[type=password]").keyup(function () {
-    var pass1 = $("#password");
-    var pass2 = $("#password2");
+    var pass1 = $("#id_password");
+    var pass2 = $("#id_password2");
 
     if (
       pass1.val() == pass2.val() &&
@@ -79,34 +79,45 @@ function readURL(input, img) {
   }
 }
 
-function recortarImage() {
+function recortarImage(img) {
   var image = document.getElementById("image-crop-modal");
   var cropBoxData;
   var canvasData;
   var datosTotal;
-  var cropper;
+  
+
+  
 
   $("#modal-crop").on("shown.bs.modal", function () {
-    cropper = new Cropper(image, {
+    var image = document.getElementById("image-crop-modal");
+    var cropper = new Cropper(image, {
       aspectRatio: 1 / 1,
       zoomable: false,
       autoCropArea: 1,
       ready: function () {
+        console.log("Al abrir modal:")
+        console.log(cropBoxData);
         cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
+        console.log(cropBoxData);
       },
     });
+    
 
     $("#aceptar-recorte").click(function () {
+      console.log(cropper);
       cropBoxData = cropper.getCropBoxData();
       canvasData = cropper.getCanvasData();
       datosTotal = cropper.getData();
       var canvas = document.getElementById("canvas");
+      console.log(canvas);
       var contex = canvas.getContext("2d");
-
+      contex.imageSmoothingEnabled = true;
+      console.log("Aceptando:")
+      //console.log(cropBoxData);
       //$('#img-perfil').attr('src', cropper.image.src);
       canvas.width = datosTotal.width;
       canvas.height = datosTotal.height;
-
+      console.log(datosTotal);
       contex.drawImage(
         image,
         datosTotal.x,
@@ -130,7 +141,18 @@ function recortarImage() {
       );
       $("#img-perfil").attr("hidden", "");
       $("#canvas").removeAttr("hidden");
+      $('#image-crop-modal').removeAttr('src');
+      //console.log(cropper);
+      //cropper.destroy();
+      //console.log(image);
+      //console.log(cropper);
+
+    });
+
+    $('#close-modal-crop').click(function(){
       cropper.destroy();
+      $('#image-crop-modal').removeAttr('src');
+      //console.log(cropper);
     });
   });
 }

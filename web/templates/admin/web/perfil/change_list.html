@@ -7,6 +7,7 @@
 
 <script src="{% static 'js/library/Chart.min.js' %}"></script>
 <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'js/admin.js' %}"></script>
 
 {% endblock %}
 
@@ -21,62 +22,30 @@
 
 <script>
 
-    // Comprueba si un objeto está en una lista
-    function contiene(lista, obj){
-        lista.forEach(element => {
-            if (element === obj){
-                return true;
-            }
-        });
-        return false;
-    }
-
-    // Crea un color aleatorio en formato rgb
-    function random_rgb() {
-        var o = Math.round, r = Math.random, s = 255;
-        return 'rgb(' + o(r()*s) + ',' + o(r()*s) + ',' + o(r()*s) + ')';
-    }
 
 
-    var datos = {{ chart_data | safe}}
-    var lista_cantidad = []
-    var lista_nombre = []
+    var datos = {{ chart_data | safe}};
     var lista_colores = [
         'rgb(255, 99, 132)',
         'rgb(255, 159, 64)',
         'rgb(255, 205, 86)',
         'rgb(75, 192, 192)',
         'rgb(54, 162, 235)',
-    ]
-
-    var datas = {
-        datasets: [{
-            label: "Hola",
-            backgroundColor: random_rgb(),
-            data: [1]
-        }]
-    }
+    ];
 
     var barDatos = {
         labels: [],
-        datasets: [
-            {
-                label: "Recetas publicadas",
-                backgroundColor: [],
-                data: []
-            }
-        ]
+        datasets: [{
+            label: [],
+            data: [],
+            backgroundColor: [],
+        }]
     }
 
     // Añade los datos a sus respectivas listas
     for (var i = 0; i < datos.length; i++) {
         var elemento = datos[i];
-        
-        lista_nombre.push(elemento['username'])
-        lista_cantidad.push(elemento['total_recetas'])
-        var dato = {backgroundColor: lista_colores[i], data: [elemento['total_recetas']]};
         barDatos.labels.push(elemento['username']);
-        
         barDatos.datasets[0].backgroundColor.push(lista_colores[i]);
         barDatos.datasets[0].data.push(elemento['total_recetas']);
     }
@@ -115,10 +84,6 @@
         }
     };
 
-    /*Se añade aquí, porque en el config coge el array como un elemento solo
-    lista_nombre.forEach(function (usuario) {
-        config['data']['labels'].push(usuario);
-    });*/
 
     window.onload = function () {
         var ctx = document.getElementById("myChart").getContext('2d');

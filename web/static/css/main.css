@@ -378,3 +378,20 @@ input[type="file"]{
   font-size: .8rem;
   color: #868686;
 }
+
+/* Menú editar perfil */
+.list-group {
+  border: 1px solid rgba(0, 0, 0, .125) !important;
+  border-radius: .25rem;
+}
+
+.list-group-item {
+  border: none !important;
+}
+
+.list-group-item.active {
+  background-color: transparent !important;
+  border-color: transparent !important;
+  color: black !important;
+  font-weight: bold;
+}

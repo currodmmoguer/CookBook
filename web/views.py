@@ -75,7 +75,6 @@ def index(request):
     
     #Paginación
     obj_pagina = utils.paginator(request, recetas)
-
     
     context = {
         'recetas': obj_pagina,
@@ -198,10 +197,7 @@ def nueva_receta(request):
             # se envía el formulario en caso de que no se introduzca los datos
             # o tiene máximo de caracteres, que no se permite introducir más
             # en el campo de texto
-            print("No Valido")
-            print(formReceta.errors)
-            print(formset_ingrediente.errors)
-            print(formset_paso.errors)
+            pass
 
     else:   # Si no es POST, crea los formularios vacíos
         formReceta = RecetaForm()
@@ -286,9 +282,7 @@ def editar_receta(request, pk):
             # se envía el formulario en caso de que no se introduzca los datos
             # o tiene máximo de caracteres, que no se permite introducir más
             # en el campo de texto
-            print(formReceta.errors)
-            print(formset_ingrediente.errors)
-            print(formset_paso.errors)
+            pass
 
     else:   # Si no es POST
         formReceta = RecetaForm(instance=receta)
@@ -311,7 +305,6 @@ def editar_receta(request, pk):
         'formSugerencia': formSugerencia,
     }
 
-    print(formReceta.instance.pk)
 
     return render(request, 'nueva-receta.html', context)
 
@@ -597,7 +590,6 @@ def busqueda_avanzada(request):
             recetas.sort(key=lambda x: x.num, reverse=True) #Ordena la receta por cantidad de coincidencias de mayor a menor
 
             # Mensaje indicando los ingredientes que busca
-            print(ingredientes)
             if ingredientes:
                 mensaje = "Resultados de "
                 for ingrediente in ingredientes:
@@ -652,7 +644,6 @@ def resultado_busqueda(request):
 def resultado_busqueda_categoria(request, c):
     categoria = Categoria.objects.get(pk=c)
     recetas = Receta.objects.filter(categoria=c).order_by('-fecha')
-    print(recetas.__dict__)
     if recetas:
         mensaje = "Resultados de " + categoria.nombre
     else:
@@ -866,13 +857,11 @@ def seguir_dejar(request, pk):
     usuario = get_object_or_404(User, pk=pk)
 
     if not request.user == usuario:
-        print(usuario.perfil.seguidores.all())
         if not request.user.perfil in usuario.perfil.seguidores.all():
             usuario.perfil.add_seguidor(request.user.perfil)
             utils.add_notificacion(request.user, usuario, "siguiendo")
             return HttpResponse("siguiendo")
         else:
-            print("entra")
             usuario.perfil.dejar_seguir(request.user.perfil)
             return HttpResponse("dejado")
     return redirect('error_404')

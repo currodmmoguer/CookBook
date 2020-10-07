@@ -58,7 +58,7 @@
   </div>
 </div>
 
-<form method="POST" id="beauty-form" enctype="multipart/form-data">
+<form method="POST" class="beauty-form" enctype="multipart/form-data">
   {% csrf_token %}
 
   <!-- TITULO -->
@@ -125,8 +125,8 @@
     <div id="ingrediente0" class="ingrediente py-3">
 
       <div class="row">
-        <div class="col-12 d-flex justify-content-end justify-content-md-start">
-          <button type="button" class="btn-remove remove-form-row-ingrediente">-</button>
+        <div class="col-12 d-flex justify-content-end">
+          <button type="button" class="btn-remove remove-form-row-ingrediente" onclick="deleteFormIngrediente('ingrediente', this)">-</button>
         </div>
       </div>
 
@@ -162,7 +162,9 @@
 
             <!-- UNIDAD DE MEDIDA -->
             <div class="col-12 col-md-4">
+              <div class="form-group form-input">
               {{form_data.unidad_medida}}
+            </div>
             </div>
 
           </div>
@@ -175,7 +177,7 @@
   <!-- BOTÓN AÑADIR INGREDIENTE -->
   <div class="row justify-content-center my-3">
     <div class="col-">
-      <button type="button" id="buttonAddIngredient" class="btn-sin-borde">+ Añadir ingrediente</button>
+      <button type="button" id="buttonAddIngredient" class="btn-sin-borde" onclick="cloneMoreIngrediente('.ingrediente:last', 'ingrediente')">+ Añadir ingrediente</button>
     </div>
   </div>
 
@@ -194,7 +196,7 @@
     <div id="paso0" class="paso py-3">
       <div class="row">
         <div class="col-12 d-flex justify-content-end">
-          <button type="button" class="btn-remove remove-form-row-paso">-</button>
+          <button type="button" class="btn-remove remove-form-row-paso" onclick="deleteFormPaso('paso', this)">-</button>
         </div>
       </div>
 
@@ -278,13 +280,12 @@
 
 <script src="{% static 'js/formset-receta.js' %}"></script>
 <script src="{% static 'js/formulario.js' %}"></script>
-<script src="{% static 'js/ajax.js' %}"></script>
-
 
 <script>
 
   // Hace que el campo cantidad en ingrediente no se pueda introducir letras
   $("input[id$='-cantidad'").keypress(function (event) {
+    console.log("entra")
     if ((event.which > 47 && event.which < 58) || (event.which == 46 || event.which == 8)) {
       // Los núneros son en el código ascii del 47 al 58, el 46 es el punto y 8 borrar
     } else {
@@ -306,50 +307,6 @@
     var img = $(this).parents('.paso').find('img');
     readURL(this, img);
   });
-
-  // Opción para mover los ingredientes y pasos
-  $('.moveup, .movedown').click(function (e) {
-
-    // "padre" obtiene un string "ingrediente" o "pasos" según sea
-    var padre = e.currentTarget.dataset.parent;
-    // Obtiene el total de pasos o ingredientes de la receta
-    var totalInputs = $('#id_' + padre + '-TOTAL_FORMS').val();
-
-    if (totalInputs > 1) { // Comprueba que no haya solo un dato
-      var opcionMovimiento = e.currentTarget.classList[0];
-      var objeto = $(this).parents('.' + padre);
-
-      if (opcionMovimiento === "moveup") { // En caso de subir
-        //Comprobar si es el primero
-        var primero = $(this).parents('.' + padre).parent().children("." + padre).first();
-        if (objeto.html() !== primero.html()) {
-          objeto.insertBefore(objeto.prev()); //Inserta el paso/ingrediente encima del anterior
-        }
-      } else if (opcionMovimiento === "movedown") { // En caso de bajar
-        //Comprobar si es el último
-        var ultimo = $(this).parents('.' + padre).parent().children("." + padre).last();
-        if (objeto.html() !== ultimo.html()) {
-          objeto.insertAfter(objeto.next());  //Inserta el paso/ingrediente despues del posterior
-        }
-      }
-
-      // Actualiza la lista de pasos o ingredientes
-      if (padre === "paso")
-        updateElementIndexPaso();
-      else
-        updateElementIndexIngrediente();
-    }
-
-
-  });
-
-
-
-  $(document).on('click', '.remove-form-row-paso', function (e) {
-    deleteFormPaso('paso', $(this));
-  });
-
-
 
 </script>
 {% endblock %}

@@ -12,7 +12,6 @@
 </head>
 
 <div class="row mx-md-5 mx-1 justify-content-end fila-orden">
-  
     Ordenar por:
     <form method="POST" class="sort">
       {% csrf_token %}
@@ -32,7 +31,7 @@
 
 <script>
   var opc = "{{opc}}"
-  $('.sort').find('.active').removeClass('active');
+  //$('.sort').find('.active').removeClass('active');
 
   if (opc == "" || opc == "new") {
     $('#new').addClass('active');

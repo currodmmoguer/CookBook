@@ -24,7 +24,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalLabel">Recortar imagen</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+        <button type="button" id="close-modal-crop" class="close" data-dismiss="modal" aria-label="Cerrar">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -165,6 +165,8 @@
     </form>
   </div>
 
+  <button id="show-modal">show</button>
+
   <script src="{% static 'js/formulario.js' %}"></script>
   <!-- JS BOOTSTRAP -->
   <script src="{% static 'js/library/popper.min.js' %}"></script>
@@ -175,8 +177,22 @@
     $('#id_imagen_perfil').change(function () {
       readURL(this, $('#image-crop-modal'));
       $('#modal-crop').modal(true);
-      recortarImage();
+      recortarImage(this);
     });
+
+    $('#show-modal').click(function () { 
+      $('#modal-crop').modal(true);
+     });
+
+   /* $('#close-modal-crop').click(function(){
+      var img = document.getElementById("image-crop-modal");
+      console.log($('#id_imagen_perfil').val());
+      console.log(img);
+      $('#image-crop-modal').removeAttr('src');
+      $('#id_imagen_perfil').val("");
+      console.log($('#id_imagen_perfil').val());
+      console.log(img);
+    });*/
 
   </script>
 

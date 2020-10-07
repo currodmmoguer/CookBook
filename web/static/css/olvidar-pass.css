@@ -1,3 +1,4 @@
+
 header {
     background-color: black;
 }
@@ -34,6 +35,12 @@ h1 {
     border-radius: 1.5rem !important;
     background-color: #b80d57;
     color: white;
+}
+
+.btn-complete {
+    width: auto !important;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
 }
 
 #volver {

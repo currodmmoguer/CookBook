@@ -48,7 +48,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn" data-dismiss="modal">Cancelar</button>
-        <button type="button" class="btn" id="modal-submit" data-recetaid="{{receta.pk}}"
+        <button type="button" class="btn" id="modal-submit-valorar" data-recetaid="{{receta.pk}}"
           data-url="{% url 'valorar_seguro' %}">Valorar</button>
       </div>
 
@@ -315,140 +315,105 @@
   {% endfor %}
 </div>
 
-
+<script src="{% static 'js/receta.js' %}"></script>
 
 <script>
-
-  $(document).ready(function () {
-
-    // CAMBIAR CANTIDADES DE INGREDIENTES
-
-    var defaultRaciones;
-    var ingredientes = $('#lista-ingredientes').children();
-    var cantidadesIngredientes = [];
-    ingredientes.children().each(function () {  // Guarda en un lista las cantidades originales de los ingredientes
-      let oldCantidad = this.childNodes[1].textContent.replace(',', '.');
-      cantidadesIngredientes.push(oldCantidad)
-    });
-
-    try { // Se hace con excepción porque a ser un atributo de Django si no existe devuelve None en vez de null
-      defaultRaciones = {{receta.raciones}};
-    } catch(err){
-      defaultRaciones = null;
-    }
-  
-    if (defaultRaciones != null) {
-      $("#cantidad").keyup(function (event) { //Cuando se escribe en el campo cantidad
-
-        // Hace que el campo cantidad de raciones en ingrediente no se pueda introducir letras
-        if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105 || event.which == 8) {
-
-          let newRaciones = $(this).val();
-
-          ingredientes.children().each(function (i) {
-            // Regla de 3: cantidadOriginal x nuevaRaciones / racionesOriginal
-            let newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
-            this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
-          });
-
-        }
-      }).on('paste', function (event) {
-        event.preventDefault(); // No permite que se pueda pegar(Ctrl+V) en el campo
-      });
-    }
-
-
-    // COMENTARIOS
-    $('.form-respuesta').hide();
-
-    $('.btn-responder').click(function () {
-      let elemento = $(this).parent().children('div.form-respuesta');
-      elemento.slideToggle('slow');
-    });
-
-    // Mostrar imagen de los pasos en grande
-    $('#pasos img').click(function () {
-
-      if ($(window).width() >= 992) {
-        var src = $(this).attr('src');
-        $('#img-preview').attr('src', src);
-        $('#modal-img-preview').modal('show');
-      }
-
-    });
-
-
-
-  // VALORACIÓN
-
   var valoracion = parseFloat("{{receta.valoracion_media}}");
-  var idCheck;  // id de input(estrella) que se ha pulsado
-  var isCheck;  // true si se ha pulsado alguna estrella
-  var estrellas = $('.starrating label');
-
-  // Colorea las estrellas según la valoración media
-  function colorearEstrellas(cantidad){
-    $($(estrellas).get().reverse()).each(function (e) {
-      if (e < cantidad) {
-        $(this).css("color", "#F9A31A ");
-      }
-    });
+  var ingredientes = $('#lista-ingredientes').children();
+  var cantidadesIngredientes = [];
+  ingredientes.children().each(function () {  // Guarda en un lista las cantidades originales de los ingredientes
+    let oldCantidad = this.childNodes[1].textContent.replace(',', '.');
+    cantidadesIngredientes.push(oldCantidad)
+  });
+  
+  try { // Se hace con excepción porque a ser un atributo de Django si no existe devuelve None en vez de null
+    var defaultRaciones = "{{receta.raciones}}";
+  } catch (err) {
+    var defaultRaciones = null;
   }
 
   colorearEstrellas(valoracion);
-  
 
-  // Desctivar hover de valoracion de la receta en caso de que sea el autor
-  if ("{{receta.usuario}}" === "{{request.user}}") {  // Es el mismo usuario
-    $(estrellas).each(function () {
-      $(this).attr("for", "");
-    });
-  } else {
+  // CAMBIAR CANTIDADES DE INGREDIENTES
+  //Cuando se escribe en el campo cantidad
+  $("#cantidad").keyup(function (event) {
 
-    // Desactiva el coloreo de las estrella segun el número la media
-    $('.starrating').mouseover(function () {  // Cuando se pone el cursor encima
-      $(this).children("label").css("color", ""); // Quita los colores de las estrellas, para que solo se coloree la actual y las anteriores
+    // Hace que el campo cantidad de raciones en ingrediente no se pueda introducir letras
+    if (event.which >= 48 && event.which <= 57 || event.which == 229 || event.which >= 96 && event.which <= 105 || event.which == 8) {
 
-      // Si se ha seleccionado una estrella, hay que quitar la que está seleccionada para poder hacer el efecto de colorear
-      // las estrellas que se sobrepone el cursos
-      if (isCheck) {
+      let newRaciones = $(this).val();
 
-        $('.starrating').children("input").each(function () {
-          // Almacena el elemento que se ha seleccionado
-          if (this.checked) {
-            idCheck = this.id;
-            this.checked = false;
-          }
+      if (newRaciones == ""){ // Si el campo está vacío
+        ingredientes.children().each(function (i) {
+          this.firstElementChild.textContent = cantidadesIngredientes[i]
+        });
+      } else {
+        ingredientes.children().each(function (i) {
+          // Regla de 3: cantidadOriginal x nuevaRaciones / racionesOriginal
+          let newCantidad = cantidadesIngredientes[i] * newRaciones / defaultRaciones;
+          this.firstElementChild.textContent = Math.round(newCantidad * 1000) / 1000;
         });
       }
-    });
-
-    // Cuando el usuario quita el cursor de las estrallas
-    $('.starrating').mouseleave(function () {
-
-      if (!isCheck) { //Si no se ha pulsado ninguna estrella
-        // Colorea según la valoración media que tiene
-        colorearEstrellas(valoracion);
-      } else {
-        // Colorea segun la estrella que haya pulsado
-        colorearEstrellas($("#" + idCheck).val());
-        // "Pulsa" la que se habia pulsado porque en hover se pierde
-        $("#" + idCheck).get(0).checked = true;
-      }
-
-    });
-
-    // Cuando se hace clic en una estrella
-    $('.starrating label').mousedown(function () {
-      idCheck = $(this).attr("for");
-      isCheck = true;
-    });
-  }
-   
+    }
+  }).on('paste', function (event) {
+    event.preventDefault(); // No permite que se pueda pegar(Ctrl+V) en el campo
   });
+
+  // VALORACIÓN
+
+    var idCheck;  // id de input(estrella) que se ha pulsado
+    var isCheck = false;  // true si se ha pulsado alguna estrella
+    var estrellas = $('.starrating label');
+
+
+    // Desctivar hover de valoracion de la receta en caso de que sea el autor
+    if ("{{receta.usuario}}" === "{{request.user}}") {  // Es el mismo usuario
+      $(estrellas).each(function () {
+        $(this).attr("for", "");
+      });
+    } else {
+
+      // Desactiva el coloreo de las estrella segun el número la media
+      $('.starrating').mouseover(function () {  // Cuando se pone el cursor encima
+        $(this).children("label").css("color", ""); // Quita los colores de las estrellas, para que solo se coloree la actual y las anteriores
+
+        // Si se ha seleccionado una estrella, hay que quitar la que está seleccionada para poder hacer el efecto de colorear
+        // las estrellas que se sobrepone el cursos
+        if (isCheck) {
+
+          $('.starrating').children("input").each(function () {
+            // Almacena el elemento que se ha seleccionado
+            if (this.checked) {
+              idCheck = this.id;
+              this.checked = false;
+            }
+          });
+        }
+      });
+
+      // Cuando el usuario quita el cursor de las estrallas
+      $('.starrating').mouseleave(function () {
+
+        if (!isCheck) { //Si no se ha pulsado ninguna estrella
+          // Colorea según la valoración media que tiene
+          colorearEstrellas(valoracion);
+        } else {
+          // Colorea segun la estrella que haya pulsado
+          colorearEstrellas($("#" + idCheck).val());
+          // "Pulsa" la que se habia pulsado porque en hover se pierde
+          $("#" + idCheck).get(0).checked = true;
+        }
+
+      });
+
+      // Cuando se hace clic en una estrella
+      $('.starrating label').mousedown(function () {
+        idCheck = $(this).attr("for");
+        isCheck = true;
+      });
+    }
 
 </script>
 
-<script src="{% static 'js/ajax.js' %}"></script>
 
 {% endblock %}

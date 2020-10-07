@@ -4,6 +4,42 @@ $(document).ready(function () {
   updateElementIndexIngrediente();
 });
 
+// Opción para mover los ingredientes y pasos
+$('.moveup, .movedown').click(function (e) {
+
+  // "padre" obtiene un string "ingrediente" o "pasos" según sea
+  var padre = e.currentTarget.dataset.parent;
+  // Obtiene el total de pasos o ingredientes de la receta
+  var totalInputs = $('#id_' + padre + '-TOTAL_FORMS').val();
+
+  if (totalInputs > 1) { // Comprueba que no haya solo un dato
+    var opcionMovimiento = e.currentTarget.classList[0];
+    var objeto = $(this).parents('.' + padre);
+
+    if (opcionMovimiento === "moveup") { // En caso de subir
+      //Comprobar si es el primero
+      var primero = $(this).parents('.' + padre).parent().children("." + padre).first();
+      if (objeto.html() !== primero.html()) {
+        objeto.insertBefore(objeto.prev()); //Inserta el paso/ingrediente encima del anterior
+      }
+    } else if (opcionMovimiento === "movedown") { // En caso de bajar
+      //Comprobar si es el último
+      var ultimo = $(this).parents('.' + padre).parent().children("." + padre).last();
+      if (objeto.html() !== ultimo.html()) {
+        objeto.insertAfter(objeto.next());  //Inserta el paso/ingrediente despues del posterior
+      }
+    }
+
+    // Actualiza la lista de pasos o ingredientes
+    if (padre === "paso")
+      updateElementIndexPaso();
+    else
+      updateElementIndexIngrediente();
+  }
+
+
+});
+
 // SCRIPT PASOS 
 
 
@@ -77,9 +113,9 @@ function cloneMorePaso(selector, prefix) {
  */
 function deleteFormPaso(prefix, btn) {
   var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
-
+  console.log(btn);
   if (total > 1) {
-    btn.parents('.paso').remove();
+    $(btn).parents('.paso').remove();
     $('#id_' + prefix + '-TOTAL_FORMS').val($('.paso').length);
     updateElementIndexPaso();
   }
@@ -87,6 +123,11 @@ function deleteFormPaso(prefix, btn) {
 }
 
 /**
+$(document).on('click', '.remove-form-row-paso', function (e) {
+  deleteFormPaso('paso', $(this));
+});
+
+
 $(document).on('click', '#buttonAddPaso', function (e) {
   alert("Aqui si");
   //e.preventDefault();
@@ -173,27 +214,23 @@ function cloneMoreIngrediente(selector, prefix) {
  * @param {texto} prefix Prefijo
  * @param {objeto} btn Botón eliminar
  */
-function deleteForm(prefix, btn) {
+function deleteFormIngrediente(prefix, btn) {
 
   var total = parseInt($('#id_' + prefix + '-TOTAL_FORMS').val());
 
 
   if (total > 1) {
-    btn.parents('.ingrediente').remove();
+    $(btn).parents('.ingrediente').remove();
     console.log($('.ingrediente').length);
     $('#id_' + prefix + '-TOTAL_FORMS').val($('.ingrediente').length);
     updateElementIndexIngrediente();
   }
 }
 
-$(document).on('click', '#buttonAddIngredient', function (e) {
-  e.preventDefault();
-  cloneMoreIngrediente('.ingrediente:last', 'ingrediente');
-});
 
 $(document).on('click', '.remove-form-row-ingrediente', function (e) {
   e.preventDefault();
-  deleteForm('ingrediente', $(this));
+  //deleteForm('ingrediente', $(this));
 });
 
 

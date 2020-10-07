@@ -7,6 +7,8 @@ from django.db.models import Avg
 # Sirve para controlar el máximo y mínimo de la valoración
 from django.core.validators import MaxValueValidator, MinValueValidator
 
+from django.contrib.auth.models import User
+
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
@@ -33,13 +35,14 @@ class Unidad_medida(models.Model):
 class Receta(models.Model):
     titulo = models.CharField(max_length=100)
     imagen_terminada = models.ImageField(upload_to='receta', db_column='imagen')
-    raciones = models.CharField(max_length=5, null=True, blank=True)
+    raciones = models.PositiveIntegerField(null=True, blank=True)
     tiempo_estimado = models.CharField(max_length=50, null=True, blank=True)
     publico = models.BooleanField(default=False)
     fecha = models.DateTimeField(default=timezone.now)
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recetas")
     valoracion_media = ""
+    p = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = 'receta'

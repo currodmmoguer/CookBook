@@ -30,7 +30,7 @@
     
 <!-- PAGINATOR -->
 
-{% if lista_usuarios %}
+{% if lista_usuarios.paginator.num_pages > 1 %}
 
 <div class="row justify-content-center my-5 paginator">
   <span class="step-links">

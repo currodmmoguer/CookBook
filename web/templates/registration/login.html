@@ -4,13 +4,14 @@
 
 <head>
   <meta charset="utf-8">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="shortcut icon" type="image/png" href="{% static 'img/favicon.ico' %}" />
   <title>CookBook</title>
   <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/main.css' %}">
   <link rel="stylesheet" href="{% static 'css/login.css' %}">
-  <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
+  <script content-type="application/javascript;charset=utf-8" src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
 
 </head>
 
@@ -34,16 +35,15 @@
 
           <form class="login-form" method="POST" novalidate>
             {% csrf_token %}
-            <!--<input type="text" name="username" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username">
-                <input type="password" id="password" name="password" placeholder="Contraseña" required/>-->
 
-            {{form.username}}
-            {{form.password}}
+            <input type="text" name="username" autofocus="" autocapitalize="none" autocomplete="username" maxlength="150" required="" id="id_username" placeholder="Usuario">
+            <input type="password" name="password" autocomplete="current-password" required="" id="id_password" placeholder="Constraseña">
+
             <a href="{% url 'password_reset' %}">Olvidé mi contraseña</a>
             <button id="btn-acceder">Acceder</button>
             <!-- ERROR -->
             {% if form.errors %}
-            <p class="my-1">Usuario o contraseña incorrecta. Vuelve a intentarlo.</p>
+            <p class="my-2">Usuario o contraseña incorrecta. Vuelve a intentarlo.</p>
             {% endif %}
 
             <div class="registro my-1">
@@ -58,12 +58,6 @@
     </div>
   </div>
 
-  <script>
-    $('#id_username').attr('placeholder', "Usuario");
-    $('#id_password').attr('placeholder', "Constraseña");
-  </script>
-
-  <script src="{% static 'js/ajax.js' %}"></script>
 
 </body>
 
