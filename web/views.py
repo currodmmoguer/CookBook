@@ -90,24 +90,17 @@ def receta(request, pk):
         respuestaForm = RespuestaForm(request.POST)
 
         if respuestaForm.is_valid():
-            texto = respuestaForm.cleaned_data['texto']
-            padre = Comentario.objects.get(
-                pk=int(request.POST['comentario-respuesta']))
-            comentario = Comentario.objects.create(
-                texto=texto, receta=receta, usuario=request.user, comentario_respuesta=padre)
+            padre = Comentario.objects.get(pk=int(request.POST['comentario-respuesta']))
+            comentario = respuestaForm.save(receta, request.user)
             utils.add_notificacion(request.user, padre.usuario, "respuesta", receta, comentario)
-            respuestaForm.save(receta, request.user)
+            
 
     # Formulario escribir comentario
     if request.method == "POST" and 'comentario' in request.POST:  # En caso de que escriba un comentario
         comentarioForm = ComentarioForm(request.POST)
 
         if comentarioForm.is_valid():
-            comentario = comentarioForm.save(commit=False)  # Guarda el texto
-            comentario.usuario = request.user  # Añade el usuario
-            comentario.receta = Receta.objects.get(pk=pk)  # Le añade la receta
-            comentario.save()
-            
+            comentario = comentarioForm.save(request.user, Receta.objects.get(pk=pk))  # Guarda el texto
             utils.add_notificacion(request.user, receta.usuario, "comentario", receta, comentario)
 
     comentarioFrom = ComentarioForm()
@@ -431,35 +424,11 @@ def editar_perfil(request, username):
         form = EditarPerfilForm(request.POST, request.FILES)
         
         if form.is_valid():
-            cd = form.cleaned_data
-            request.user.first_name = cd['nombre']
-            request.user.last_name = cd['apellido']
-            request.user.perfil.descripcion = cd['descripcion']
-            request.user.email = cd['email']
-            #Obtiene los valores para recortar [x, y, w, h]
-            valores = list(map(float, cd['val_img'].split(";")))
-
-            if not cd['imagen_perfil'] is None:
-                if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
-                    remove(request.user.perfil.imagen_perfil.path) # Borra la imagen anterior
-                request.user.perfil.set_imagen(cd['imagen_perfil'])
-
-            request.user.save()
-            request.user.perfil.save()
-
-            # Guarda la imagen recortada
-            # Se hace ahora porque tiene que está guardada la imagen ya
-            if not cd['imagen_perfil'] is None:
-                image = Image.open(request.user.perfil.imagen_perfil)
-                cropped_image = image.crop((valores[0], valores[1], valores[0] + valores[2], valores[1] + valores[3]))
-                resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-                resized_image.save(request.user.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
-
+            form.save(request.user)          
         else:
             # No puede haber errores
-            pass
+            print(form.errors)
     else:
-
         form = EditarPerfilForm(initial={
                 'nombre': request.user.first_name,
                 'apellido': request.user.last_name,
@@ -502,21 +471,8 @@ def editar_rrss(request):
 
         if form.is_valid():
             cd = form.cleaned_data
-            # De cada campo comprueba que no se haya cambiado
-            if request.user.perfil.facebook != cd['facebook']:
-                request.user.perfil.facebook = cd['facebook']
-            
-            if request.user.perfil.instagram != cd['instagram']:
-                request.user.perfil.instagram = cd['instagram']
-            
-            if request.user.perfil.twitter != cd['twitter']:
-                request.user.perfil.twitter = cd['twitter']
+            form.save(request.user.perfil)
 
-            if request.user.perfil.youtube != cd['youtube']:
-                request.user.perfil.youtube = cd['youtube']
-            
-            request.user.perfil.save()
-    
     else:
         form = EditarRRSSForm(initial = {
             'facebook': request.user.perfil.facebook,
@@ -654,8 +610,10 @@ def registro(request):
     if request.method == "POST":
         registroUserForm = RegistroUserForm(request.POST)
         registroPerfilForm = RegistroPerfilForm(request.POST, request.FILES)
-
+        
         if registroUserForm.is_valid() and registroPerfilForm.is_valid():
+
+            
             
             # Obtiene todos los datos
             username = registroUserForm.cleaned_data.get('username')
@@ -677,17 +635,8 @@ def registro(request):
                     if password == password2:
 
                         if not password.isnumeric():
-                            user = registroUserForm.save(commit=False)
-                            user.set_password(password)
-                            user.first_name = nombre
-                            user.last_name = apellido
-                            user.email = email
-                            user.save() #Guarda el objeto user
-
-                            perfil = Perfil(usuario=user)
-                            perfil.descripcion = descripcion
-                            perfil.set_imagen(imagen)
-                            perfil.save()   #Guarda el perfil de dicho usuario
+                            user = registroUserForm.save()
+                            registroPerfilForm.save(user)
                             do_login(request, user) #Accede a la aplicación
                             return redirect('index')
                         else:
@@ -714,13 +663,19 @@ def registro(request):
 def eliminar_cuenta(request):
     for receta in request.user.recetas.all():
         remove(receta.imagen_terminada.path)
+        
         for paso in receta.pasos.all():
             if paso.imagen_paso:
                 remove(paso.imagen_paso.path)
     
     if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
         remove(request.user.imagen_perfil.path)
+
+    """notificaciones = Notificacion.objects.filter(usuario_destino=request.user)
     
+    for notificacion in notificaciones:
+        notificacion.delete()
+    """
     request.user.delete()
     
     return redirect('login')
@@ -747,6 +702,9 @@ def eliminar_receta(request, pk):
         for paso in receta.pasos.all():
             if paso.imagen_paso:
                 remove(paso.imagen_paso.path)
+        notificaciones = Notificacion.objects.filter(receta=receta)
+        for notificacion in notificaciones:
+            notificacion.delete()
         receta.delete()
         return redirect('perfil', username=request.user.username)
 

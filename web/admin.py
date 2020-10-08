@@ -6,8 +6,8 @@ from django.db.models import Count
 # Librarias para trabajar con json
 from django.core.serializers.json import DjangoJSONEncoder
 import json
- 
-    
+
+
 @admin.register(Categoria)
 class CategoriaReport(admin.ModelAdmin):
     list_display = ('nombre',)  # El dato del objeto que se ve en la lista
@@ -53,11 +53,10 @@ class Sugerencia(admin.ModelAdmin):
 @admin.register(Notificacion)
 class Notificacion(admin.ModelAdmin):
     list_display = ('usuario_origen', 'usuario_destino', 'tipo', 'visto', )
+    
 
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
-admin.site.register(Receta)
-
 
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)

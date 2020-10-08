@@ -2,6 +2,9 @@ from django import forms
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
+from os import remove
+# Recortar image
+from PIL import Image
 
 
 class RegistroUserForm(forms.ModelForm):
@@ -23,6 +26,18 @@ class RegistroUserForm(forms.ModelForm):
             'password': forms.PasswordInput()
         
         }
+
+    def save(self, commit=False):
+        user = super(RegistroUserForm, self).save(commit=False)
+        print(self.cleaned_data)
+        cd = self.cleaned_data
+        user.set_password(cd['password'])
+        user.first_name = cd['first_name']
+        user.last_name = cd['last_name']
+        user.email = cd['email']
+        user.save()
+        return user
+
     
 
 class RegistroPerfilForm(forms.ModelForm):
@@ -38,10 +53,14 @@ class RegistroPerfilForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'rows': 4})
         }
 
-        def save(self):
+        def save(self, usuario):
             print("entra")
-            print(self.__dict__)
-
+            print(self.cleaned_data)
+            cd = self.cleaned_data
+            perfil = Perfil(usuario=usuario)
+            perfil.descripcion = cd['descripcion']
+            perfil.set_imagen(cd['imagen_perfil'])
+            perfil.save()
 
 class EditarPerfilForm(forms.Form):
     imagen_perfil = forms.ImageField(required=False, label="Elegir imagen...")
@@ -49,7 +68,32 @@ class EditarPerfilForm(forms.Form):
     apellido = forms.CharField(max_length=50, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
     descripcion = forms.CharField(max_length=255, label="Descripción", required=False, widget=forms.Textarea(attrs={'rows':3, 'class': "form-control"}))
     email = forms.CharField(max_length=30, widget=forms.TextInput(attrs={'class': "form-control"}))
-    val_img = forms.CharField(widget=forms.HiddenInput())
+    val_img = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    def save(self, usuario):
+        cd = self.cleaned_data
+        usuario.first_name = cd['nombre']
+        usuario.last_name = cd['apellido']
+        usuario.perfil.descripcion = cd['descripcion']
+        usuario.email = cd['email']
+
+        if not cd['imagen_perfil'] is None:
+            valores = list(map(float, cd['val_img'].split(";")))
+            if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
+                remove(usuario.perfil.imagen_perfil.path) # Borra la imagen anterior
+            usuario.perfil.set_imagen(cd['imagen_perfil'])
+        usuario.save()
+        usuario.perfil.save()
+
+        # Guarda la imagen recortada
+        # Se hace ahora porque tiene que está guardada la imagen ya
+        if not cd['imagen_perfil'] is None:
+            image = Image.open(usuario.perfil.imagen_perfil)
+            cropped_image = image.crop((valores[0], valores[1], valores[0] + valores[2], valores[1] + valores[3]))
+            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
+            resized_image.save(usuario.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
+
+
 
 class PasswordChangeForm(PasswordChangeForm):
     
@@ -66,6 +110,22 @@ class EditarRRSSForm(forms.Form):
     twitter = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
     youtube = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
 
+    def save(self, perfil):
+        cd = self.cleaned_data
+        # De cada campo comprueba que no se haya cambiado
+        if perfil.facebook != cd['facebook']:
+            perfil.facebook = cd['facebook']
+            
+        if perfil.instagram != cd['instagram']:
+            perfil.instagram = cd['instagram']
+            
+        if perfil.twitter != cd['twitter']:
+            perfil.twitter = cd['twitter']
+
+        if perfil.youtube != cd['youtube']:
+            perfil.youtube = cd['youtube']
+            
+        perfil.save()
     
 
 class RecetaForm(forms.ModelForm):
@@ -123,6 +183,7 @@ class PasoFormset(forms.ModelForm):
         }
 
 
+
 class ComentarioForm(forms.ModelForm):
 
     class Meta:
@@ -132,6 +193,14 @@ class ComentarioForm(forms.ModelForm):
             'texto': forms.Textarea(attrs={'class': 'form-control', 'rows':3, 'placeholder': 'Escribe un comentario...', 'required': 'required'}),
         }
 
+    def save(self, usuario, receta):
+        print(self.__dict__)
+        comentario = self.instance
+        comentario.usuario = usuario
+        comentario.receta = receta  # Le añade la receta
+        comentario.save()
+        return comentario
+
 
 class RespuestaForm(forms.ModelForm):
 
@@ -140,12 +209,11 @@ class RespuestaForm(forms.ModelForm):
         fields = ('texto',)
 
     def save(self, receta, usuario):
-        print(self.__dict__)
-        print(self.data.get('comentario-respuesta'))
         texto = self.cleaned_data['texto']
         padre =Comentario.objects.get(pk=self.data.get('comentario-respuesta'))
         comentario = Comentario.objects.create(
                 texto=texto, receta=receta, usuario=usuario, comentario_respuesta=padre)
+        return comentario
 
 class ValoracionForm(forms.Form):
     valoracion = forms.CharField(max_length=1)
