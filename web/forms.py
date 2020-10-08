@@ -38,6 +38,10 @@ class RegistroPerfilForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'rows': 4})
         }
 
+        def save(self):
+            print("entra")
+            print(self.__dict__)
+
 
 class EditarPerfilForm(forms.Form):
     imagen_perfil = forms.ImageField(required=False, label="Elegir imagen...")
@@ -134,6 +138,14 @@ class RespuestaForm(forms.ModelForm):
     class Meta:
         model = Comentario
         fields = ('texto',)
+
+    def save(self, receta, usuario):
+        print(self.__dict__)
+        print(self.data.get('comentario-respuesta'))
+        texto = self.cleaned_data['texto']
+        padre =Comentario.objects.get(pk=self.data.get('comentario-respuesta'))
+        comentario = Comentario.objects.create(
+                texto=texto, receta=receta, usuario=usuario, comentario_respuesta=padre)
 
 class ValoracionForm(forms.Form):
     valoracion = forms.CharField(max_length=1)

@@ -79,80 +79,95 @@ function readURL(input, img) {
   }
 }
 
-function recortarImage(img) {
-  var image = document.getElementById("image-crop-modal");
-  var cropBoxData;
-  var canvasData;
-  var datosTotal;
+var cropper;
+var image = document.getElementById("image-crop-modal");
+var cropBoxData;
+var canvasData;
+var datosTotal;
+var imagen_subida;
+
+$("#modal-crop").on("shown.bs.modal", function () {
   
-
-  
-
-  $("#modal-crop").on("shown.bs.modal", function () {
-    var image = document.getElementById("image-crop-modal");
-    var cropper = new Cropper(image, {
-      aspectRatio: 1 / 1,
-      zoomable: false,
-      autoCropArea: 1,
-      ready: function () {
-        console.log("Al abrir modal:")
-        console.log(cropBoxData);
-        cropper.setCropBoxData(cropBoxData).setCanvasData(canvasData);
-        console.log(cropBoxData);
-      },
-    });
-    
-
-    $("#aceptar-recorte").click(function () {
-      console.log(cropper);
-      cropBoxData = cropper.getCropBoxData();
-      canvasData = cropper.getCanvasData();
-      datosTotal = cropper.getData();
-      var canvas = document.getElementById("canvas");
-      console.log(canvas);
-      var contex = canvas.getContext("2d");
-      contex.imageSmoothingEnabled = true;
-      console.log("Aceptando:")
-      //console.log(cropBoxData);
-      //$('#img-perfil').attr('src', cropper.image.src);
-      canvas.width = datosTotal.width;
-      canvas.height = datosTotal.height;
-      console.log(datosTotal);
-      contex.drawImage(
-        image,
-        datosTotal.x,
-        datosTotal.y,
-        datosTotal.width,
-        datosTotal.height,
-        0,
-        0,
-        datosTotal.width,
-        datosTotal.height
-      );
-
-      $("#val_img").val(
-        datosTotal.x +
-          ";" +
-          datosTotal.y +
-          ";" +
-          datosTotal.width +
-          ";" +
-          datosTotal.height
-      );
-      $("#img-perfil").attr("hidden", "");
-      $("#canvas").removeAttr("hidden");
-      $('#image-crop-modal').removeAttr('src');
-      //console.log(cropper);
-      //cropper.destroy();
-      //console.log(image);
-      //console.log(cropper);
-
-    });
-
-    $('#close-modal-crop').click(function(){
-      cropper.destroy();
-      $('#image-crop-modal').removeAttr('src');
-      //console.log(cropper);
-    });
+  cropper = new Cropper(image, {
+    aspectRatio: 1 / 1,
+    zoomable: false,
+    autoCropArea: 1,
+    crop: function (e) {
+      datosTotal = e.detail;  // Guarda los datos del recorte
+    },
   });
-}
+}).on('hidden.bs.modal', function () {
+  cropBoxData = cropper.getCropBoxData();
+  canvasData = cropper.getCanvasData();
+  cropper.destroy();
+  $('.cropper-container').remove();
+
+});
+
+function borrarFoto() { 
+  // console.log($('#id_imagen_perfil').val());
+  $('#id_imagen_perfil').val("");
+  // console.log($("#canvas").attr('hidden'));
+  $("#canvas").attr('hidden', '');
+
+ }
+
+  $("#aceptar-recorte").click(function () {
+    // console.log(cropper);
+    cropBoxData = cropper.getCropBoxData();
+    canvasData = cropper.getCanvasData();
+    // datosTotal = cropper.getData();
+    var canvas = document.getElementById("canvas");
+    // console.log(canvas);
+    var contex = canvas.getContext("2d");
+    
+    // console.log("Aceptando:");
+    //console.log(cropBoxData);
+    //$('#img-perfil').attr('src', cropper.image.src);
+    canvas.width = datosTotal.width;
+    canvas.height = datosTotal.height;
+    // console.log(datosTotal);
+    contex.drawImage(
+      image,
+      datosTotal.x,
+      datosTotal.y,
+      datosTotal.width,
+      datosTotal.height,
+      0,
+      0,
+      datosTotal.width,
+      datosTotal.height
+    );
+
+    $("#val_img").val(
+      datosTotal.x +
+        ";" +
+        datosTotal.y +
+        ";" +
+        datosTotal.width +
+        ";" +
+        datosTotal.height
+    );
+    // $("#img-perfil").attr("hidden", "");
+    $("#canvas").removeAttr("hidden");
+    $("#image-crop-modal").removeAttr("src");
+    imagen_subida = $('#id_imagen_perfil').val();
+    $('#img-perfil').attr('hidden', '');
+    //console.log(cropper);
+    //cropper.destroy();
+    //console.log(image);
+    //console.log(cropper);
+  });
+
+  $("#close-modal-crop").click(function () {
+    // cropper.destroy();
+    $('#id_imagen_perfil').val("");
+    $("#image-crop-modal").removeAttr("src");
+    //console.log(cropper);
+    if (imagen_subida == null) {
+      $('#id_imagen_perfil').val(imagen_subida);
+  } else {
+      $('#id_imagen_perfil').val("");
+  }
+  });
+

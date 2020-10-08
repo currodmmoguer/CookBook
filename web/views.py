@@ -67,19 +67,11 @@ def index(request):
     else:
         recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
         opc = ""
-        
-    
-    if not opc == "rating": # Si la lista es por valoración, ya ha realizado esto
-        for receta in recetas:  # Añade la valoración media a cada receta
-            receta.valoracion_media = utils.valoracion_media(receta)
-    
-    #Paginación
-    obj_pagina = utils.paginator(request, recetas)
     
     context = {
-        'recetas': obj_pagina,
+        'recetas': utils.paginator(request, recetas),
         'opc': opc,
-        'notificaciones': notificaciones,
+        #'notificaciones': notificaciones,
         'mensaje_vacio': "No hay recetas"
     }
     
@@ -104,7 +96,7 @@ def receta(request, pk):
             comentario = Comentario.objects.create(
                 texto=texto, receta=receta, usuario=request.user, comentario_respuesta=padre)
             utils.add_notificacion(request.user, padre.usuario, "respuesta", receta, comentario)
-
+            respuestaForm.save(receta, request.user)
 
     # Formulario escribir comentario
     if request.method == "POST" and 'comentario' in request.POST:  # En caso de que escriba un comentario
