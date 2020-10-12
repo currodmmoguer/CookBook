@@ -29,7 +29,6 @@ class RegistroUserForm(forms.ModelForm):
 
     def save(self, commit=False):
         user = super(RegistroUserForm, self).save(commit=False)
-        print(self.cleaned_data)
         cd = self.cleaned_data
         user.set_password(cd['password'])
         user.first_name = cd['first_name']
@@ -53,14 +52,12 @@ class RegistroPerfilForm(forms.ModelForm):
             'descripcion': forms.Textarea(attrs={'rows': 4})
         }
 
-        def save(self, usuario):
-            print("entra")
-            print(self.cleaned_data)
-            cd = self.cleaned_data
-            perfil = Perfil(usuario=usuario)
-            perfil.descripcion = cd['descripcion']
-            perfil.set_imagen(cd['imagen_perfil'])
-            perfil.save()
+    def save(self, usuario):
+        cd = self.cleaned_data
+        perfil = Perfil(usuario=usuario)
+        perfil.descripcion = cd['descripcion']
+        perfil.set_imagen(cd['imagen_perfil'])
+        perfil.save()
 
 class EditarPerfilForm(forms.Form):
     imagen_perfil = forms.ImageField(required=False, label="Elegir imagen...")
@@ -144,7 +141,12 @@ class RecetaForm(forms.ModelForm):
             'tiempo_estimado': forms.TextInput(attrs={'placeholder': 'Ej: 30 minutos'}),
             'categoria': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input', 'required': 'required'}),
         }
-
+    def save(self, publico, usuario):
+        receta = super(RecetaForm, self).save(commit=False)
+        receta.publico = publico
+        receta.usuario = usuario
+        receta.save()
+        return receta
     
 class IngredienteFormset(forms.ModelForm):
     ingrediente = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'required': "required"}))
@@ -156,17 +158,21 @@ class IngredienteFormset(forms.ModelForm):
             'unidad_medida': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input', 'required': 'required'}),
             'cantidad': forms.TextInput(attrs={'required': "required"})
         }
-    
-class IngredienteEditFormset(forms.ModelForm):
-    ingrediente = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'required': "required"}))
-    
-    class Meta:
-        model = Ingrediente_Receta
-        fields = ('cantidad', 'unidad_medida')
-        widgets = { #Añade clases al elemento en el archivo html
-            'unidad_medida': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input'}),
-            'cantidad': forms.TextInput(attrs={'required': "required"})
-        }
+
+    def save(self, receta):
+        rel_ingrediente = super(IngredienteFormset, self).save(commit=False)
+        formIngrediente = self.cleaned_data
+        
+        # Comprueba que exista el ingrediente
+        if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
+            rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
+        else:   # Si no, crea el ingrediente
+            nombre = formIngrediente['ingrediente']
+            instancia = Ingrediente.objects.create(nombre=nombre)
+            rel_ingrediente.ingrediente = instancia
+        
+        rel_ingrediente.receta = receta
+        rel_ingrediente.save()
 
         
 class PasoFormset(forms.ModelForm):
@@ -182,6 +188,11 @@ class PasoFormset(forms.ModelForm):
             'texto': forms.Textarea(attrs={'rows':3, 'required': 'required'}),
         }
 
+    def save(self, receta, pos):
+        paso = super(PasoFormset, self).save(commit=False)
+        paso.receta = receta
+        paso.posicion = pos
+        paso.save()
 
 
 class ComentarioForm(forms.ModelForm):
@@ -194,7 +205,6 @@ class ComentarioForm(forms.ModelForm):
         }
 
     def save(self, usuario, receta):
-        print(self.__dict__)
         comentario = self.instance
         comentario.usuario = usuario
         comentario.receta = receta  # Le añade la receta

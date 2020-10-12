@@ -124,15 +124,6 @@ def nueva_receta(request):
     formsetIngredienteFactory = modelformset_factory(Ingrediente_Receta, form=IngredienteFormset, extra=1)
 
     if request.method == 'POST':
-        
-        if 'sugerencia' in request.POST:    # Si envía una sugerencia
-            formSugerencia = SugForm(request.POST)
-            
-            if formSugerencia.is_valid():
-                formSugerencia.save()
-                return redirect('nueva_receta')
-            else:   # Siempre es válido, se pone para que no hagas las siguientes operaciones
-                return redirect('nueva_receta')
 
         formReceta = RecetaForm(request.POST, request.FILES)
         formset_paso = formsetPasoFactory(request.POST, request.FILES, prefix='paso')
@@ -140,38 +131,17 @@ def nueva_receta(request):
 
         if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
             # Receta (básicos)
-            receta = formReceta.save(commit=False)
-            
-            if request.POST.__contains__('publico'): #Comprueba que se pulse el botón publicar
-                receta.publico = True
-
-            receta.usuario = request.user
-            receta.save()
+            receta = formReceta.save(request.POST.__contains__('publico'), request.user)
 
             # Ingredientes
             for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
-                rel_ingrediente = formIngrediente.save(commit=False)
-                formIngrediente = formIngrediente.cleaned_data
+                formIngrediente.save(receta)
                 
-                # Comprueba que exista el ingrediente
-                if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
-                    rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
-                else:   # Si no, crea el ingrediente
-                    nombre = formIngrediente['ingrediente']
-                    instancia = Ingrediente.objects.create(nombre=nombre)
-                    rel_ingrediente.ingrediente = instancia
-
-                rel_ingrediente.receta = receta
-                rel_ingrediente.save()
-
             # Pasos
             pos = 1
             
-            for formPaso in formset_paso:   #Bucle todos los pasos
-                paso = formPaso.save(commit=False)
-                paso.receta = receta
-                paso.posicion = pos
-                paso.save()
+            for formPaso in formset_paso:   #Bucle todos los 
+                formPaso.save(receta, pos)
                 pos += 1
 
             return redirect('receta', pk=receta.pk)
@@ -208,17 +178,9 @@ def editar_receta(request, pk):
     formSugerencia = SugForm()
     
     formsetPasoFactory = modelformset_factory(Paso, form=PasoFormset, extra=0)
-    formsetIngredienteFactory = modelformset_factory(Ingrediente_Receta, form=IngredienteEditFormset, extra=0)
+    formsetIngredienteFactory = modelformset_factory(Ingrediente_Receta, form=IngredienteFormset, extra=0)
 
     if request.method == 'POST':
-        if 'sugerencia' in request.POST:    # Si envía una sugerencia
-            formSugerencia = SugForm(request.POST)
-            
-            if formSugerencia.is_valid():
-                formSugerencia.save()
-                return redirect('editar_receta', pk=pk)
-            else:   # Siempre es válido, se pone para que no hagas las siguientes operaciones
-                return redirect('editar_receta')
 
         formReceta = RecetaForm(request.POST, request.FILES, instance=receta)
         formset_paso = formsetPasoFactory(request.POST, request.FILES, prefix='paso')
@@ -226,38 +188,17 @@ def editar_receta(request, pk):
 
         if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
             # Receta (básicos)
-            receta = formReceta.save(commit=False)
-            
-            if request.POST.__contains__('publico'): #Comprueba que se pulse el botón publicar
-                receta.publico = True
-
-            receta.usuario = request.user
-            receta.save()
+            receta = formReceta.save(request.POST.__contains__('publico'), request.user)
 
             # Ingredientes
             for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
-                rel_ingrediente = formIngrediente.save(commit=False)
-                formIngrediente = formIngrediente.cleaned_data
-                
-                # Comprueba que exista el ingrediente
-                if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
-                    rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
-                else:   # Si no, crea el ingrediente
-                    nombre = formIngrediente['ingrediente']
-                    instancia = Ingrediente.objects.create(nombre=nombre)
-                    rel_ingrediente.ingrediente = instancia
-
-                rel_ingrediente.receta = receta
-                rel_ingrediente.save()
+                formIngrediente.save(receta)
 
             # Pasos
             pos = 1
             
             for formPaso in formset_paso:   #Bucle todos los pasos
-                paso = formPaso.save(commit=False)
-                paso.receta = receta
-                paso.posicion = pos
-                paso.save()
+                formPaso.save(receta, pos)
                 pos += 1
 
             return redirect('receta', pk=receta.pk)
@@ -612,40 +553,27 @@ def registro(request):
         registroPerfilForm = RegistroPerfilForm(request.POST, request.FILES)
         
         if registroUserForm.is_valid() and registroPerfilForm.is_valid():
-
-            
-            
-            # Obtiene todos los datos
+            # Obtiene todos los datos necesarios
             username = registroUserForm.cleaned_data.get('username')
             password = registroUserForm.cleaned_data.get('password')
             password2 = registroUserForm.cleaned_data.get('password2')
             email = registroUserForm.cleaned_data.get('email')
-            nombre = registroUserForm.cleaned_data.get('first_name')
-            apellido = registroUserForm.cleaned_data.get('last_name')
-            descripcion = registroPerfilForm.cleaned_data.get('descripcion')
-            imagen = registroPerfilForm.cleaned_data.get('imagen_perfil')
             
             
             # Comprueba que no exista un usuario con el nombre de usuario introducido
-            if not User.objects.filter(username=username).exists():
-
-                # Comprueba que no exista un usuario con el email introducido
-                if not User.objects.filter(email=email).exists():
-
-                    if password == password2:
-
-                        if not password.isnumeric():
-                            user = registroUserForm.save()
-                            registroPerfilForm.save(user)
-                            do_login(request, user) #Accede a la aplicación
-                            return redirect('index')
-                        else:
-                            registroUserForm.add_error('password', 'Las contraseñas no pueden ser solo numérica.')
-                    else:
-                        registroUserForm.add_error('password', 'Las contraseñas no coinciden.')
-                else:
+            if not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists() and password == password2 and not password.isnumeric():
+                user = registroUserForm.save()
+                registroPerfilForm.save(user)
+                do_login(request, user) #Accede a la aplicación
+                return redirect('index')
+            else:   # En caso de que haya algún error, comprueba cuales han sido para mostrarlo por pantalla
+                if User.objects.filter(email=email).exists():
                     registroUserForm.add_error('email', 'Ya existe un usuario registrado con este email.')
-
+                if password.isnumeric():
+                    registroUserForm.add_error('password', 'Las contraseñas no pueden ser solo numérica.')
+                if not password == password2:
+                    registroUserForm.add_error('password', 'Las contraseñas no coinciden.')
+                
     else:
         registroUserForm = RegistroUserForm()
         registroPerfilForm = RegistroPerfilForm()
@@ -669,7 +597,7 @@ def eliminar_cuenta(request):
                 remove(paso.imagen_paso.path)
     
     if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
-        remove(request.user.imagen_perfil.path)
+        remove(request.user.perfil.imagen_perfil.path)
 
     """notificaciones = Notificacion.objects.filter(usuario_destino=request.user)
     
@@ -778,6 +706,7 @@ def valorar_seguro(request):
 def sugerencia(request):
     
     if request.method == "GET":
+        print(request)
         # Busca si existe la sugerencia
         if Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).exists():
             sugerencia = Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).first()
