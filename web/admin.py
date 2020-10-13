@@ -57,6 +57,8 @@ class Notificacion(admin.ModelAdmin):
 
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
-
+admin.site.register(Receta)
+admin.site.register(Paso)
+admin.site.register(Ingrediente_Receta)
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)

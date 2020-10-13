@@ -3,8 +3,8 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from os import remove
-# Recortar image
-from PIL import Image
+from .utils import recortar_img
+
 
 
 class RegistroUserForm(forms.ModelForm):
@@ -40,6 +40,7 @@ class RegistroUserForm(forms.ModelForm):
     
 
 class RegistroPerfilForm(forms.ModelForm):
+    val_img = forms.CharField(widget=forms.HiddenInput(), required=False)
    
     class Meta:
         model = Perfil
@@ -58,6 +59,10 @@ class RegistroPerfilForm(forms.ModelForm):
         perfil.descripcion = cd['descripcion']
         perfil.set_imagen(cd['imagen_perfil'])
         perfil.save()
+        if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
+            valores = list(map(float, cd['val_img'].split(";")))
+            image = recortar_img(perfil.imagen_perfil, valores)
+            image.save(perfil.imagen_perfil.path)
 
 class EditarPerfilForm(forms.Form):
     imagen_perfil = forms.ImageField(required=False, label="Elegir imagen...")
@@ -76,8 +81,8 @@ class EditarPerfilForm(forms.Form):
 
         if not cd['imagen_perfil'] is None:
             valores = list(map(float, cd['val_img'].split(";")))
-            if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
-                remove(usuario.perfil.imagen_perfil.path) # Borra la imagen anterior
+            # if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
+                # remove(usuario.perfil.imagen_perfil.path) # Borra la imagen anterior
             usuario.perfil.set_imagen(cd['imagen_perfil'])
         usuario.save()
         usuario.perfil.save()
@@ -85,10 +90,8 @@ class EditarPerfilForm(forms.Form):
         # Guarda la imagen recortada
         # Se hace ahora porque tiene que está guardada la imagen ya
         if not cd['imagen_perfil'] is None:
-            image = Image.open(usuario.perfil.imagen_perfil)
-            cropped_image = image.crop((valores[0], valores[1], valores[0] + valores[2], valores[1] + valores[3]))
-            resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
-            resized_image.save(usuario.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
+            image = recortar_img(usuario.perfil.imagen_perfil, valores)
+            image.save(usuario.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
 
 
 

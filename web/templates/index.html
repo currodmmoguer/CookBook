@@ -15,9 +15,9 @@
     Ordenar por:
     <form method="POST" class="sort">
       {% csrf_token %}
-      <button type="submit" class="sort-item" id="new" name="new" data-toggle="tooltip" title="Últimas recetas">Nuevos</button>
-      <button type="submit" class="sort-item" id="follow" name="follow" data-toggle="tooltip" title="Últimas recetas de los usuarios a los que sigues">Seguidos</button>
-      <button type="submit" class="sort-item" id="rating" name="rating" data-toggle="tooltip" title="Recetas mejor valoradas">Valoración</button>
+      <button type="submit" class="sort-item" id="new" name="type-sort" value="new" data-toggle="tooltip" title="Últimas recetas">Nuevos</button>
+      <button type="submit" class="sort-item" id="follow" name="type-sort" value="follow" data-toggle="tooltip" title="Últimas recetas de los usuarios a los que sigues">Seguidos</button>
+      <button type="submit" class="sort-item" id="rating" name="type-sort" value="rating" data-toggle="tooltip" title="Recetas mejor valoradas">Valoración</button>
     </form>
   
 </div>

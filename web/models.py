@@ -9,6 +9,8 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 from django.contrib.auth.models import User
 
+import os
+
 
 class Categoria(models.Model):
     nombre = models.CharField(max_length=50, unique=True)
@@ -82,11 +84,15 @@ class Perfil(models.Model):
     		return self.seguidores.all().count()
 
     def set_imagen(self, imagen):   #Añade una imagen de perfil
-    	if imagen is None: #Si no hay ninguna le pone la de por defecto
-    		self.imagen_perfil.name = self._IMG_DEFAULT
-    	else:
-    		self.imagen_perfil = imagen
-    	self.save()
+        if not self.imagen_perfil.name == self._IMG_DEFAULT:
+            os.remove(self.imagen_perfil.path)
+
+        if imagen is None: #Si no hay ninguna le pone la de por defecto
+            self.imagen_perfil.name = self._IMG_DEFAULT
+        else:
+    	    self.imagen_perfil = imagen
+
+       	self.save()
 
 
     def add_seguidor(self, perfil): # Añade un usuario a la lista de seguidores

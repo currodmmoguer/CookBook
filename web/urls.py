@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     path('hay_notificaciones/', views.hay_notificaciones, name="hay_notificaciones"),   #Ajax-Comprueba que el usuario tenga notificaciones
-    path('sugerencia/', views.sugerencia, name="sugerencia"),
+    path('sugerencia/', views.sugerencia, name="sugerencia"),   #Ajax-Envía sugerencia al administrador
     path('valorar/', views.valorar, name="valorar"),    #Sirve para cuando se da al botón valorar
     path('valorar-seg/', views.valorar_seguro, name="valorar_seguro"),  #Sirve cuando se valora desde el modal
     path('buscar/', views.busqueda_avanzada, name='busqueda_avanzada'),     #Buscqueda avanzada de receta
