@@ -23,7 +23,7 @@ from django.forms import modelformset_factory, formset_factory
 #Contains
 from django.db.models import Q
 
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 #from django.urls import reverse
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -603,23 +603,25 @@ def eliminar_receta(request, pk):
             if paso.imagen_paso:
                 remove(paso.imagen_paso.path)
 
-        """notificaciones = Notificacion.objects.filter(receta=receta)
-
-        for notificacion in notificaciones:
-            notificacion.delete()
-        receta.delete()"""
+        receta.delete()
+        
         return redirect('perfil', username=request.user.username)
 
 
-#Pone una receta pública
+#Pone una receta pública o privada según la que esté marcada
 @login_required()
 def publicar(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
     
     if request.user == receta.usuario:  # Comprueba que la receta pertenezca al usuario logueado
         receta.publicar()
-        return redirect('receta', pk=pk)
     
+    return redirect('receta', pk=pk)
+    
+
+"""
+    FUNCIONES LLAMADAS CON AJAX
+"""
 
 # Guarda una receta que se pasa por parametro y se guarda en el usuario conectado
 @login_required
@@ -634,75 +636,69 @@ def guardar(request):
             Receta_Guardada.objects.filter(receta=receta).filter(usuario=request.user).delete()
         else: # En caso contrario, la añade
             Receta_Guardada.objects.create(receta=receta, usuario=request.user)
-        return HttpResponse('success')
-    
+        
+        return HttpResponse()
 
 # Valora una receta
 @login_required
 def valorar(request):
     
     if request.method == 'GET':
-        receta_id = request.GET['receta_id']
-        receta = get_object_or_404(Receta, pk=receta_id)
+        receta = get_object_or_404(Receta, pk=request.GET['receta_id']) # Obtienes la receta por la id
         valoracion = request.GET['valoracion']
 
-        #No tiene ya valoracion
+        #No tiene ya valoracion por el mismo usuario
         if not Valoracion.objects.filter(receta=receta).filter(usuario=request.user).exists():
-            Valoracion.objects.create(valoracion=valoracion, receta=receta, usuario=request.user)
+            Valoracion.objects.create(valoracion=valoracion, receta=receta, usuario=request.user)   # Crea valoración
             receta.valoracion_media = utils.valoracion_media(receta)
-            utils.add_notificacion(request.user, receta.usuario, "valoracion", receta)
+            utils.add_notificacion(request.user, receta.usuario, "valoracion", receta)  # Crea notificación
             return HttpResponse(receta.valoracion_media)
         else:
             return HttpResponse('existe')
 
-# Cuando se valora, a través del modal
+# Cuando se valora, a través del modal, porque un usuario ya habia valorado dicha receta
 @login_required    
 def valorar_seguro(request):
 
     if request.method == 'GET':
-        receta_id = request.GET['receta_id']
-        receta = get_object_or_404(Receta, pk=receta_id)
-        puntos = request.GET['valoracion']
+        receta = get_object_or_404(Receta, pk=request.GET['receta_id'])
         
         # Obtiene la valoración ya existente
-        valoracion = Valoracion.objects.filter(receta=receta).filter(usuario=request.user).first()
-        valoracion.valoracion = puntos
+        valoracion = Valoracion.objects.filter(receta=receta).filter(usuario=request.user).first()  # Obtiene la valoración ya existente
+        valoracion.valoracion = request.GET['valoracion']
         valoracion.save()
         receta.valoracion_media = utils.valoracion_media(receta)
-        utils.add_notificacion(request.user, receta.usuario, "valoracion", receta)
+        utils.add_notificacion(request.user, receta.usuario, "valoracion", receta)  # Crea la notificación
         
         return HttpResponse(receta.valoracion_media)
     
-    return HttpResponse("unsuccessful")
 
 
+# Un usuario envía una sugerencia de una categoría o unidad de medida
 @login_required
 def sugerencia(request):
     
     if request.method == "GET":
-        print(request)
+
         # Busca si existe la sugerencia
         if Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).exists():
             sugerencia = Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).first()
-            sugerencia.cantidad += 1
+            sugerencia.cantidad += 1    # Si esa sugerencia existe, suma 1 al campo cantidad para ver cuantos la han enviado en total
             sugerencia.save()
-        else:
+        else:   # Crea una nueva sugerencia
             Sugerencia.objects.create(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia'])
         
         return HttpResponse()
-
-    return HttpResponse("unsuccessful")
+        
 
 @login_required
 def hay_notificaciones(request):
 
-    if request.method == "GET":
-        notificaciones = Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False)
-
-        if notificaciones:
-            return HttpResponse("si-notificacion")
+    # Comprueba que sea GET y que el usuario tenga notificaciones sin ver
+    if request.method == "GET" and Notificacion.objects.filter(usuario_destino=request.user).filter(visto=False).exists():
+        return HttpResponse("si-notificacion")
         
-        return HttpResponse("no-notificacion")
+    return HttpResponse()
 
 
 @login_required
@@ -710,15 +706,17 @@ def seguir_dejar(request, pk):
     usuario = get_object_or_404(User, pk=pk)
 
     if not request.user == usuario:
-        if not request.user.perfil in usuario.perfil.seguidores.all():
+        if not request.user.perfil in usuario.perfil.seguidores.all():  # En caso de que no lo siga
             usuario.perfil.add_seguidor(request.user.perfil)
             utils.add_notificacion(request.user, usuario, "siguiendo")
             return HttpResponse("siguiendo")
-        else:
+        else:   # En caso de que ya sea seguidor, lo deja de seguir
             usuario.perfil.dejar_seguir(request.user.perfil)
             return HttpResponse("dejado")
-    return redirect('error_404')
+    
+    raise Http404   # Si el usuario es el mismo => error404
 
+"""
 @login_required
 def seguir(request, pk):
     usuario = get_object_or_404(User, pk=pk)
@@ -735,6 +733,6 @@ def dejar_seguir(request, pk):
     if not request.user == usuario:
         usuario.perfil.dejar_seguir(request.user.perfil)
         return HttpResponse("ok")
-
+"""
 def error_404(request, exception):
         return render(request,'404.html', {})
