@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
-from .models import Valoracion, Notificacion, Avg
+from .models import Receta, Perfil, Valoracion, Notificacion
+from django.db.models import Avg
 from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.contrib.sessions.models import Session
@@ -79,6 +80,21 @@ def recortar_img(img, valores):
     resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)
     return resized_image
     
-
+def ordenar_recetas(request):
+    if "new" == request.POST.get("type-sort"):
+        recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
+        opc = "new"
+        
+    elif "follow" == request.POST.get("type-sort"):
+        siguiendo = Perfil.objects.filter(seguidores=request.user.perfil)
+        recetas = Receta.objects.filter(publico=True).filter(usuario__perfil__in=siguiendo).order_by('-fecha')
+        opc = "follow"
+        
+    elif "rating" == request.POST.get("type-sort"):
+        recetas = Receta.objects.filter(publico=True)
+        recetas = ordenar_por_valoracion(recetas)
+        opc = "rating"
+    
+    return recetas, opc
 
         

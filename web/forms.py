@@ -2,7 +2,7 @@ from django import forms
 from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
-from os import remove
+#from os import remove
 from .utils import recortar_img
 
 
@@ -24,10 +24,9 @@ class RegistroUserForm(forms.ModelForm):
             'email': forms.TextInput(attrs={'required': "required"}),
             'first_name': forms.TextInput(attrs={'required': "required"}),
             'password': forms.PasswordInput()
-        
         }
 
-    def save(self, commit=False):
+    def save(self):
         user = super(RegistroUserForm, self).save(commit=False)
         cd = self.cleaned_data
         user.set_password(cd['password'])
@@ -59,6 +58,8 @@ class RegistroPerfilForm(forms.ModelForm):
         perfil.descripcion = cd['descripcion']
         perfil.set_imagen(cd['imagen_perfil'])
         perfil.save()
+
+        # En caso de que la imagen no sea la de por defecto, la recorta con los valores seleccionados
         if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
             valores = list(map(float, cd['val_img'].split(";")))
             image = recortar_img(perfil.imagen_perfil, valores)
@@ -78,21 +79,16 @@ class EditarPerfilForm(forms.Form):
         usuario.last_name = cd['apellido']
         usuario.perfil.descripcion = cd['descripcion']
         usuario.email = cd['email']
-
-        if not cd['imagen_perfil'] is None:
-            valores = list(map(float, cd['val_img'].split(";")))
-            # if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":   # Cromprueba que no sea la imagen por defecto
-                # remove(usuario.perfil.imagen_perfil.path) # Borra la imagen anterior
-            usuario.perfil.set_imagen(cd['imagen_perfil'])
+        usuario.perfil.set_imagen(cd['imagen_perfil'])        
         usuario.save()
         usuario.perfil.save()
 
         # Guarda la imagen recortada
         # Se hace ahora porque tiene que está guardada la imagen ya
         if not cd['imagen_perfil'] is None:
+            valores = list(map(float, cd['val_img'].split(";")))
             image = recortar_img(usuario.perfil.imagen_perfil, valores)
             image.save(usuario.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
-
 
 
 class PasswordChangeForm(PasswordChangeForm):
@@ -101,8 +97,8 @@ class PasswordChangeForm(PasswordChangeForm):
         super(PasswordChangeForm, self).__init__(*args, **kwargs)
 
         for field in self.fields.values():
-            field.widget.attrs['class'] = 'form-control'
-            field.widget.attrs['autocomplete'] = 'off'
+            field.widget.attrs['class'] = 'form-control'    #Añade a los campos la clase
+            field.widget.attrs['autocomplete'] = 'off'  # Desactiva el autocomplete
 
 class EditarRRSSForm(forms.Form):
     facebook = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': "form-control"}))
@@ -144,6 +140,7 @@ class RecetaForm(forms.ModelForm):
             'tiempo_estimado': forms.TextInput(attrs={'placeholder': 'Ej: 30 minutos'}),
             'categoria': forms.Select(attrs={'class': 'custom-select wrap-input2 validate-input', 'required': 'required'}),
         }
+
     def save(self, publico, usuario):
         receta = super(RecetaForm, self).save(commit=False)
         receta.publico = publico
@@ -168,11 +165,9 @@ class IngredienteFormset(forms.ModelForm):
         
         # Comprueba que exista el ingrediente
         if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():
-            rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])
+            rel_ingrediente.ingrediente = Ingrediente.objects.get(nombre=formIngrediente['ingrediente'])       
         else:   # Si no, crea el ingrediente
-            nombre = formIngrediente['ingrediente']
-            instancia = Ingrediente.objects.create(nombre=nombre)
-            rel_ingrediente.ingrediente = instancia
+            rel_ingrediente.ingrediente = Ingrediente.objects.create(nombre=formIngrediente['ingrediente'])
         
         rel_ingrediente.receta = receta
         rel_ingrediente.save()

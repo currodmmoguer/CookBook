@@ -1,14 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.conf import settings
-
-from django.db.models import Avg
-
-# Sirve para controlar el máximo y mínimo de la valoración
-from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.core.validators import MaxValueValidator, MinValueValidator # Sirve para controlar el máximo y mínimo de la valoración
 from django.contrib.auth.models import User
-
 import os
 
 
@@ -44,7 +38,6 @@ class Receta(models.Model):
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1)
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recetas")
     valoracion_media = ""
-    p = models.CharField(max_length=255, null=True, blank=True)
 
     class Meta:
         db_table = 'receta'
@@ -84,7 +77,7 @@ class Perfil(models.Model):
     		return self.seguidores.all().count()
 
     def set_imagen(self, imagen):   #Añade una imagen de perfil
-        if not self.imagen_perfil.name == self._IMG_DEFAULT:
+        if not self.imagen_perfil.name == self._IMG_DEFAULT:    # Elimina la foto de los archivos
             os.remove(self.imagen_perfil.path)
 
         if imagen is None: #Si no hay ninguna le pone la de por defecto
@@ -94,16 +87,13 @@ class Perfil(models.Model):
 
        	self.save()
 
-
-    def add_seguidor(self, perfil): # Añade un usuario a la lista de seguidores
+    def seguir(self, perfil): # Añade un usuario a la lista de seguidores
         if perfil not in self.seguidores.all():
             self.seguidores.add(perfil)
-            self.save()
-
-    def dejar_seguir(self, perfil): # Elimina el usuario de la lista de seguidores
-        if perfil in self.seguidores.all():
+        else:# En caso de que ya sea seguidor, lo deja de seguir
             self.seguidores.remove(perfil)
-            self.save()
+        
+        self.save()
 
 
 class Receta_Guardada(models.Model):

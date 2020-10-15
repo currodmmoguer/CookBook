@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from .models import *
+from .models import Perfil, Receta, Categoria, Ingrediente, Unidad_medida, Sugerencia
 from django.db.models import Count
 
 # Librarias para trabajar con json
@@ -12,14 +12,13 @@ import json
 class CategoriaReport(admin.ModelAdmin):
     list_display = ('nombre',)  # El dato del objeto que se ve en la lista
     ordering = ('nombre',)  #Orden de la lista, ordenado alfabéticamente
-    lista = Receta.objects.values('categoria').annotate(total=Count('id')) #Obtiene una lista con el id de la categoría y su cantidad de recetas
+    categorias = Receta.objects.values('categoria').annotate(total=Count('id')) #Obtiene una lista con el id de la categoría y su cantidad de recetas
     
-    for i in lista: #Añade a cada item de la lista el nombre de la categoría
-        categoria = Categoria.objects.get(pk=i['categoria'])
-        i['categoria'] = categoria.nombre
-
-    def changelist_view(self, request, extra_context=None):
-        as_json = json.dumps(list(self.lista), cls=DjangoJSONEncoder)   # Convierte la lista en un json
+    for categoria in categorias: #Añade a cada item de la lista el nombre de la categoría
+        categoria['categoria'] = Categoria.objects.get(pk=categoria['categoria']).nombre
+    
+    def changelist_view(self, request, extra_context=None): # Envía los datos a la template
+        as_json = json.dumps(list(self.categorias), cls=DjangoJSONEncoder)   # Convierte la lista en un json
         extra_context = extra_context or {"chart_data": as_json}
         return super().changelist_view(request, extra_context=extra_context)
 
@@ -27,18 +26,18 @@ class CategoriaReport(admin.ModelAdmin):
 class Perfil(admin.ModelAdmin):
     exclude = ('seguidores',)   # Elimina el campo seguidores del administrador
 
-    # Obtiene los 10 perfiles con más recetas creadas
+    # Obtiene los 10 perfiles con más recetas creadas con su cantidad de recetas
     perfiles = User.objects.filter(perfil__isnull=False).annotate(num_recetas=Count('recetas')).filter(num_recetas__gt=0).order_by('-num_recetas')[:5]
     lista = []
     
-    for perfil in perfiles:
+    for perfil in perfiles: # Añade los perfiles con la cantidad de recetas a lista de diccionarios
         dict = {}
         dict['username'] = perfil.username
         dict['total_recetas'] = perfil.num_recetas
         lista.append(dict)
         
     
-    def changelist_view(self, request, extra_context=None):
+    def changelist_view(self, request, extra_context=None): # Envía los datos al template
         as_json = json.dumps(list(self.lista), cls=DjangoJSONEncoder)   # Convierte la lista en un json
         extra_context = extra_context or {"chart_data": as_json}
         return super().changelist_view(request, extra_context=extra_context)
@@ -48,17 +47,15 @@ class Perfil(admin.ModelAdmin):
 class Sugerencia(admin.ModelAdmin):
     list_display = ('sugerencia', 'tipo', 'cantidad',)  # Indica los datos que se muestran en la lista
     list_filter = ('tipo', )    # Permite filtrar por dicho campo la lista
-    ordering = ('-cantidad',)
-
+    ordering = ('-cantidad',)   # Ordena las sugerencias por el campo cantidad de forma descendiente
+"""
 @admin.register(Notificacion)
 class Notificacion(admin.ModelAdmin):
     list_display = ('usuario_origen', 'usuario_destino', 'tipo', 'visto', )
-    
+  """  
 
+# Muestra por defecto
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
-admin.site.register(Receta)
-admin.site.register(Paso)
-admin.site.register(Ingrediente_Receta)
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)

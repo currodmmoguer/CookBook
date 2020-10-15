@@ -40,22 +40,11 @@ def index(request):
         logout(request) # Cierra sesión
         return redirect('login')    # Redirecciona a la pantalla de acceso
 
-    if request.method == "POST":
-        
-        if "new" == request.POST.get("type-sort"):
-            recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
-            opc = "new"
-        
-        elif "follow" == request.POST.get("type-sort"):
-            siguiendo = Perfil.objects.filter(seguidores=request.user.perfil)
-            recetas = Receta.objects.filter(publico=True).filter(usuario__perfil__in=siguiendo).order_by('-fecha')
-            opc = "follow"
-        
-        elif "rating" == request.POST.get("type-sort"):
-            recetas = Receta.objects.filter(publico=True)
-            recetas = utils.ordenar_por_valoracion(recetas)
-            opc = "rating"
-        
+
+    
+
+    if request.method == "POST":      
+        recetas, opc = utils.ordenar_recetas(request)
     else:
         recetas = Receta.objects.filter(publico=True).order_by('-fecha')    #Todas las recetas
         opc = ""
@@ -706,12 +695,12 @@ def seguir_dejar(request, pk):
     usuario = get_object_or_404(User, pk=pk)
 
     if not request.user == usuario:
+        usuario.perfil.seguir(request.user.perfil)
+
         if not request.user.perfil in usuario.perfil.seguidores.all():  # En caso de que no lo siga
-            usuario.perfil.add_seguidor(request.user.perfil)
             utils.add_notificacion(request.user, usuario, "siguiendo")
             return HttpResponse("siguiendo")
-        else:   # En caso de que ya sea seguidor, lo deja de seguir
-            usuario.perfil.dejar_seguir(request.user.perfil)
+        else:   
             return HttpResponse("dejado")
     
     raise Http404   # Si el usuario es el mismo => error404
