@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.core.validators import MaxValueValidator, MinValueValidator # Sirve para controlar el máximo y mínimo de la valoración
 from django.contrib.auth.models import User
-import os
+from os import remove
 
 
 class Categoria(models.Model):
@@ -39,11 +39,19 @@ class Receta(models.Model):
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recetas")
     valoracion_media = ""
 
-    class Meta:
-        db_table = 'receta'
+    class Meta: # Metadatos
+        db_table = 'receta' # Nombre de la tabla en la base de datos
 
     def __str__(self):
         return self.titulo
+
+    def delete(self, *args, **kwargs):
+        super(Receta, self).delete(*args, **kwargs)
+        remove(self.imagen_terminada.path)    # Elimina la foto
+
+        for paso in self.pasos.all(): # Elimina las fotos de los pasos
+            if paso.imagen_paso:
+                remove(paso.imagen_paso.path)
 
     def publicar(self): #Pone público/privado la receta, devuelve el valor de publico
         self.publico = not self.publico
@@ -70,6 +78,23 @@ class Perfil(models.Model):
     def __str__(self):
     	return "<Perfil> " + self.usuario.username
 
+    def delete(self, *args, **kwargs):
+        
+        # Elimina la foto de todas las recetas y de sus pasos
+        for receta in self.usuario.recetas.all():
+            remove(receta.imagen_terminada.path)
+
+            for paso in receta.pasos.all():
+                if paso.imagen_paso:
+                    remove(paso.imagen_paso.path)
+
+        # Eliminar la foto de perfil
+        if not self.imagen_perfil.name == "perfil/avatar-no-img.webp":
+            remove(self.imagen_perfil.path)
+
+        self.usuario.delete()   # Al borrar el usuario, con el delete cascade borra el perfil también
+        
+
     def total_seguidores(self): #Obtiene el número total de seguidores
     	if not self.seguidores.all():
     		return 0
@@ -78,7 +103,7 @@ class Perfil(models.Model):
 
     def set_imagen(self, imagen):   #Añade una imagen de perfil
         if not self.imagen_perfil.name == self._IMG_DEFAULT:    # Elimina la foto de los archivos
-            os.remove(self.imagen_perfil.path)
+            remove(self.imagen_perfil.path)
 
         if imagen is None: #Si no hay ninguna le pone la de por defecto
             self.imagen_perfil.name = self._IMG_DEFAULT
@@ -104,7 +129,7 @@ class Receta_Guardada(models.Model):
     class Meta():
         db_table = "recetas_guardadas"
 
-    def save(self, *args, **kwargs):
+    def save(self, *args, **kwargs):    # Sobrescritura de la clase Model
         if Receta_Guardada.objects.filter(receta=self.receta).filter(usuario=self.usuario).exists():
             return False
         else:
@@ -118,6 +143,7 @@ class Comentario(models.Model):
     fecha = models.DateTimeField(default=timezone.now)
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name='comentarios')
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # En caso de responder un comentario, comentario al que va respondido
     comentario_respuesta = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='respuestas')
 
     class Meta:
@@ -165,7 +191,7 @@ class Paso(models.Model):
 class Valoracion(models.Model):
     valoracion = models.IntegerField(validators=[MaxValueValidator(5), MinValueValidator(1)])
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="valoraciones")
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         db_table = 'valoracion'
@@ -180,9 +206,10 @@ class Sugerencia(models.Model):
         ('udm', 'Unidad de medida'),
     )
 
+    # Si es referencia a categoría o unidad de medida
     tipo = models.CharField(max_length=3, choices=choices, default=choices[0])
     sugerencia = models.CharField(max_length=255)
-    cantidad = models.PositiveIntegerField(default=1)
+    cantidad = models.PositiveIntegerField(default=1)   # Cantidad de veces que ha sugerido algo
 
     class Meta:
         db_table = 'sugerencia'
@@ -194,7 +221,10 @@ class Notificacion(models.Model):
         ('valoracion', 'Valoracion'),
         ('siguiendo', 'Siguiendo'),
     )
+
+    # Usuario que recibe la notificación
     usuario_destino = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="notificaciones")
+    # Usuario que provoca la notificación
     usuario_origen = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     fecha = models.DateTimeField(default=timezone.now)
     visto = models.BooleanField(default=False)

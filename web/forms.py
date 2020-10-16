@@ -61,8 +61,7 @@ class RegistroPerfilForm(forms.ModelForm):
 
         # En caso de que la imagen no sea la de por defecto, la recorta con los valores seleccionados
         if not usuario.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
-            valores = list(map(float, cd['val_img'].split(";")))
-            image = recortar_img(perfil.imagen_perfil, valores)
+            image = recortar_img(perfil.imagen_perfil, cd['val_img'])
             image.save(perfil.imagen_perfil.path)
 
 class EditarPerfilForm(forms.Form):
@@ -86,8 +85,7 @@ class EditarPerfilForm(forms.Form):
         # Guarda la imagen recortada
         # Se hace ahora porque tiene que está guardada la imagen ya
         if not cd['imagen_perfil'] is None:
-            valores = list(map(float, cd['val_img'].split(";")))
-            image = recortar_img(usuario.perfil.imagen_perfil, valores)
+            image = recortar_img(usuario.perfil.imagen_perfil, cd['val_img'])
             image.save(usuario.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
 
 

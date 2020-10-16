@@ -3,6 +3,7 @@ $(".seguir").click(function(){
   var idUser = $(this).attr("data-user");
   var url = $(this).attr("data-url");
   var button = this;
+  var seguidores = $('#cantidad-seguidores')  // Para sumar o restar 1
   $.ajax({
     type: "GET",
     url: url,
@@ -12,8 +13,10 @@ $(".seguir").click(function(){
       // Cambiar el número de seguidores
       if (data == "siguiendo"){
         $(button).html("Dejar de seguir");
+        seguidores.html(Number(seguidores.html()) - 1);
       } else if (data == "dejado"){
         $(button).html("Seguir");
+        seguidores.html(Number(seguidores.html()) + 1);
       }
     },
   });

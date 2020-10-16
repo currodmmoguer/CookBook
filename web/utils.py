@@ -23,19 +23,10 @@ def paginator(request, lista, num=16):
 def has_profile(request):
     try:
         request.user.perfil
+        return True
     except ObjectDoesNotExist:
-        #Falta mostrar mensaje
-        sessions = Session.objects.all()
-        logout(request)
-        return redirect('login')
+        return False
 
-def eliminar_recetas_usuario(usuario):
-    for receta in usuario.recetas.all():
-        remove(receta.imagen_terminada.path)
-        
-        for paso in receta.pasos.all():
-            if paso.imagen_paso:
-                remove(paso.imagen_paso.path)
 
 def ordenar_por_valoracion(recetas):
     lista_recetas = []
@@ -75,6 +66,7 @@ def ver_notificaciones(usuario):
         notificacion.save()
 
 def recortar_img(img, valores):
+    valores = list(map(float, valores.split(";")))
     image = Image.open(img)
     cropped_image = image.crop((valores[0], valores[1], valores[0] + valores[2], valores[1] + valores[3]))
     resized_image = cropped_image.resize((200, 200), Image.ANTIALIAS)

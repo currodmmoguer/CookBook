@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group, User
-from .models import Perfil, Receta, Categoria, Ingrediente, Unidad_medida, Sugerencia
+#from .models import Perfil, Receta, Categoria, Ingrediente, Unidad_medida, Sugerencia
+from .models import *
 from django.db.models import Count
 
 # Librarias para trabajar con json
@@ -57,5 +58,7 @@ class Notificacion(admin.ModelAdmin):
 # Muestra por defecto
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
+# admin.site.register(Receta)
+#admin.site.register(Notificacion)
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)

@@ -34,14 +34,9 @@ from django.core.exceptions import ObjectDoesNotExist
 @login_required
 def index(request):
 
-    try:    # Comprueba que el usuario tiene un perfil, esto puede ser que entre un administrador que no tenga perfil
-        request.user.perfil
-    except ObjectDoesNotExist:
+    if not utils.has_profile(request):
         logout(request) # Cierra sesión
         return redirect('login')    # Redirecciona a la pantalla de acceso
-
-
-    
 
     if request.method == "POST":      
         recetas, opc = utils.ordenar_recetas(request)
@@ -402,7 +397,9 @@ def editar_rrss(request):
 #Notificaciones
 @login_required
 def notificaciones(request):
+    print(request.user.notificaciones)
     notificaciones = Notificacion.objects.filter(usuario_destino=request.user).order_by('-fecha')[:50]
+    print(notificaciones)
     utils.ver_notificaciones(request.user)  # Hace que las notificaciones que tengan el atributo "visto" a False lo cambia a True
 
     context = {
@@ -562,14 +559,7 @@ def registro(request):
 #Elimina la cuenta logueada y redirecciona a la pantalla de logueo
 @login_required
 def eliminar_cuenta(request):
-    utils.eliminar_recetas_usuario(request.user)
-    
-    # Eliminar la foto de perfil
-    if not request.user.perfil.imagen_perfil.name == "perfil/avatar-no-img.webp":
-        remove(request.user.perfil.imagen_perfil.path)
-
-    request.user.delete()
-    
+    request.user.perfil.delete()
     return redirect('login')
 
 
@@ -585,16 +575,10 @@ def eliminar_foto(request):
 def eliminar_receta(request, pk):
     receta = get_object_or_404(Receta, pk=pk)
     
-    if request.user == receta.usuario:  # Comprueba que la receta pertenezca al usuario logueado
-        remove(receta.imagen_terminada.path)    # Elimina la foto
-        
-        for paso in receta.pasos.all(): # Elimina las fotos de los pasos
-            if paso.imagen_paso:
-                remove(paso.imagen_paso.path)
-
+    if request.user == receta.usuario:  # Comprueba que la receta pertenezca al usuario logueado      
         receta.delete()
         
-        return redirect('perfil', username=request.user.username)
+    return redirect('perfil', username=request.user.username)
 
 
 #Pone una receta pública o privada según la que esté marcada
@@ -705,23 +689,5 @@ def seguir_dejar(request, pk):
     
     raise Http404   # Si el usuario es el mismo => error404
 
-"""
-@login_required
-def seguir(request, pk):
-    usuario = get_object_or_404(User, pk=pk)
-
-    if not request.user == usuario:
-        usuario.perfil.add_seguidor(request.user.perfil)
-        utils.add_notificacion(request.user, usuario, "siguiendo")
-        return HttpResponse("ok")
-
-
-@login_required
-def dejar_seguir(request, pk):
-    usuario = get_object_or_404(User, pk=pk)
-    if not request.user == usuario:
-        usuario.perfil.dejar_seguir(request.user.perfil)
-        return HttpResponse("ok")
-"""
 def error_404(request, exception):
         return render(request,'404.html', {})
