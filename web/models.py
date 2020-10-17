@@ -35,7 +35,7 @@ class Receta(models.Model):
     tiempo_estimado = models.CharField(max_length=50, null=True, blank=True)
     publico = models.BooleanField(default=False)
     fecha = models.DateTimeField(default=timezone.now)
-    categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1)
+    categoria = models.ForeignKey(Categoria, on_delete=models.SET_DEFAULT, default=1, related_name="recetas")
     usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recetas")
     valoracion_media = ""
 
@@ -167,7 +167,7 @@ class Ingrediente(models.Model):
 
 class Ingrediente_Receta(models.Model): # Relacion entre ingrediente y receta
     receta = models.ForeignKey(Receta, on_delete=models.CASCADE, related_name="ingredientes")
-    ingrediente = models.ForeignKey(Ingrediente, on_delete=models.DO_NOTHING)
+    ingrediente = models.ForeignKey(Ingrediente, on_delete=models.DO_NOTHING, related_name="recetas")
     cantidad = models.FloatField(max_length=30)
     unidad_medida = models.ForeignKey(Unidad_medida, on_delete=models.SET("Otros"), default=1)
 

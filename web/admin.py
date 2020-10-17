@@ -20,7 +20,7 @@ class CategoriaReport(admin.ModelAdmin):
     
     def changelist_view(self, request, extra_context=None): # Envía los datos a la template
         as_json = json.dumps(list(self.categorias), cls=DjangoJSONEncoder)   # Convierte la lista en un json
-        extra_context = extra_context or {"chart_data": as_json}
+        extra_context = {"chart_data": as_json}
         return super().changelist_view(request, extra_context=extra_context)
 
 @admin.register(Perfil)
@@ -40,7 +40,7 @@ class Perfil(admin.ModelAdmin):
     
     def changelist_view(self, request, extra_context=None): # Envía los datos al template
         as_json = json.dumps(list(self.lista), cls=DjangoJSONEncoder)   # Convierte la lista en un json
-        extra_context = extra_context or {"chart_data": as_json}
+        extra_context = {"chart_data": as_json}
         return super().changelist_view(request, extra_context=extra_context)
 
 
@@ -49,11 +49,7 @@ class Sugerencia(admin.ModelAdmin):
     list_display = ('sugerencia', 'tipo', 'cantidad',)  # Indica los datos que se muestran en la lista
     list_filter = ('tipo', )    # Permite filtrar por dicho campo la lista
     ordering = ('-cantidad',)   # Ordena las sugerencias por el campo cantidad de forma descendiente
-"""
-@admin.register(Notificacion)
-class Notificacion(admin.ModelAdmin):
-    list_display = ('usuario_origen', 'usuario_destino', 'tipo', 'visto', )
-  """  
+    
 
 # Muestra por defecto
 admin.site.register(Ingrediente)

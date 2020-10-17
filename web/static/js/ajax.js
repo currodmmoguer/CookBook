@@ -91,20 +91,24 @@ $("#submit-sugerencia").click(function () {
   var url = $(this).attr("data-url");
   var categoria = $("#sugerenciaModal").find("#id_tipo").val();
   var sugerencia = $("#sugerenciaModal").find("#id_sugerencia").val();
-
-  $.ajax({
-    type: "GET",
-    url: url,
-    data: {
-      categoria: categoria,
-      sugerencia: sugerencia,
-    },
-    success: function (data) {
-      $("#sugerenciaModal").modal("toggle");
-      $("#sugerenciaModal").find("#id_sugerencia").val("");
-    },
-  });
+  
+  if (sugerencia){  // Comprueba que no se haya dejado el campo vacío
+    $.ajax({
+      type: "GET",
+      url: url,
+      data: {
+        categoria: categoria,
+        sugerencia: sugerencia,
+      },
+      success: function (data) {
+        $("#sugerenciaModal").modal("toggle");
+        $("#sugerenciaModal").find("#id_sugerencia").val("");
+      },
+    });
+  }
+  
 });
+
 
 // Notificaciones
 $(document).ready(function(){
@@ -114,7 +118,7 @@ $(document).ready(function(){
     success: function(e){
       if (e === "si-notificacion") {
         $('#badge-not').removeAttr("hidden");
-      } 
+      }
     },
   });
 

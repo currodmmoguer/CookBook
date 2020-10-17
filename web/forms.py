@@ -216,7 +216,7 @@ class RespuestaForm(forms.ModelForm):
 
     def save(self, receta, usuario):
         texto = self.cleaned_data['texto']
-        padre =Comentario.objects.get(pk=self.data.get('comentario-respuesta'))
+        padre = Comentario.objects.get(pk=self.data.get('comentario-respuesta'))
         comentario = Comentario.objects.create(
                 texto=texto, receta=receta, usuario=usuario, comentario_respuesta=padre)
         return comentario

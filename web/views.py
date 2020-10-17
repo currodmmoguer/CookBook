@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import *
 from .forms import *
 from . import utils
-from os import remove
+# from os import remove
 
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
@@ -60,9 +60,10 @@ def index(request):
 
 # Vista de una receta creada
 @login_required
-def receta(request, pk):
+def receta(request, pk, tipo=None):
     receta = get_object_or_404(Receta, pk=pk)  # Obtiene la receta
     
+    # Crea los formularios vacíos
     comentarioFrom = ComentarioForm()
     valoracionForm = ValoracionForm()
     respuestaForm = RespuestaForm()
@@ -71,16 +72,15 @@ def receta(request, pk):
     if request.method == 'POST':
         
         if 'comentario-respuesta' in request.POST:
-            respuestaForm = RespuestaForm(request.POST)
+            respuestaForm = RespuestaForm(request.POST) # Obtiene el formulario con los datos
 
             if respuestaForm.is_valid():
-                padre = Comentario.objects.get(pk=int(request.POST['comentario-respuesta']))
                 comentario = respuestaForm.save(receta, request.user)
-                utils.add_notificacion(request.user, padre.usuario, "respuesta", receta, comentario)
+                utils.add_notificacion(request.user, comentario.comentario_respuesta.usuario, "respuesta", receta, comentario)
             
         # Formulario escribir comentario
-        if request.method == "POST" and 'comentario' in request.POST:  # En caso de que escriba un comentario
-            comentarioForm = ComentarioForm(request.POST)
+        if 'comentario' in request.POST:  # En caso de que escriba un comentario
+            comentarioForm = ComentarioForm(request.POST)   # Obtiene el formulario con los datos
 
             if comentarioForm.is_valid():
                 comentario = comentarioForm.save(request.user, Receta.objects.get(pk=pk))  # Guarda el texto
@@ -89,8 +89,12 @@ def receta(request, pk):
     # Añade a la receta la valoración media
     receta.valoracion_media = utils.valoracion_media(receta)
     
-    context = {'receta': receta, 'valoracionForm': valoracionForm,
-               'comentarioForm': comentarioFrom, 'respuestaForm': respuestaForm}
+    context = {
+        'receta': receta,
+        'valoracionForm': valoracionForm,
+        'comentarioForm': comentarioFrom,
+        'respuestaForm': respuestaForm
+    }
     
     return render(request, 'receta.html', context)
 
@@ -105,33 +109,10 @@ def nueva_receta(request):
 
     if request.method == 'POST':
         formReceta = RecetaForm(request.POST, request.FILES)
-        formset_paso = formsetPasoFactory(request.POST, request.FILES, prefix='paso')
-        formset_ingrediente = formsetIngredienteFactory(request.POST, prefix='ingrediente')
-
-        if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
-            # Receta (básicos)
-            receta = formReceta.save(request.POST.__contains__('publico'), request.user)
-
-            # Ingredientes
-            for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
-                formIngrediente.save(receta)
-                
-            # Pasos
-            pos = 1 # Posición de los pasos
-    
-            for formPaso in formset_paso:   #Bucle todos los 
-                formPaso.save(receta, pos)
-                pos += 1
-
+        receta = utils.guardar_receta(request, formReceta, formsetPasoFactory, formsetIngredienteFactory)
+        
+        if receta:
             return redirect('receta', pk=receta.pk)
-
-        else:   # ERROR
-            # En caso de que no sea válido el formulario, muestra los errores
-            # Nunca va a dar la situación porque o es requerido, que no 
-            # se envía el formulario en caso de que no se introduzca los datos
-            # o tiene máximo de caracteres, que no se permite introducir más
-            # en el campo de texto
-            pass
 
     else:   # Si no es POST, crea los formularios vacíos
         formReceta = RecetaForm()
@@ -159,35 +140,12 @@ def editar_receta(request, pk):
 
     if request.method == 'POST':
         formReceta = RecetaForm(request.POST, request.FILES, instance=receta)
-        formset_paso = formsetPasoFactory(request.POST, request.FILES, prefix='paso')
-        formset_ingrediente = formsetIngredienteFactory(request.POST, prefix='ingrediente')
-
-        if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
-            # Receta (básicos)
-            receta = formReceta.save(request.POST.__contains__('publico'), request.user)
-
-            # Ingredientes
-            for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
-                formIngrediente.save(receta)
-
-            # Pasos
-            pos = 1
-            
-            for formPaso in formset_paso:   #Bucle todos los pasos
-                formPaso.save(receta, pos)
-                pos += 1
-
-            return redirect('receta', pk=receta.pk)
+        receta = utils.guardar_receta(request, formReceta, formsetPasoFactory, formsetIngredienteFactory)
         
-        else:   # ERROR
-            # En caso de que no sea válido el formulario, muestra los errores
-            # Nunca va a dar la situación porque o es requerido, que no 
-            # se envía el formulario en caso de que no se introduzca los datos
-            # o tiene máximo de caracteres, que no se permite introducir más
-            # en el campo de texto
-            pass
+        if receta:
+            return redirect('receta', pk=receta.pk)
 
-    else:   # Si no es POST obtiene rellena los formularios con los datos de la receta
+    else:   # Si no es POST, rellena los formularios con los datos de la receta
         formReceta = RecetaForm(instance=receta)
         formset_paso = formsetPasoFactory(queryset=Paso.objects.filter(receta=receta).order_by('posicion'), prefix='paso')
         formset_ingrediente = formsetIngredienteFactory(queryset=Ingrediente_Receta.objects.filter(receta=receta), prefix='ingrediente')
@@ -219,7 +177,7 @@ def editar_receta(request, pk):
 def perfil(request, username):
     user = get_object_or_404(User, username=username)
     
-    # Obtiene la lista de los usuarios a los que sigue
+    # Obtiene la cantidad de los usuarios a los que sigue
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     if request.user == user:    # Si el usuario que se visualiza es el mismo del de la sesión
@@ -248,12 +206,13 @@ def recetas_guardadas(request, username):
     if not user == request.user:
         return redirect('perfil', username=username)
     
-    # Obtiene la lista de los usuarios a los que sigue
+    # Obtiene la cantidad de los usuarios a los que sigue
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
-    # Obtiene una lista de las id de recetas que el usuario tiene guardada y ordenada por fecha
-    lista_recetas = Receta_Guardada.objects.filter(usuario=user).values_list('receta', flat=True).order_by('-fecha') 
-    # Crea una lista de Recetas obtienendolas por su id
-    recetas = [Receta.objects.get(pk=id_receta) for id_receta in lista_recetas]
+    
+    # Obtiene una lista de las recetas que tiene el usuario guardadas con objectos de la clase Receta_guardada
+    recetas_guardadas = user.recetas_guardadas.all().order_by('-fecha')
+    # Añade a una lista de clase Receta las recetas guardadas
+    recetas = [receta.receta for receta in recetas_guardadas]
     
     context = {
         'usuario': user,
@@ -269,8 +228,9 @@ def recetas_guardadas(request, username):
 @login_required
 def seguidores(request, username):
     user = get_object_or_404(User, username=username)
-    # Obtiene la lista de los usuarios a los que sigue
+    # Obtiene la cantidad de los usuarios a los que sigue
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
+    
     # Al obtener la lista de seguidores se obtiene una lista con objetos Perfil, por eso con un bucle se obtiene el objeto usuario de dicho perfil
     seguidores = [i.usuario for i in user.perfil.seguidores.all()]
     
@@ -293,8 +253,10 @@ def seguidores(request, username):
 @login_required
 def siguiendo(request, username):
     user = get_object_or_404(User, username=username)
-    # Obtiene la lista de los usuarios a los que sigue
+    
+    # Obtiene la cantidad de los usuarios a los que sigue
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
+    
     # Al obtener la lista de siguiendo se obtiene una lista con objetos Perfil, por eso con un bucle se obtiene el objeto usuario de dicho perfil
     siguiendo = [i.usuario for i in Perfil.objects.filter(seguidores=user.perfil)]
 
@@ -322,10 +284,9 @@ def editar_perfil(request, username):
         
         if form.is_valid():
             form.save(request.user)          
-        else:   # ERROR
-            # No puede haber errores
-            print(form.errors)
-    else:
+        else:   # ERROR - No puede haber errores
+            pass
+    else:   # Rellena el formulario con los datos del usuario
         form = EditarPerfilForm(initial={
                 'nombre': request.user.first_name,
                 'apellido': request.user.last_name,
@@ -374,7 +335,7 @@ def editar_rrss(request):
         if form.is_valid():
             form.save(request.user.perfil)
 
-    else:
+    else:   # Rellena el formulario con los datos el perfil
         form = EditarRRSSForm(initial = {
             'facebook': request.user.perfil.facebook,
             'instagram': request.user.perfil.instagram,
@@ -397,9 +358,7 @@ def editar_rrss(request):
 #Notificaciones
 @login_required
 def notificaciones(request):
-    print(request.user.notificaciones)
-    notificaciones = Notificacion.objects.filter(usuario_destino=request.user).order_by('-fecha')[:50]
-    print(notificaciones)
+    notificaciones = request.user.notificaciones.all().order_by('-fecha')[:50]
     utils.ver_notificaciones(request.user)  # Hace que las notificaciones que tengan el atributo "visto" a False lo cambia a True
 
     context = {
@@ -432,6 +391,7 @@ def busqueda_avanzada(request):
             #Obtiene la lista de recetas filtrando por ingrediente y sin obtener repetidos
             #Sqlite no soporta hacer distinct() directamente con objeto, por lo que hay que pasar la lista de objeto a las id
             recetas_id = Ingrediente_Receta.objects.filter(ingrediente__in=ingredientes).values_list('receta', flat=True).distinct()
+
             recetas = []
             
             for id in recetas_id:   #Se crea el objeto receta a traves de su id
@@ -501,7 +461,7 @@ def resultado_busqueda(request):
 @login_required
 def resultado_busqueda_categoria(request, c):
     categoria = get_object_or_404(Categoria, pk=c)
-    recetas = Receta.objects.filter(categoria=c).order_by('-fecha')
+    recetas = categoria.recetas.filter(publico=True).order_by('-fecha')
     mensaje = "Resultados de " + categoria.nombre if recetas else 'No se ha encontrado ninguna receta de la categoría ' + categoria.nombre
 
     context = {
@@ -652,10 +612,9 @@ def valorar_seguro(request):
 def sugerencia(request):
     
     if request.method == "GET":
-
-        # Busca si existe la sugerencia
-        if Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).exists():
-            sugerencia = Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia']).first()
+        sugerencia = Sugerencia.objects.filter(tipo=request.GET['categoria'], sugerencia=request.GET['sugerencia'])
+        
+        if sugerencia:# Comprueba si existe la sugerencia
             sugerencia.cantidad += 1    # Si esa sugerencia existe, suma 1 al campo cantidad para ver cuantos la han enviado en total
             sugerencia.save()
         else:   # Crea una nueva sugerencia

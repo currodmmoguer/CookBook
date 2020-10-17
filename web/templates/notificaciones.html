@@ -27,6 +27,7 @@
         <a href="{% url 'perfil' username=notificacion.usuario_origen.username %}"
             style="font-weight: bold;">{{notificacion.usuario_origen}}</a>
 
+        
         <a href="{% url 'receta' pk=notificacion.receta.pk %}">
             {% if notificacion.tipo == "comentario" %}
             <!-- Muestra el nombre de la receta y el texto como máximo 50 caracteres-->

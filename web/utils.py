@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
 from .models import Receta, Perfil, Valoracion, Notificacion
+
 from django.db.models import Avg
 from django.shortcuts import redirect
 from django.contrib.auth import logout
@@ -8,8 +9,6 @@ from django.contrib.sessions.models import Session
 from os import remove
 # Recortar image
 from PIL import Image
-
-
 
 
 # Paginación
@@ -37,6 +36,38 @@ def ordenar_por_valoracion(recetas):
     lista_recetas.sort(key=lambda x: x.valoracion_media, reverse=True)
     return lista_recetas
 
+# Guarda una receta
+def guardar_receta(request, formReceta, formsetPasoFactory, formsetIngredienteFactory):
+    receta = None
+    formset_paso = formsetPasoFactory(request.POST, request.FILES, prefix='paso')
+    formset_ingrediente = formsetIngredienteFactory(request.POST, prefix='ingrediente')
+
+    # Comprueba las validaciones
+    if formReceta.is_valid() and formset_ingrediente.is_valid() and formset_paso.is_valid():
+        # Receta (básicos)
+        receta = formReceta.save(request.POST.__contains__('publico'), request.user)
+
+        # Ingredientes
+        for formIngrediente in formset_ingrediente: #Bucle todos los ingredientes
+            formIngrediente.save(receta)
+                
+        # Pasos
+        pos = 1 # Posición de los pasos
+    
+        for formPaso in formset_paso:   #Bucle todos los pasos
+            formPaso.save(receta, pos)
+            pos += 1
+    else:   # ERROR
+            # En caso de que no sea válido el formulario, muestra los errores
+            # Nunca va a dar la situación porque o es requerido, que no 
+            # se envía el formulario en caso de que no se introduzca los datos
+            # o tiene máximo de caracteres, que no se permite introducir más
+            # en el campo de texto
+        pass
+    
+    return receta
+
+
 def valoracion_media(receta):
     media = Valoracion.objects.filter(receta=receta).aggregate(Avg('valoracion'))['valoracion__avg']
     
@@ -47,7 +78,7 @@ def valoracion_media(receta):
 
 
     
-def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0, comentario=None):
+def add_notificacion(usuario_origen, usuario_destino, tipo, receta=None, comentario=None):
     if not usuario_origen == usuario_destino:
         notificacion = Notificacion.objects.create(usuario_origen=usuario_origen, usuario_destino=usuario_destino, tipo=tipo)
         
@@ -59,7 +90,7 @@ def add_notificacion(usuario_origen, usuario_destino, tipo, receta=0, comentario
             notificacion.save()
 
 def ver_notificaciones(usuario):
-    notificaciones = Notificacion.objects.filter(usuario_destino=usuario).filter(visto=False)
+    notificaciones = usuario.notificaciones.filter(visto=False)
 
     for notificacion in notificaciones:
         notificacion.visto = True
