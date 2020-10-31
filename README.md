@@ -9,7 +9,7 @@ Tener instalado python3 y pip en la máquina.
 
 También las instrucciones de instalación están dirigidas para una máquina _Linux._
 
-## Instalación
+## Instalación 🔧
 
 **1 Instalar requerimientos:**
 
@@ -32,3 +32,7 @@ La base de datos se llama db.sqlite3, se puede cambiar en el archivo settings.py
 * [Chart JS](https://www.chartjs.org/) - Librería de Javascript para creación de gráficos
 * [Cropper JS](https://fengyuanchen.github.io/cropperjs/) - Librería de Javascript para editar imágenes
 * SQLite3 - Base de datos
+
+## Autor ✒️
+
+[Francisco Domínguez](https://github.com/currodmmoguer/)
