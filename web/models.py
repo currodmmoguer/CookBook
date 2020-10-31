@@ -113,6 +113,7 @@ class Perfil(models.Model):
        	self.save()
 
     def seguir(self, perfil): # Añade un usuario a la lista de seguidores
+
         if perfil not in self.seguidores.all():
             self.seguidores.add(perfil)
         else:# En caso de que ya sea seguidor, lo deja de seguir
@@ -127,7 +128,7 @@ class Receta_Guardada(models.Model):
     fecha = models.DateTimeField(default=timezone.now)
 
     class Meta():
-        db_table = "recetas_guardadas"
+        db_table = "receta_guardada"
 
     def save(self, *args, **kwargs):    # Sobrescritura de la clase Model
         if Receta_Guardada.objects.filter(receta=self.receta).filter(usuario=self.usuario).exists():
@@ -233,7 +234,7 @@ class Notificacion(models.Model):
     comentario = models.ForeignKey(Comentario, null=True, blank=True, on_delete=models.CASCADE)
 
     class Meta:
-        #db_table = 'notificacion'
+        db_table = 'notificacion'
         verbose_name_plural = 'Notificaciones'
     def __str__(self):
         return "Usuario origen: {}, Usuario destino: {}, Tipo: {}".format(self.usuario_destino, self.usuario_origen, self.tipo)

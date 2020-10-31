@@ -16,6 +16,7 @@ from django.contrib.auth import login as do_login, logout
 from django.contrib.auth import update_session_auth_hash
 #from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib import messages
+from django.contrib.auth.password_validation import validate_password
 
 #Fromset
 from django.forms import modelformset_factory, formset_factory
@@ -181,9 +182,9 @@ def perfil(request, username):
     user.perfil.total_siguiendo = Perfil.objects.filter(seguidores=user.perfil).count()
     
     if request.user == user:    # Si el usuario que se visualiza es el mismo del de la sesión
-        recetas = user.recetas.all().order_by('-fecha')
+        recetas = user.recetas.all().order_by('-fecha') # Obtiene todas sin importar que sean públicas o privadas
         mensaje_vacio = "Aún no tienes ninguna receta creada"
-    else:
+    else:   # Obtiene solo las púlicas ya que no es el mismo usuario
         recetas = user.recetas.filter(publico=True).order_by('-fecha')
         mensaje_vacio = username + " no tiene ninguna receta creada"
 
@@ -219,6 +220,7 @@ def recetas_guardadas(request, username):
         'recetas': utils.paginator(request, recetas),
         'mensaje_vacio': "Aún no tienes ninguna receta guardada",
         'lista_es_receta': True,
+        'tipo_lista': 'guardadas',
     }
 
     return render(request, 'perfil.html', context)
@@ -244,6 +246,7 @@ def seguidores(request, username):
         'lista_usuarios': utils.paginator(request, seguidores),
         'mensaje_vacio': mensaje_vacio,
         'lista_es_receta': False,
+        'tipo_lista': 'seguidores',
     }
 
     return render(request, 'perfil.html', context)
@@ -270,6 +273,7 @@ def siguiendo(request, username):
         'lista_usuarios': utils.paginator(request, siguiendo),
         'mensaje_vacio': mensaje_vacio,
         'lista_es_receta': False,
+        'tipo_lista': 'siguiendo',
     }
 
     return render(request, 'perfil.html', context)
@@ -417,7 +421,7 @@ def busqueda_avanzada(request):
                 mensaje = "No se han encontrado recetas"
             
             context = {
-                'recetas': utils.paginator(request, recetas), 
+                'recetas': recetas, 
                 'mensaje_titulo': mensaje
             }
             
@@ -441,7 +445,7 @@ def resultado_busqueda(request):
 
     try:    # Comprueba que haya una categoría con el nombre introducido
         categoria = Categoria.objects.get(nombre=query.capitalize())
-        recetas = Receta.objects.filter(categoria=categoria)
+        recetas = categoria.recetas.all()
     except ObjectDoesNotExist:  # Si no hay, obtiene las recetas que se llamen como se ha introducido en el buscador
         recetas = Receta.objects.filter(Q(titulo__icontains=query))
 
@@ -452,7 +456,8 @@ def resultado_busqueda(request):
 
     context = {
         'recetas': utils.paginator(request, recetas),
-        'mensaje_titulo': mensaje
+        'mensaje_titulo': mensaje,
+        'name': query
     }
 
     return render(request, 'resultado_busqueda.html', context)
@@ -464,6 +469,7 @@ def resultado_busqueda_categoria(request, c):
     recetas = categoria.recetas.filter(publico=True).order_by('-fecha')
     mensaje = "Resultados de " + categoria.nombre if recetas else 'No se ha encontrado ninguna receta de la categoría ' + categoria.nombre
 
+    print(c)
     context = {
         'recetas': utils.paginator(request, recetas),
         'mensaje_titulo': mensaje
@@ -486,11 +492,17 @@ def registro(request):
             email = registroUserForm.cleaned_data.get('email')
             
             # Comprueba que no exista un usuario con el nombre de usuario o introducido, que las password coincidan y no sean numéricas
-            if not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists() and password == password2 and not password.isnumeric():
-                user = registroUserForm.save()
-                registroPerfilForm.save(user)
-                do_login(request, user) #Accede a la aplicación
-                return redirect('index')
+            if not User.objects.filter(username=username).exists() and not User.objects.filter(email=email).exists() and password == password2:
+                
+                try :
+                    validate_password(password)
+                    user = registroUserForm.save()
+                    registroPerfilForm.save(user)
+                    do_login(request, user) #Accede a la aplicación
+                    return redirect('index')
+                except Exception as e:
+                    for i in e:
+                        registroUserForm.add_error('password', i)
             
             else:   # En caso de que haya algún error, comprueba cuales han sido para mostrarlo por pantalla
                 if User.objects.filter(email=email).exists():
@@ -640,7 +652,7 @@ def seguir_dejar(request, pk):
     if not request.user == usuario:
         usuario.perfil.seguir(request.user.perfil)
 
-        if not request.user.perfil in usuario.perfil.seguidores.all():  # En caso de que no lo siga
+        if request.user.perfil in usuario.perfil.seguidores.all():  # En caso de que no lo siga
             utils.add_notificacion(request.user, usuario, "siguiendo")
             return HttpResponse("siguiendo")
         else:   

@@ -1,7 +1,6 @@
 *.pyc
 __pycache__
 venv-cookbook
-/static
 media
 db.sqlite3
 .DS_Store

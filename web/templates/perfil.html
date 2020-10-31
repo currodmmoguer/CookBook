@@ -25,10 +25,34 @@
 <!-- Receta lista -->
 
 {% if lista_es_receta %}
-  {% include 'partes/lista-recetas2.html' %}
+  {% include 'partes/lista-recetas.html' %}
 {% else %}
   {% include 'partes/lista-usuarios.html' %}
 {% endif %}
+
+<script type="text/javascript">
+
+  // Variables que se utilizan en ajax, pero hay que obtenerlos desde aquí
+  var usuario_perfil = "{{usuario}}";
+  var request_user = "{{user}}";
+
+  var tipo_lista = "{{tipo_lista}}";
+  
+  switch (tipo_lista){
+    case 'guardadas':
+      $('#text-guardadas').css('font-weight', '600');
+      break;
+    case 'seguidores':
+      $('#text-seguidores').css('font-weight', '600');
+      break;
+    case 'siguiendo':
+      $('#text-siguiendo').css('font-weight', '600');
+      break;
+    default:
+    $('#text-recetas').css('font-weight', '600');
+  }
+  
+</script>
   
 
 

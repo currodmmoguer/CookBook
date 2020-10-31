@@ -36,7 +36,6 @@ class Perfil(admin.ModelAdmin):
         dict['username'] = perfil.username
         dict['total_recetas'] = perfil.num_recetas
         lista.append(dict)
-        
     
     def changelist_view(self, request, extra_context=None): # Envía los datos al template
         as_json = json.dumps(list(self.lista), cls=DjangoJSONEncoder)   # Convierte la lista en un json

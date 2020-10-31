@@ -5,7 +5,7 @@
         <div class="row justify-content-center">
           <b>{{usuario.recetas.all.count}}</b>
         </div>
-        <div class="row justify-content-center">
+        <div id="text-recetas" class="row justify-content-center">
           RECETAS
         </div>
       </a>
@@ -16,7 +16,7 @@
         <div class="row justify-content-center">
           <b id="cantidad-seguidores">{{usuario.perfil.total_seguidores}}</b>
         </div>
-        <div class="row justify-content-center">
+        <div id="text-seguidores" class="row justify-content-center">
           SEGUIDORES
         </div>
       </a>
@@ -25,9 +25,9 @@
     <div class="col-4 col-sm-3">
       <a href="{% url 'siguiendo' usuario.username %}">
         <div class="row justify-content-center">
-          <b>{{usuario.perfil.total_siguiendo}}</b>
+          <b id="cantidad-siguiendo">{{usuario.perfil.total_siguiendo}}</b>
         </div>
-        <div class="row justify-content-center">
+        <div id="text-siguiendo" class="row justify-content-center">
           SIGUIENDO
         </div>
       </a>

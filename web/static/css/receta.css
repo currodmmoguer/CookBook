@@ -21,6 +21,11 @@
   display: none !important;
 }
 
+.username {
+  font-weight: 600;
+  color: #b80d57;
+}
+
 #pasos img {
   width: 35%;
   margin-left: 10%;

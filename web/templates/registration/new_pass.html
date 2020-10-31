@@ -38,7 +38,7 @@
 
         <div class="row">
             <div class="col-12">
-                <form method="post" id="beauty-form">
+                <form method="post" class="beauty-form">
                     {% csrf_token %}
 
                     <div class="row justify-content-center ">
@@ -75,7 +75,12 @@
 
         {% else %}
 
-        <h1>ENCALE INVALIDO</h1>
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>ENCALE INVÁLIDO</h1>
+            </div>
+        </div>
+        
 
         {% endif %}
 

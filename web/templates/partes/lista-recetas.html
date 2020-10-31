@@ -2,91 +2,28 @@
 {% load static %}
 
 
-{% for receta in recetas %}
-<div class="row my-3 mx-md-5">
-  
-  <div class="col-2 col-sm-1">
 
-    <!-- Botón guardar -->
-    <a id="{{receta.pk}}" class="btn-guardar" data-url="{% url 'guardar' %}" data-toggle="tooltip" data-placement="bottom" title="Guardar">
-      {% if  receta|is_save:user %}
-          <i class='fas fa-bookmark' style='font-size:36px'></i>
-      {% else %}
-          <i class='far fa-bookmark' style='font-size:36px'></i>
-      {% endif %}
-    </a>
+<div id="lista-recetas" class="row my-3">
+  {% for receta in recetas %}
 
-  </div>
-
-  <div class="col-9 col-sm-6">
-    
-    <!-- TÍTULO -->
-    <div class="row">
-      <div class="col-12">
-        <a href="{% url 'receta' pk=receta.pk %}"><span class="titulo">{{receta.titulo}}</span></a>
-        
-        {% if receta.usuario == user %}
-          {% if receta.publico%}
-            <i class="fas fa-lock-open" style="color: #721b65"></i>
-          {% else %}
-            <i class="fas fa-lock" style="color: #721b65"></i>
-          {% endif %}
-        {% endif %}
-
-        <p>{{receta.categoria}}</p>
-          
-        
-      </div>
+    <div class="col-12 col-md-6 col-lg-3 my-2">
+      {% include 'partes/card-receta.html' %}
     </div>
-
-    <!-- USUARIO -->
-    <div class="row">
-      <div class="col-12">
-        Realizado por <a href="{% url 'perfil' username=receta.usuario.username %}">{{receta.usuario.username}}</a>
+    {% if forloop.counter|divisibleby:4 %}
       </div>
-    </div>
+      <div class="row my-3">
+    {% endif %}
+  {% endfor %}
 
-    <!-- VALORACIÓN -->
-    <div class="row valoracion mt-1">
-      <div class="col-12">
-        {% if receta.valoracion_media >= 1 %}
-          
-          {% for i in receta.valoracion_media|times %}
-            <span class="fa fa-star checked"></span>
-          {% endfor %}
-
-          <span>{{receta.valoracion_media}}</span>
-        {% endif %}
-      </div>
-    </div>
-  </div>
-
-  <!-- IMAGEN -->
-  <div class="col-12 col-sm-5 text-center">
-    <a href="{% url 'receta' pk=receta.pk %}">
-      <img src="{{receta.imagen_terminada.url}}" class="img-fluid">
-    </a>
-  </div>
 </div>
 
-{% empty %}
-
-  <div class="row justify-content-center my-2">
-    <div class="col-">
-      <h4>{{mensaje_vacio}}</h4>
-    </div>
-  </div>
-  
-{% endfor %}
-
-{% if recetas %}
-
 <!-- PAGINATOR -->
+{% if recetas.paginator.num_pages > 1 %}
 <div class="row justify-content-center my-5 paginator">
   <span class="step-links">
     
     {% if recetas.has_previous %}
-      <a href="?page={{ recetas.previous_page_number }}">
+      <a href="?&name={{name}}&page={{ recetas.previous_page_number }}">
         <
       </a>
     {% endif %}
@@ -96,12 +33,14 @@
     </span>
 
     {% if recetas.has_next %}
-      <a href="?page={{ recetas.next_page_number }}">></a>
+      <a href="?name={{name}}&page={{ recetas.next_page_number }}">></a>
     {% endif %}
 
   </span>
 
 </div>
-
 {% endif %}
+
+
+
 

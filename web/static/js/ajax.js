@@ -4,19 +4,35 @@ $(".seguir").click(function(){
   var url = $(this).attr("data-url");
   var button = this;
   var seguidores = $('#cantidad-seguidores')  // Para sumar o restar 1
+  var siguiendo = $('#cantidad-siguiendo')  // Para sumar o restar 1
+  console.log(usuario_perfil);
+  console.log(request_user);
   $.ajax({
     type: "GET",
     url: url,
     data: {user_id: idUser},
     success: function(data) {
+      console.log(data)
+      
       // Cambia el texto del botón
       // Cambiar el número de seguidores
       if (data == "siguiendo"){
         $(button).html("Dejar de seguir");
-        seguidores.html(Number(seguidores.html()) - 1);
+
+        if (usuario_perfil === request_user) {
+          console.log(siguiendo);
+          siguiendo.html(Number(siguiendo.html()) + 1);
+        } else {
+          seguidores.html(Number(seguidores.html()) + 1);
+        }
       } else if (data == "dejado"){
         $(button).html("Seguir");
-        seguidores.html(Number(seguidores.html()) + 1);
+        if (usuario_perfil === request_user) {
+          siguiendo.html(Number(siguiendo.html()) - 1);
+        } else {
+          seguidores.html(Number(seguidores.html()) - 1);
+          
+        }
       }
     },
   });

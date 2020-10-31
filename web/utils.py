@@ -13,6 +13,12 @@ from PIL import Image
 
 # Paginación
 def paginator(request, lista, num=16):
+
+    # Paginator trabaja con listas, asi que si es por ejemplo un queryset
+    # lo convierte a lista
+    if not lista.__class__ == list:
+        lista = [i for i in lista]
+
     paginator = Paginator(lista, num)
     num_pagina = request.GET.get('page')
     obj_pagina = paginator.get_page(num_pagina)

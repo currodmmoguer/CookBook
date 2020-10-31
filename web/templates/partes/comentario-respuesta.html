@@ -17,7 +17,7 @@
     <!-- CUERPO COMENTARIO-->
     <div class="col-12 col-md-9 col-lg-10">
       
-      <a href="{% url 'perfil' username=respuesta.usuario.username %}">{{respuesta.usuario}}</a>
+      <a class="username" href="{% url 'perfil' username=respuesta.usuario.username %}">{{respuesta.usuario}}</a>
       <p>{{respuesta.texto}}</p>
 
       <!-- BOTÓN RESPONDER -->
