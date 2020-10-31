@@ -11,11 +11,11 @@ También las instrucciones de instalación están dirigidas para una máquina _L
 
 ## Instalación
 
-**1 Instalar requerimientos:
+**1 Instalar requerimientos:**
 
 pip install -r requeriments.txt
 
-**2 Crear base de datos (SQlite3):
+**2 Crear base de datos (SQlite3):**
 
 python manage.py makemigrations web
 
