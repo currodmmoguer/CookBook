@@ -23,7 +23,7 @@ python manage.py migrate web
 
 La base de datos se llama db.sqlite3, se puede cambiar en el archivo settings.py en el apartado "DATABASES".
 
-**3 Desplegar la aplicación en la máquina
+**3 Desplegar la aplicación en la máquina:**
 
 python manage.py runserver
 
