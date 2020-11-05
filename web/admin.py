@@ -50,10 +50,13 @@ class Sugerencia(admin.ModelAdmin):
     ordering = ('-cantidad',)   # Ordena las sugerencias por el campo cantidad de forma descendiente
     
 
+
+admin.site.site_header = "Administración de CookBook"
+admin.site.site_title = "CookBook"
+
 # Muestra por defecto
 admin.site.register(Ingrediente)
 admin.site.register(Unidad_medida)
-# admin.site.register(Receta)
-#admin.site.register(Notificacion)
+
 
 admin.site.unregister(Group)    # Elimina del administración la opción de grupos (porque no se utiliza)
