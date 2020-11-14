@@ -2,5 +2,5 @@
 __pycache__
 venv-cookbook
 media
-db.sqlite3
+
 .DS_Store
