@@ -7,8 +7,7 @@
 <head>
   <title>Editar perfil · CookBook</title>
   <script src="{% static 'js/library/jquery-3.3.1.min.js' %}"></script>
-  
-  <!--link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.css"-->
+  <link rel="stylesheet" href="{% static 'css/library/cropper.min.css' %}">
 </head>
 
 
@@ -172,7 +171,7 @@
 </div>
 
 <script src="{% static 'js/formulario.js' %}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.9/cropper.min.js"></script>
+<script src="{% static 'js/library/cropper.min.js' %}"></script>
 
 <script>
     $('#{{form.imagen_perfil.auto_id}}').change(function() {
