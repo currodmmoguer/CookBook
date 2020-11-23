@@ -23,6 +23,9 @@ python manage.py migrate web
 
 La base de datos se llama db.sqlite3, se puede cambiar en el archivo settings.py en el apartado "DATABASES".
 
+Si da error: django.db.utils.OperationalError: no such table: receta
+  Comentar las funciones de admin.py al migrar la base de datos o solo las consultas que se hacen.
+
 **3 Desplegar la aplicación en la máquina:**
 
 python manage.py runserver
