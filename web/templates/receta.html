@@ -179,7 +179,7 @@
       {% for ingrediente in receta.ingredientes.all %}
       <lu data-ingrediente="{{ingrediente.pk}}">
         <b>{{ingrediente.cantidad}}</b> <b>{{ingrediente.unidad_medida.nombre}}</b> de
-        {{ingrediente.ingrediente.nombre}}
+        {{ingrediente.ingrediente.nombre|capitalize}}
         <br>
       </lu>
       {% endfor %}

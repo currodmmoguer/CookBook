@@ -77,14 +77,15 @@ class EditarPerfilForm(forms.Form):
         usuario.first_name = cd['nombre']
         usuario.last_name = cd['apellido']
         usuario.perfil.descripcion = cd['descripcion']
-        usuario.email = cd['email']
-        usuario.perfil.set_imagen(cd['imagen_perfil'])        
+        usuario.email = cd['email'] 
         usuario.save()
         usuario.perfil.save()
 
         # Guarda la imagen recortada
-        # Se hace ahora porque tiene que está guardada la imagen ya
-        if not cd['imagen_perfil'] is None:
+        # Comprueba que vengan datos de recorte
+        if not cd['val_img'] == '':
+            usuario.perfil.set_imagen(cd['imagen_perfil'])  
+            usuario.perfil.save()   # Se guarda porque para recortar tiene que estár almacenada
             image = recortar_img(usuario.perfil.imagen_perfil, cd['val_img'])
             image.save(usuario.perfil.imagen_perfil.path)  # Lo guarda con el mismo nombre del aterior (lo remplaza)
 
@@ -160,6 +161,8 @@ class IngredienteFormset(forms.ModelForm):
     def save(self, receta):
         rel_ingrediente = super(IngredienteFormset, self).save(commit=False)
         formIngrediente = self.cleaned_data
+        
+        formIngrediente['ingrediente'] = formIngrediente['ingrediente'].upper()
         
         # Comprueba que exista el ingrediente
         if Ingrediente.objects.filter(nombre=formIngrediente['ingrediente']).exists():

@@ -63,3 +63,6 @@ def fecha_hasta_hoy(fecha):
         medida = "segundo" if tiempo == 1 else "segundos"
 
     return str(tiempo) + " " + medida
+@register.filter
+def capitalize(value):
+    return value.capitalize()
